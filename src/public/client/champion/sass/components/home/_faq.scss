@@ -1,0 +1,135 @@
+.section-faq{
+    .section-heading{
+        position: relative;
+        .section-title{
+            display: inline-block;
+            position: relative;
+        &::before{
+            content: '';
+            position: absolute;
+            background: url(/images/why/star-left.svg) no-repeat;
+        
+            top: -50%;
+            left: -114%;
+            width: 120px;
+            height: 120px;
+        }
+        &::after{
+            content: '';
+            position: absolute;
+            background: url(/images/why/star-right.svg) no-repeat;
+        
+            top: -50%;
+            right: -150%;
+            width: 120px;
+            height: 120px;
+        }
+    }
+
+    }
+    .wrapper{
+        box-shadow: inset 1px 2px 2px 1px rgb(49 39 62);
+        border-radius: 30px;
+        overflow: hidden;
+        background-color: rgba(48, 37, 66, 0.17);
+    }
+}
+.faq-item{
+    position: relative;
+    overflow: hidden;
+    transition: 0.3s ease;
+    .faq-title{
+    background-color: rgba(48, 37, 66, 0.57);
+        padding: 30px;
+        margin: 0;
+        position: relative;
+        color: $white-color;
+    }
+}
+.faq-item:not(:last-child){
+    .faq-title{
+        &::before{
+            content: "";
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            left: 0;
+            height: 1px;
+            background-image: linear-gradient(to right, rgb(51, 48, 63), transparent);
+        }
+    }
+}
+
+.faq.active {
+    .faq-text{
+
+    }
+}
+
+.faq-title{
+    margin: 0 35px 0 0;
+    color: $primary-color;
+    font-size: 20px;
+}
+
+.faq-text{
+    display: none;
+    padding: 30px;
+    margin-left: 30px;
+    position: relative;
+    &::before{
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 2px;
+        background-color: $primary-color;
+        height: calc(100% - 60px);
+    }
+    p{
+        margin-bottom: 10px;
+    }
+}
+
+.faq-item.active .faq-text{
+    display: block;
+}
+
+.faq-toggle{
+    background-color: transparent;
+    border-radius: 50%;
+    border: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    padding: 0;
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    width: 30px;
+    height: 30px;
+}
+
+.faq-toggle:focus{
+    outline: none;
+}
+
+.faq-toggle .fas {
+    font-size: 20px;
+    background: $linear-primary;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    transition: all 0.25s linear;
+    
+}
+
+.faq-item.active .faq-toggle .fas {
+transform: rotate(45deg);
+}
+
+.faq-item.active .faq-toggle .fa-chevron-down{
+    display: none;
+}

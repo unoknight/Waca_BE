@@ -1,0 +1,177 @@
+.cashout-detail {
+    .back-to-shop {
+      a {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 15px;
+        background: rgba(0, 0, 0, 0.19);
+        border-radius: 40px;
+        padding: 0px 20px 0 0;
+        display: inline-flex;
+        flex-wrap: nowrap;
+        cursor: pointer;
+        margin-bottom: 18px;
+      }
+      .boxed {
+        width: 32px;
+        height: 32px;
+        border-radius: 100rem;
+        background-image: $linear-primary;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+    }
+    .cashout-detail-header {
+      display: flex;
+      justify-content: space-between;
+      padding: 20px;
+      .logo {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        font-size: 28px;
+        font-family: "SF-Pro-Rouded Bold";
+        color: $white-color;
+        img {
+          max-width: 35px;
+        }
+      }
+      .warning {
+        color: $white-color;
+        font-size: 13px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        padding: 10px;
+        background: rgba(0, 0, 0, 0.27);
+        border-radius: 8px;
+      }
+    }
+    .cashout-detail-body {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding: 12px 0;
+      .item {
+        flex: 0 0 calc(25% - 12px);
+        height: auto;
+        object-fit: cover;
+        position: relative;
+        cursor: pointer;
+        overflow: hidden;
+        border-radius: 33px;
+        @include mw-1100 {
+          flex: 0 0 calc(33% - 12px);
+        }
+        @include mw-768 {
+          flex: 0 0 calc(50% - 12px);
+          border-radius: 24px;
+        }
+        .checked {
+          width: 20px;
+          height: 20px;
+          background-color: transparent;
+          border-radius: 100rem;
+          border: 1px solid white;
+          position: absolute;
+          top: 20px;
+          right: 20px;
+        }
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+          border-radius: inherit;
+        }
+        .price {
+          background-color: $primary_color;
+          display: inline-flex;
+          justify-content: center;
+          align-items: center;
+          padding: 5px 10px;
+          border-radius: 100rem;
+          font-family: "SF-Pro-Rouded Semibold";
+          color: #333;
+          width: 60px;
+          position: absolute;
+          bottom: 10px;
+          right: 20px;
+        }
+      }
+      .item.active {
+        box-shadow: 0px 9px 24px rgba(83, 98, 245, 0.37),
+          0px -8px 24px rgba(83, 98, 245, 0.37);
+        .checked {
+          background-color: white;
+          box-shadow: rgba(149, 157, 165, 0.7) 0px 0px 10px;
+        }
+        .price {
+          box-shadow: rgba(149, 157, 165, 0.7) 0px 0px 10px;
+          color: $white-color;
+        }
+      }
+    }
+    .cashout-detail-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+      .boxed-price {
+        flex: 0 0 200px;
+        @include mw-768 {
+          flex: 0 0 180px;
+        }
+        .field {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 5px;
+        }
+        .wrap {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 5px 10px;
+          background-color: rgba(0, 0, 0, 0.27);
+          border-radius: 100rem;
+          .boxed {
+            color: $primary_color;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 5px;
+            img {
+              width: 30px;
+              height: 30px;
+              object-fit: contain;
+            }
+            span {
+              color: $primary-color;
+              font-family: "SF-Pro-Rouded Semibold";
+            }
+          }
+          span {
+            color: $white-color;
+          }
+        }
+      }
+      .action {
+        button {
+          width: 180px;
+          height: 55px;
+          font-size: 18px;
+          border-radius: 30px;
+          @include mw-768 {
+            width: fit-content;
+            padding: 0 35px;
+            height: 45px;
+          }
+        }
+      }
+    }
+  }
+  

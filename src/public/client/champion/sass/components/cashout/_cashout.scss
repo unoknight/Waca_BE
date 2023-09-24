@@ -1,0 +1,88 @@
+.section-cashout{
+    .cashout-header{
+        margin-bottom: 32px;
+        .boxed{
+            display: flex;
+            gap: 15px;
+            margin-bottom: 24px;
+            h2{
+                font-size: 28px;
+                color: $white-color;
+            }
+        }
+        .info{
+            max-width: 502px;
+            position: relative;
+            padding: 16px 30px 16px 45px;
+            border-radius: 18px;
+            img{
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 36px;
+                height: 36px;
+                object-fit: cover;
+            }
+        }
+    }
+    .cashout-body{
+        &-wrap{
+            .title-box{
+                font-size: 20px;
+                color: $primary_color;
+                margin-bottom: 16px;
+                @include mw-991{
+                    text-align: center;
+                }
+                @include mw-500 {
+                    text-align: left;
+                }
+            }
+            .wrapper{
+                display: flex;
+                justify-content: flex-start;
+                flex-wrap: wrap;
+                gap: 12px;
+                margin-bottom: 35px;
+                @include mw-991{
+                    justify-content: center;
+                }
+
+                .item{
+                    flex: 0 0 245px;
+                    height: 160px;
+                    cursor: pointer;
+                    transition: all 0.25s linear;
+                    position: relative;
+                    @include mw-500 {
+                        flex: 0 0 calc(50% - 20px);
+                        height: auto;
+                    }
+                    &:hover{
+                        filter: brightness(1.2);
+                        box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+                    }
+                    .bonus{
+                        position: absolute;
+                        padding: 0.3rem 1rem;
+                        color: #333;
+                        background: $primary_color;
+                        border-radius: 100rem;
+                        top: -7px;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        font-family: 'SF-Pro-Rouded Medium';  
+                        opacity: 0;
+                        visibility: hidden; 
+                    }
+                }
+                .item.hasbonus{
+                    .bonus{
+                        opacity: 1;
+                        visibility: visible;
+                    }
+                }
+            }
+        }
+    }
+}

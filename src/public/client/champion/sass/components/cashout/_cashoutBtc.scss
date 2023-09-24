@@ -1,0 +1,343 @@
+.cashout-btc{
+    .back-to-shop{
+        a{
+            display:flex;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 15px;
+            background: rgba(0, 0, 0, 0.19);
+            border-radius: 40px;
+            padding: 0px 20px 0 0;
+            display: inline-flex;
+            flex-wrap: nowrap;
+            cursor: pointer;
+            margin-bottom: 18px;
+        }
+        .boxed{
+            width: 32px;
+            height: 32px;
+            border-radius: 100rem;
+            background-image: $linear-primary;
+            display:flex;
+            justify-content: center;
+            align-items: center;
+        }
+    }
+    .cashout-btc-header{
+        display: flex;
+        justify-content: space-between;
+        padding: 20px;
+        flex-wrap: wrap;
+        gap: 15px;
+        .logo{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            font-size: 28px;
+            font-family: 'SF-Pro-Rouded Bold';
+            color: $white-color;
+            flex: 0 0 200x;
+            img{
+                max-width: 35px;
+            }
+        }
+        .actions{
+            flex-grow: 1;
+            color: $white-color;
+            font-size: 13px;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            @include mw-650 {
+                justify-content: center;
+            }
+            .warning{
+                padding: 10px;
+                border-radius: 8px;
+                background: rgba(0, 0, 0, 0.27);
+                display:flex;
+                justify-content: space-between;
+                align-items: center;
+                max-width: 424px;
+                gap: 8px;
+                color: #A4F67D;
+                font-family: 'SF-Pro-Rouded Light';
+                .message-stake{
+                    display: none;
+                }
+            }
+            .warning.stake-username-message{
+                .message-stake{
+                    display: block;
+                }
+                .message-btc{
+                    display: none;
+                }
+            }
+            form{
+                display: flex;
+                gap: 8px;
+                align-items: center;
+                justify-content: flex-end;
+                flex-wrap: wrap;
+                @include mw-650 {
+                    justify-content: center;
+                }
+                .form-action{
+                    position: relative;
+                    padding: 10px;
+                    border-radius: 6px;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    min-width: 200px;
+                    height: 45px;
+                    @include mw-650 {
+                        min-width: 150px;
+                    }
+                    .bonus{
+                        top: -15px;
+                        font-size: 14px;
+                        font-family: 'SF-Pro-Rouded Bold';
+                    }
+                    label{
+                        color: $text_global;
+                        font-size: 16px;
+                    }
+                    input{
+                        width: 20px;
+                        height: 20px;
+
+                    }
+                    input:checked:after {
+                        width: 20px;
+                        height: 20px;
+                        border-radius: 20px;
+                        position: relative;
+                        background-color: $primary-color;
+                        content: '';
+                        display: inline-block;
+                        visibility: visible;
+                        border: 2px solid white;
+                    }
+                }
+                .form-action.selected{
+                    *{
+                        color: $white-color;
+                    }
+                }
+            }
+        }
+    }
+    .cashout-btc-body{
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        padding:20px;
+        margin: 15px 0;
+        @include mw-768 {
+            padding: 15px;
+        }
+        form{
+            display: block;
+            width: 100%;
+            .form-action{
+                display: flex;
+                flex-direction: column;
+                margin-bottom: 20px;
+                label{
+                    margin-bottom: 12px;
+                    font-size: 16px;
+                    color: $primary-color;
+                    font-family: 'SF-Pro-Rouded Bold';
+                }
+                .boxed{
+                    display: flex;
+                    align-items: center;
+                    gap: 30px;
+                    @include mw-768 {
+                        gap: 10px;
+                    }
+                    button{
+                        flex: 0 0 180px;
+                        display: flex;
+                        border-radius: 100rem;
+                        justify-content: center;
+                        align-items: center;
+                        padding: 0.85rem 0.5rem;
+                        
+                        @include mw-768 {
+                            flex: 0 0 150px;
+                        padding: 0.7rem 0.5rem;
+
+                        }
+                    }
+                    .button-global{
+                        opacity: 0.5;
+                        pointer-events: none;
+                    }
+                    .button-global.active{
+                        opacity: 1;
+                        pointer-events: visible;
+                    }
+                    .button-outline{
+                        background-color: #3F3254;
+                        border: none;
+                        color: $white-color;
+                        font-size: 14px;
+                        font-family: "SF-Pro-Rouded Bold";
+                        border-radius: 8px;
+                        padding: 0.85rem 0.5rem;
+                        white-space: nowrap;
+                        justify-content: space-between;
+                        pointer-events: none;
+                        outline: none;
+                        @include mw-650 {
+                            font-size: 12px;
+                        padding: 0.7rem 0.5rem;
+
+                        }
+                        .rate{
+                            position: relative;
+                            &::before{
+                                content: '';
+                                position: absolute;
+                                width: 6px;
+                                height: 6px;
+                                border-radius: 100rem;
+                                background-color: #EC8D1F;
+                                left: -10px;
+                                top: 50%;
+                                transform: translateY(-50%);
+                            }
+                        }
+                    }
+                    input{
+                        flex-grow: 1;
+                        background-color: #1F162D;
+                        border: 1px solid transparent;
+                        padding: 0.7rem 1rem;
+                        border-radius: 6px;
+                        color: $white-color;
+                        @include mw-768 {
+                            padding: 0.5rem;
+                        }
+                    }
+                }
+                .message{
+                    margin-top: 8px;
+                }
+            }
+        }
+    }
+    .cashout-btc-footer{
+        display:flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px;
+        @include mw-768 {
+            padding: 15px;
+        }
+        .boxed-price{
+            position: relative;
+            flex: 0 0 40%;
+            display: flex;
+            justify-content: flex-start;
+            align-items: flex-end;
+            flex-wrap: wrap;
+            gap: 15px;
+            @include mw-768 {
+                flex: 0 0 180px;
+            }
+            .bonus2{
+                // position: absolute;
+                padding: 0.3rem 1rem;
+                color: #333;
+                background: #69D6CF;
+                border-radius: 100rem;
+                font-family: "SF-Pro-Rouded Medium";
+            }
+            .field{
+                display:flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 5px;
+                div{
+                    display: flex;
+                    gap: 10px;
+                    img{
+                        width: 18px;
+                        height: 18px;
+                        object-fit: contain;
+                    }
+                }
+            }
+            .wrap{
+                display:flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 5px 10px;
+                background-color: rgba(0, 0, 0, 0.27);
+                border-radius: 100rem;
+                gap: 10px;
+                .boxed{
+                    color: $primary_color;
+                    display:flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    gap: 10px;
+                    img{
+                        width: 18px;
+                        height: 18px;
+                        object-fit: contain;
+                    }
+                    span{
+                        color: $primary-color;
+                        font-family: 'SF-Pro-Rouded Semibold';
+                        font-size: 16px;
+                        @include mw-768{
+                            font-size: 12px;
+                            font-family: 'SF-Pro-Rouded Light';
+
+                        }
+                    }
+                }
+                .btc{
+                    display: flex;
+                    gap: 5px;
+                    align-items: center;
+                    img{
+                        width: 18px;
+                        height: 18px;
+                        object-fit: contain;
+                    }
+                    span{
+                    color: $white-color;
+                    }
+                }
+            }
+        }
+        .action{
+            button{
+                width: 180px;
+                height: 55px;
+                font-size: 18px;
+                border-radius: 30px;
+                pointer-events: none;
+                opacity: 0.5;
+                @include mw-768{
+                    width: fit-content;
+                    padding: 0 35px;
+                    height: 45px;
+                }
+            }
+            button.active {
+                opacity: 1;
+                pointer-events: visible;
+            }
+        }
+    }
+}

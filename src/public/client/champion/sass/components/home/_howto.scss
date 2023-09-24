@@ -1,0 +1,36 @@
+.howto{
+    position: relative;
+    padding: 100px 0;
+    .section-content{
+        .wrapper{
+            display:flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            flex-wrap: wrap;
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+            img{
+                flex-basis: 50%;
+                max-width: 440px;
+                height: auto;
+            }
+        }
+        .start-earning{
+            margin-top: 60px;
+        }
+    }
+    &::before{
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        left: 0;
+        top: 0;
+        background-image: url(/images/howto/bg.svg);
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: top;
+    }
+}

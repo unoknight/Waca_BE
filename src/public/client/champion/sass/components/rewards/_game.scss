@@ -1,0 +1,247 @@
+.section-game{
+    flex-basis: calc(50% - 10px);
+    @include mw-768 {
+        flex-basis: 100%;
+    }
+    .game-top{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+    .wrapper{
+        position: relative;
+        .rocket{
+            position: absolute;
+            right: 0%;
+            bottom: 10%;
+            animation: rocket 5s linear infinite;
+            z-index: 1;
+            pointer-events: none;
+        }
+    }
+    .steps{
+        margin-bottom: 20px;
+        padding: 20px;
+        background: url(/images/rewards/game/bg.png) no-repeat center / cover;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        position: relative;
+        border-radius: 24px;
+        .robot{
+            position: absolute;
+            top: -40px;
+            right: 22%;
+            z-index: 99;
+            @include mw-768{
+                right: 10%;
+            }
+        }
+        .step{
+            text-align: center;
+            position: relative;
+            img{
+                margin-left: auto;
+                margin-right: auto;
+            }
+            img.bg-active{
+                display: none;
+            }
+            .numb{
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                align-items: center;
+                span{
+                    color: $white-color;
+                    font-family: 'SF-Pro-Rouded Semibold';
+
+                }
+            }
+        }
+        .step.active{
+            img.bg{
+                display: none;
+            }
+            img.bg-active {
+                display: block;
+            }
+        }
+    }
+    //actions
+    .actions{
+        background: url(/images/rewards/game/bg-actions.png) no-repeat center/cover;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: nowrap;
+        gap: 8px;
+        padding: 8px;
+        button{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 10px 30px;
+            border-radius: 16px;
+            font-size: 16px;
+            font-family: 'SF-Pro-Rouded Bold';
+            @include mw-991{
+                gap: 3px;
+                font-size: 14px;
+                font-family: 'SF-Pro-Rouded Medium';
+                img{
+                    width: 25px;
+                    height: 25px;
+                    object-fit: contain;
+                }
+            }
+        }
+    }
+    // progress
+    .progress{
+        margin-bottom: 50px;
+        margin-top: 16px;
+        .top{
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+        progress {
+            width: 100%;
+            border-radius: 12px; 
+            height: 12px;
+            box-shadow: 1px 1px 4px rgba( 0, 0, 0, 0.2 );
+          }
+          progress::-webkit-progress-bar {
+            background-color: #1F162D;
+            border-radius: 12px;
+          }
+          progress::-webkit-progress-value {
+            background: linear-gradient(180deg, #8B7EFF 0%, #4335E3 100%);
+            box-shadow: 0px -4px 9px rgba(129, 117, 252, 0.17), 0px 4px 9px rgba(0, 0, 0, 0.09);
+            border-radius: 12px;
+          }
+          .bottom{
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            p{
+                text-align: center;
+            }
+          }
+    }
+    //ranking
+    .ranking{
+        position: relative;
+        .title{
+            font-family: 'SF-Pro-Rouded Semibold';
+            background-color: #306864a2;
+            border-radius: 10px;
+            display: inline-block;
+            padding: 5px 15px;
+            color: $white-color;
+            border: 1px solid #69D6CF;
+            position: absolute;
+            top: -22px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+
+        }
+        .wrapper{
+            position: relative;
+            background: url(/images/rewards/game/bg-ranking.png) no-repeat center/contain;
+            padding: 15px;
+            border-radius: 24px;
+            padding-top: 50px;
+            .memb{
+                padding: 10px;
+                display: flex;
+                justify-content: space-between;
+                border-radius: 32px;
+                backdrop-filter: blur(4px);
+                max-width: 350px;
+                margin-left: auto;
+                margin-right: auto;
+                margin-bottom: 10px;
+                height: 55px;
+                .boxed{
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    justify-content: flex-start;
+                    flex-basis: 50%;
+                    img{
+                        position: relative;
+                        top: 4px;
+                        left: -12px;
+                    }
+                    span{
+                        color: $white-color;
+                        font-family: 'SF-Pro-Rouded Bold';
+                        font-size: 15px;
+                    }
+                }
+                .money{
+                    flex-basis: 27%;
+                    position: relative;
+                    background: url(/images/rewards/game/avatar/bg-money.png) no-repeat center/contain;
+                    display: inline-flex;
+                    justify-content: flex-end;
+                    align-items: flex-end;
+                    width: 100px;
+                    height: 50px;
+                    top: -4px;
+                    right: -5px;
+                    span{
+                        color: $white-color;
+                        font-family: 'SF-Pro-Rouded Bold';
+                        font-size: 15px;
+                        position: absolute;
+                        top: 44% !important;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                    }
+                }
+            }
+            .best{
+                background: rgba(255, 239, 138, 0.37);
+                box-shadow: 0px 4px 9px rgba(0, 0, 0, 0.09);
+                border: 1px solid gold;
+            }
+            .second{
+                background: rgba(172, 190, 255, 0.37);
+                box-shadow: 0px 4px 9px rgba(0, 0, 0, 0.09);
+                border: 1px solid #cccfed;
+            }
+            .third{
+                background: rgba(255, 159, 47, 0.37);
+                box-shadow: 0px 4px 9px rgba(0, 0, 0, 0.09);
+                border: 1px solid #eb7d2f;
+            }
+        }
+    }
+}
+@keyframes rocket {
+    0%{
+        transform:  translateY(0px);
+    }
+    50%{
+
+        transform:  translateY(-10px);
+        filter: brightness(1.2) hue-rotate(200deg) drop-shadow(0 0 10px gold);
+    }
+    100%{
+
+        transform:  translateY(0px);
+    }
+}

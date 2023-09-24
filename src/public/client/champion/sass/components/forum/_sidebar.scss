@@ -1,0 +1,265 @@
+.section-forum {
+    padding: 30px 0;
+    .forum-header{
+        display: block;
+        padding: 20px;
+        margin-bottom: 20px;
+        
+        .wrapper{
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            .info{
+                display:flex;
+                justify-content: flex-start;
+                gap: 10px;
+                align-items: center;
+                .boxed{
+                    width: 60px;
+                    height: 60px;
+                    display: inline-block;
+                    position: relative;
+                    background-color: #FD8F5A;
+                    border-radius: 100rem;
+                    // padding: 2px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    filter: drop-shadow(0 0 5px rgb(5, 84, 121));
+                    img{
+                        width: calc(100% - 4px);
+                        height: calc(100% - 4px);
+                        position: absolute;
+                        object-fit: cover;
+                        top: 2px;
+                        left: 2px;
+                    }
+                }
+                .name{
+                    color: $primary-color;
+                    font-size: 16px;
+                }
+            }
+            .icon-menu{
+                display: none;
+                width: 40px;
+                height: 40px;
+                position: relative;
+                background-color: #44365A;
+                padding: 5px;
+                border-radius: 5px;
+                @include mw-991{
+                    display: block;
+                }
+                span{
+                    pointer-events: none;
+                    display: block;
+                    position: relative;
+                    width: 25px;
+                    height: 2px;
+                    background-color: $white-color;
+                    top: 15px;
+                    left:50%;
+                    transform: translateX(-50%);
+                    &::before{
+                        content: '';
+                        position: absolute;
+                        width: 25px;
+                        height: 2px;
+                        background-color: $white-color;
+                        top: 10px;
+                    }
+                    &::after{
+                        content: '';
+                        position: absolute;
+                        width: 25px;
+                        height: 2px;
+                        background-color: $white-color;
+                        bottom: 10px;
+                    }
+                }
+            }
+        }
+        .sidebar-mobile{
+           display: none;
+            padding: 20px;
+            .categories{
+                list-style: none;
+                margin: 0;
+                padding: 20px 0 20px 0;
+                .item{
+                    margin-bottom: 1px;
+                    padding: 5px;
+                    a{
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: flex-start;
+                        *{
+                            pointer-events: none;
+                        }
+                        .icon{
+                            width: 16px;
+                            height: 16px;
+                            display: inline-flex;
+                            align-items: center;
+                            opacity: 0.7;
+                            svg{
+                                width: 22px;
+                                height: 22px;
+                            }
+                        }
+                        .count{
+                            color: #FD8F5A;
+                            font-size: 14px;
+                        }
+                    }
+                }
+                .item.active{
+                    background-color: #44365A;
+                    border-radius: 4px;
+                    box-shadow: 0px 4px 9px rgb(0 0 0 / 9%);
+                    a{
+                        color: $primary-color;
+                    }
+                }
+            }
+        }
+        .sidebar-mobile.show {
+            display: block;
+        }
+    }
+    // .menu-mobile{
+    //     display: none;
+    //     margin-bottom: 20px;
+    //     @include mw-991{
+    //         display: block;
+    //     }
+    //     .wrap{
+    //         display: flex;
+    //         justify-content: space-between;
+    //         align-items: center;
+    //         label{
+    //             color: $primary-color;
+    //             font-size: 18px;
+    //         }
+
+    //     }
+
+
+    // }
+    .forum-content{
+        display: flex;
+        justify-content: center;
+        align-items: stretch;
+        gap: 15px;
+        @include mw-991{
+
+        }
+        .sidebar{
+            width: 300px;
+            @include mw-991{
+            display: none;
+            }
+            .categories{
+                list-style: none;
+                margin: 0;
+                padding: 20px 0 20px 0;
+                
+                .item{
+                    margin-bottom: 1px;
+                    padding: 5px;
+                    a{
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: flex-start;
+                        *{
+                            pointer-events: none;
+                        }
+                        .icon{
+                            width: 16px;
+                            height: 16px;
+                            display: inline-flex;
+                            align-items: center;
+                            opacity: 0.7;
+                            svg{
+                                width: 22px;
+                                height: 22px;
+                            }
+                        }
+                        .count{
+                            color: #FD8F5A;
+                            font-size: 14px;
+                        }
+                    }
+                }
+                .item.active{
+                    background-color: #44365A;
+                    border-radius: 4px;
+                    box-shadow: 0px 4px 9px rgb(0 0 0 / 9%);
+                    a{
+                        color: $primary-color;
+                    }
+                }
+            }
+        }
+        .content{
+            flex-grow: 1;
+            .wrapper {
+                max-width: 90vw;
+                min-width: 275px;
+              }
+              .tabs {
+                display: flex;
+                border-bottom: none;
+              }
+              
+              .tab {
+                padding: 12px 0px;
+                cursor: pointer;
+                color: $white-color;
+                text-align: center;
+                border-radius: 6px 6px 0 0px;
+                width: 150px;
+              }
+              
+              .tab.active {
+                border-bottom: none;
+                border-right: none;
+                border-left: none;
+                background-color: $primary-color;
+                color: $dark_color;
+            }
+            
+            .tab:hover {
+                background-color: $primary-color;
+              }
+              
+              .active {
+                display: block;
+              }
+              
+              .tab-content {
+                border-radius: 6px;
+              }
+              
+              .tab-content-item {
+                display: none;
+                max-width: 100%;
+                margin-top: -1px;
+                color: $white-color;
+                padding: 20px;
+              }
+              
+              .tab-content-item.active {
+                display: block;
+              }
+              
+        }
+    }
+}

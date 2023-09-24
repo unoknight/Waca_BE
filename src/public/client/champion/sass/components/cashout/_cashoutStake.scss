@@ -1,0 +1,251 @@
+.cashout-stake{
+    .back-to-shop{
+        a{
+            display:flex;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 15px;
+            background: rgba(0, 0, 0, 0.19);
+            border-radius: 40px;
+            padding: 0px 20px 0 0;
+            display: inline-flex;
+            flex-wrap: nowrap;
+            cursor: pointer;
+            margin-bottom: 18px;
+        }
+        .boxed{
+            width: 32px;
+            height: 32px;
+            border-radius: 100rem;
+            background-image: $linear-primary;
+            display:flex;
+            justify-content: center;
+            align-items: center;
+        }
+    }
+    .cashout-stake-header{
+        display: flex;
+        justify-content: space-between;
+        padding: 20px;
+        flex-wrap: wrap;
+        gap: 15px;
+        .logo{
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            font-size: 28px;
+            font-family: 'SF-Pro-Rouded Bold';
+            .wrap1{
+                color: $white-color;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex: 0 0 200x;
+                font-size: 28px;
+                gap: 10px;
+                img{
+                    max-width: 35px;
+                    object-fit: contain;
+                }
+            }
+            .wrap2{
+                .top{
+                    display: flex;
+                    gap: 10px;
+                    justify-content: center;
+                    align-items: center;
+                    .bonus{
+                        position: relative;
+                        opacity: 1;
+                        visibility: visible;
+                        font-size: 15px;
+                        top: unset;
+                        left: unset;
+                        transform: none;
+                    }
+                    .question{
+                        width: 28px;
+                        height: 28px;
+                        background: linear-gradient(180deg, #8B7EFF 0%, #4335E3 100%);
+                        background-size: 200% auto;
+                        border-radius: 24px;
+                        display: inline-block;
+                        cursor: pointer;
+                        position: relative;
+                        .message{
+                            position: absolute;
+                            padding: 15px;
+                            color: $text_global;
+                            font-size: 12px;
+                            min-width: 287px;
+                            text-align: center;
+                            top: -100px;
+                            border-radius: 20px;
+                            left: 50%;
+                            transform: translateX(-50%);
+                            font-family: 'SF-Pro-Rouded Light';
+                            opacity: 0;
+                            visibility: hidden;
+                            &::before{
+                                content: '';
+                                position: absolute;
+                                width: 0;
+                                height: 0;
+                                border-left: 15px solid transparent;
+                                border-right: 15px solid transparent;
+                                border-top: 15px solid #483A5F;
+                                bottom: -11px;
+                                left: 50%;
+                                transform: translateX(-50%);
+                                background-color: transparent;
+                            }
+                        }
+                        &:hover{
+                            background: linear-gradient(180deg, #4335E3 0%, #8B7EFF 100%, );
+                            .message {
+                                opacity: 1;
+                                visibility: visible;
+                            }
+                        }
+                    }
+                }
+                .bottom{
+                    .button-outline-create{
+                        font-size: 14px;
+                        background: #44365A;
+                        box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.09);
+                        border-radius: 8px;
+                        color: $white-color;
+                        border: none;
+                        font-family: 'SF-Pro-Rouded Light';
+                        padding: 7px 10px;
+
+                    }
+                }
+            }
+        }
+        .actions{
+            flex-grow: 1;
+            color: $white-color;
+            font-size: 13px;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            @include mw-650 {
+                justify-content: center;
+            }
+            .warning{
+                padding: 10px;
+                border-radius: 8px;
+                background: rgba(0, 0, 0, 0.27);
+                display:flex;
+                justify-content: space-between;
+                align-items: center;
+                max-width: 424px;
+                gap: 8px;
+                color: #A4F67D;
+                font-family: 'SF-Pro-Rouded Light';
+            }
+            .warning.stake-username-message{
+                .message-stake{
+                    display: block;
+                }
+                .message-stake{
+                    display: none;
+                }
+            }
+            form{
+                display: flex;
+                gap: 8px;
+                align-items: center;
+                justify-content: flex-end;
+                flex-wrap: wrap;
+                @include mw-650 {
+                    justify-content: center;
+                }
+                .form-action{
+                    position: relative;
+                    padding: 10px;
+                    border-radius: 6px;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    min-width: 200px;
+                    height: 45px;
+                    @include mw-650 {
+                        min-width: 150px;
+                    }
+                    .bonus{
+                        top: -15px;
+                        font-size: 14px;
+                        font-family: 'SF-Pro-Rouded Bold';
+                    }
+                    label{
+                        color: $text_global;
+                        font-size: 16px;
+                    }
+                    input{
+                        width: 20px;
+                        height: 20px;
+
+                    }
+                    input:checked:after {
+                        width: 20px;
+                        height: 20px;
+                        border-radius: 20px;
+                        position: relative;
+                        background-color: $primary-color;
+                        content: '';
+                        display: inline-block;
+                        visibility: visible;
+                        border: 2px solid white;
+                    }
+                }
+                .form-action.selected{
+                    *{
+                        color: $white-color;
+                    }
+                }
+            }
+        }
+    }
+    .cashout-stake-body{
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        padding:20px;
+        margin: 15px 0;
+        @include mw-768 {
+            padding: 15px;
+        }
+        .boxed{
+            position: relative;
+            width: 100%;
+            margin-bottom: 30px;
+            h3{
+                color: $white-color;
+                font-size: 20px;
+                margin-bottom: 20px;
+            }
+            .wrap{
+                display: flex;
+                flex-wrap: wrap;
+                gap: 15px;
+                .item{
+                    flex: 0 0 245px;
+                    height: 160px;
+                    display: inline-block;
+                    position: relative;
+                    .bonus{
+                        opacity: 1;
+                        visibility: visible;
+                    }
+                }
+            }
+        }
+    }
+}
