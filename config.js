@@ -7,13 +7,13 @@ module.exports = {
 		cert: 'certs/panazic.crt'
 	},
 
-	DOMAIN: 'https://wacaglobal.net',
-	REAL_DOMAIN:"https://wacaglobal.net",
+	DOMAIN: 'https://wacatrade.com',
+	REAL_DOMAIN:"https://wacatrade.com",
 	TITLE_SITE: 'WacaGlobal',
-	CONTACT: 'support@wacaglobal.net',
+	CONTACT: 'support@wacatrade.com',
 
-	MAIL_LOGO: 'https://wacaglobal.net/logo.png',
-	MAIL_IMG_FOOTER: 'https://racaglobal.net/line.png',
+	MAIL_LOGO: 'https://wacatrade.com/logo.png',
+	MAIL_IMG_FOOTER: 'https://wacatrade.com/line.png',
 	MAIL_USERNAME: '',
 	MAIL_PASSWORD: '',
 
@@ -34,7 +34,7 @@ module.exports = {
 	PAYPAL_CLIENT_SECRET: 'EMEZw9QceAhl2UztIWGH62xh95z7---kuu6npJTRj09TVJRQnG-hyIfKUfsptfPIGcBvuwxeBhCtjYT_',//'',
 	// KẾT THÚC THANH TOÁN PAYPAL
 
-	DATA_HOST: 'localhost',
+	DATA_HOST: '194.233.76.98',
 	DATA_USER: 'root',
 	DATA_PASS: '8GFy9CQwCCSfanCI',
 	DATA_DB: 'db_production',
@@ -55,11 +55,11 @@ module.exports = {
 	ABI_USDT_MAINNET: 'USDT_BEP20_mainnet',
 	ABI_USDT_TESTNNET: 'USDT_BEP20_testnet',
 	IS_TELEGRAM:true,
-	TELEGRAM_TOKEN: '6010101591:AAHIvk7jmqaNd3wUC-lztyhzMrSgplO5ykI',
-	TELEGRAM_BET_ID: 'waca_bet',
-	TELEGRAM_RUT_ID: 'waca_rut',
-	TELEGRAM_NAP_ID: 'waca_nap',
-	TELEGRAM_BET_AMOUNT: 'waca_bet_amount',
-	TELEGRAM_BET_THONG_BAO: 'waca_bet_noty',
-	TELEGRAM_BET_PHIM_LENH: 'waca_botglobal',
+	TELEGRAM_TOKEN: '6363572622:AAEcIiX7LY_ywMoOeETZesrx914OIWNEvXk',
+	TELEGRAM_BET_ID: 'wacabot6',
+	TELEGRAM_RUT_ID: 'wacabot5',
+	TELEGRAM_NAP_ID: 'wacabot4',
+	TELEGRAM_BET_AMOUNT: 'wacabot3',
+	TELEGRAM_BET_THONG_BAO: 'wacabot2',
+	TELEGRAM_BET_PHIM_LENH: 'wacabot1',
 }
