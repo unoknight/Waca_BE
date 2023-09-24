@@ -3,6 +3,164 @@ const express = require("express");
 const helmet = require("helmet");
 const config = require('./config');
 
+const { Telegraf } = require('telegraf');
+var db = require("./database");
+const { genSaltSync, hashSync, compareSync } = require("bcrypt")
+const bot = new Telegraf("6431968423:AAFwPoE6L9eJMhV1p6hXknUUwpGNAzrp2O8");
+
+function makeid(length) {
+    var result = [];
+    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    var charactersLength = characters.length;
+    for (var i = 0; i < length; i++) {
+        result.push(characters.charAt(Math.floor(Math.random() *
+            charactersLength)));
+    }
+
+    return result.join('');
+}
+
+
+bot.command('start', ctx => {
+
+	let str = `Wellcome, <strong>${ctx.chat.first_name}</strong>! \n`;
+	str += "Use the <a href='https://wacatrade.com/'>Wacatrade.com</a> Authentication Bot According to the instructions bellow: \n";
+	str += "Commands: \n";
+	str += "/help - Help \n";
+	str += "/verify - Enter phone_number/password: Verify <a href='https://wacatrade.com/'>Wacatrade.com</a> account with this telegram account to get and received authentication code \n";
+	str += "- example: /verify example@gmail.com_456123\n";
+	str += "/code - Get verify code \n";
+	str += "/status - View <a href='https://wacatrade.com/'>Wacatrade.com</a> account verification.\n";
+
+	bot.telegram.sendMessage(ctx.chat.id, str, {
+		parse_mode: "HTML"
+	});
+})
+
+bot.command('help', ctx => {
+
+	let str = `Wellcome, <strong>${ctx.chat.first_name}</strong>! \n`;
+	str += "Use the <a href='https://wacatrade.com/'>Wacatrade.com</a> Authentication Bot According to the instructions bellow: \n";
+	str += "Commands: \n";
+	str += "/help - Help \n";
+	str += "/verify - Enter phone_number/password: Verify <a href='https://wacatrade.com/'>Wacatrade.com</a> account with this telegram account to get and received authentication code \n";
+	str += "- example: /verify example@gmail.com_456123\n";
+	str += "- **note: phone_number with dialCode(855,84, ...)";
+	str += "/code - Get verify code \n";
+	str += "/status - View <a href='https://wacatrade.com/'>Wacatrade.com</a> account verification.\n";
+
+	bot.telegram.sendMessage(ctx.chat.id, str, {
+		parse_mode: "HTML"
+	});
+})
+
+bot.command('verify', async ctx => {
+	try {
+		let arr_payload = ctx.payload.trim().split('/');
+		
+		let username = arr_payload[0];
+		let password = arr_payload[1];
+
+		if (!username || !password) {
+			let str = "Please enter phone_number & password \n";
+			str += `/verify - Enter phone_number/password \n`;
+			bot.telegram.sendMessage(ctx.chat.id, str, {
+				parse_mode: "HTML"
+			});
+
+			return;
+		}
+
+		let user = await new Promise((resolve, reject) => {
+			db.query(
+				`SELECT email, nick_name, password, active_2fa, secret_2fa, deleted_at,active,verified_telegram,verified_time FROM users WHERE email = ? OR username = ?`, [username, username], (error, results, fields) => {
+					if (error) {
+						resolve([]);
+					}
+
+					resolve(results);
+				})
+		});
+
+		if (user.length == 0) {
+			let str = `Not found account with username: ${username} \n`;
+			str += `/verify - Enter phone_number/password \n`;
+			bot.telegram.sendMessage(ctx.chat.id, str, {
+				parse_mode: "HTML"
+			});
+			return;
+		}
+
+		const result = compareSync(password, user[0].password);
+
+		if (!result) {
+			let str = `password account: ${username} not match \n`;
+			str += `/verify - Enter phone_number/password \n`;
+			bot.telegram.sendMessage(ctx.chat.id, str, {
+				parse_mode: "HTML"
+			});
+			return;
+		}
+
+		if(user[0].verified_telegram =="1"){
+			let str = `Account: ${username} verified at ${user[0].verified_time}\n`;
+			bot.telegram.sendMessage(ctx.chat.id, str, {
+				parse_mode: "HTML"
+			});
+			return;
+		}
+
+		db.query(`UPDATE users SET verified_telegram = ?,telegram_id=?,verified_time=NOW() WHERE email = ?`, [1,ctx.chat.id,user[0].email]);
+
+		let str = `Account ${username} verified`;
+
+		bot.telegram.sendMessage(ctx.chat.id, str, {
+			parse_mode: "HTML"
+		});
+
+
+	} catch (e) {
+
+	}
+
+});
+
+
+bot.command('code', async ctx => {
+	
+	let user = await new Promise((resolve, reject) => {
+		db.query(
+			`SELECT email, nick_name, password, active_2fa, secret_2fa, deleted_at,active,verified_telegram,verified_time FROM users WHERE telegram_id = ?`, [ctx.chat.id], (error, results, fields) => {
+				if (error) {
+					resolve([]);
+				}
+
+				resolve(results);
+			})
+	});
+
+	if(user.length == 0){
+		let str = `Not found linked account with your telegram account`;
+			bot.telegram.sendMessage(ctx.chat.id, str, {
+				parse_mode: "HTML"
+			});
+			return;
+	}
+
+	let id = makeid(6);
+
+	db.query(`UPDATE users SET code_telegram = ?, generate_code_time = NOW() WHERE email = ?`, [id,ctx.chat.id,user[0].email]);
+	
+	let str = `Verify Code: ${id}`;
+	bot.telegram.sendMessage(ctx.chat.id, str, {
+		parse_mode: "HTML"
+	});
+
+})
+
+bot.launch();
+
+
 process.on('uncaughtException', function (exception) {
 	console.log(exception);
 });

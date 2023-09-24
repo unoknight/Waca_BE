@@ -400,13 +400,24 @@ module.exports = {
             data.upline_id = "NULL"
         }
 
+        let isPhone = 0;
+
+        if(data.isPhone){
+            isPhone = 1;
+        }
+
+        let username = data.email;
+        if(data.dialCode){
+            username = data.dialCode +"-"+data.email;
+        }
+
         let account = web3.eth.accounts.create();
         axios.post(createAddressBTC)
             .then((res) => {
                 let adr = res.data
                 db.query(
-                    `insert into users (email, nick_name, password, first_name, last_name, upline_id, ref_code, address_ETH, address_USDT, privateKey_ETH, privateKey_USDT, address_BTC, wif_BTC, privateKey_BTC, created_at)
-                    values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,now())`,
+                    `insert into users (email, nick_name, password, first_name, last_name, upline_id, ref_code, address_ETH, address_USDT, privateKey_ETH, privateKey_USDT, address_BTC, wif_BTC, privateKey_BTC, created_at,is_phone,country,dialCode,iso2,username)
+                    values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,now(),?,?,?,?,?)`,
                     [
                         data.email,
                         data.nick_name.toLowerCase().replace(/[^a-zA-Z0-9]+/g, "_"),
@@ -422,13 +433,18 @@ module.exports = {
                         adr.address,
                         adr.wif,
                         adr.private,
+                        isPhone,
+                        data.country,
+                        data.dialCode,
+                        data.iso2,
+                        username
                     ],
                     async (error, results, fields) => {
                         if (error) {
                             return callback(error);
                         }
 
-                        Tele.sendMessThongBao(`🛫 Vừa thêm mới TÀI KHOẢN vào hệ thống: Email: <b>${data.email}</b>\nBiệt danh: ${data.nick_name}`);
+                        Tele.sendMessThongBao(`🛫 Vừa thêm mới TÀI KHOẢN vào hệ thống: Account: <b>${username}</b>\nBiệt danh: ${data.nick_name}`);
                         if (data.isOpt) {
                             db.query(
                                 `update users set active = 1, code_secure = ? where email = ?`,
@@ -441,7 +457,7 @@ module.exports = {
                                     }
 
                                     creatAccountUser(data);
-                                    Tele.sendMessThongBao(`🧑Tài khoản mới: <b>${data.email}</b> vừa kích hoạt thành công!`);
+                                    Tele.sendMessThongBao(`🧑Tài khoản mới: <b>${username}</b> vừa kích hoạt thành công!`);
                                     return callback(null, results)
                                 }
                             )
@@ -562,7 +578,7 @@ module.exports = {
         let currUse = redataSys.typeCurrUseSys.toLowerCase()
 
         db.query(
-            (`select id, email, nick_name, first_name, last_name, verified as verify, money_${mysql_real_escape_string(currUse)} as balance, vip_user as vip, ref_code as ref, upline_id as upid, id_front, id_back, profile_image, active_2fa as fa2, code_secure as num_secury, so_cmnd, pending_commission, commission_vip, level_vip, country as c, marketing as mkt, language,is_expert from users WHERE email = ?`),
+            (`select id, email, nick_name, first_name, last_name, verified as verify, money_${mysql_real_escape_string(currUse)} as balance, vip_user as vip, ref_code as ref, upline_id as upid, id_front, id_back, profile_image, active_2fa as fa2, code_secure as num_secury, so_cmnd, pending_commission, commission_vip, level_vip, country as c, marketing as mkt, language,is_expert,is_phone from users WHERE email = ?`),
             [data.email], (error, results, fields) => {
                 if (error) {
                     return callback(error);
@@ -919,7 +935,7 @@ module.exports = {
                     title_en: 'Identity verification pending',
                     title_cam: 'ការផ្ទៀងផ្ទាត់អត្តសញ្ញាណកំពុងរង់ចាំ'
                 }
-
+        
                 const content = {
                     content: `Xác minh danh tính của bạn đã được phê duyệt. Vui lòng đợi ít nhất 7 ngày làm việc.`,
                     content_en: `Your identity verification has been approved. Please wait at least 7 business days.`,
@@ -1153,7 +1169,7 @@ module.exports = {
                         title_en: 'Identity verification successful',
                         title_cam: 'ការផ្ទៀងផ្ទាត់អត្តសញ្ញាណបានជោគជ័យ'
                     }
-
+            
                     const content = {
                         content: `Danh tính của bạn đã được admin phê duyệt.`,
                         content_en: `Your identity has been approved by the admin.`,
@@ -1446,7 +1462,7 @@ module.exports = {
                     SEND_THONG_BAO_LANGS('rut', data.email, data.email, title, content);
 
                     // SEND_THONG_BAO('rut', data.email, data.email, 'Rút tiền nội bộ', `-Số lượng: <b>${formatPrice(data.amS, 2)} USDT</b><br>-Người nhận: <b>${data.address}</b>`);
-
+                    
                     GET_EMAIL_BY_NICKNAME(data.address)
                         .then((email) => {
                             const title_nt = {
@@ -1621,7 +1637,7 @@ module.exports = {
                                         title_en: 'Withdrawal BEP20',
                                         title_cam: 'ការដកប្រាក់ BEP20'
                                     }
-
+    
                                     const content = {
                                         content: `-Số lượng: <b>${formatPrice(data.amS, 2)} USDT</b>`,
                                         content_en: `-Amount: <b>${formatPrice(data.amS, 2)} USDT</b>`,
@@ -1634,11 +1650,11 @@ module.exports = {
                                     // SEND_THONG_BAO('rut', data.email, email, 'Rút tiền BEP20', `-Số lượng: <b>${formatPrice(data.amS, 2)} USDT</b>`)
                                 })
 
-                            const type = {
-                                type: `Rút tiền BEP20 (BSC) về Ví: ${data.address}`,
-                                type_en: `Withdraw BEP20 (BSC) to Wallet: ${data.address}`,
-                                type_cam: `ដក BEP20 (BSC) ទៅកាបូប៖ ${data.address}`
-                            };
+                                const type = {
+                                    type: `Rút tiền BEP20 (BSC) về Ví: ${data.address}`,
+                                    type_en: `Withdraw BEP20 (BSC) to Wallet: ${data.address}`,
+                                    type_cam: `ដក BEP20 (BSC) ទៅកាបូប៖ ${data.address}`
+                                };
 
                             //==== IN vào lịch sử
                             db.query(`insert into trade_history (email, from_u, to_u, type_key, type, type_en, type_cam, currency, amount, note, status, network, fee_withdraw, created_at)
@@ -1708,7 +1724,7 @@ module.exports = {
                                         title_en: 'Withdrawal VND',
                                         title_cam: 'ដកប្រាក់ដុង'
                                     }
-
+    
                                     const content = {
                                         content: `-Số lượng: <b>${formatPrice(data.amS, 2)} USDT</b>`,
                                         content_en: `-Amount: <b>${formatPrice(data.amS, 2)} USDT</b>`,

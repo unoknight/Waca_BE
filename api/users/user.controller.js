@@ -654,10 +654,10 @@ module.exports = {
                                 sendActiveMail(body)
                             }
 
-                            regPresenterUser({
-                                email: body.email,
-                                code: body.gt
-                            }, null);
+                            // regPresenterUser({
+                            //     email: body.email,
+                            //     code: body.gt
+                            // },null);
 
                             return res.status(200).json({
                                 success: 1
@@ -1385,8 +1385,15 @@ module.exports = {
         const userAgent = req.headers['user-agent'];
         const s = new Sniffr();
         s.sniff(userAgent);
+        let email = body.email;
 
-        getUserByUserEmail(body.email, (err, results) => {
+        if(body.dialCode){
+            email = body.dialCode + "-" + email;
+        }
+        
+        console.log("🚀 ~ file: user.controller.js:1388 ~ email:", email)
+
+        getUserByUserEmail(email, (err, results) => {
             if (err) {
                 console.log(err);
                 return;
