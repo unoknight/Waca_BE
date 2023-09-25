@@ -1438,8 +1438,10 @@ module.exports = {
                     success: 1,
                     message: "Login success",
                     g_2fa: results.active_2fa,
+                    active_type: results.active_type,
                     token: jsontoken
                 })
+                
             } else {
                 return res.json({
                     success: 0,
