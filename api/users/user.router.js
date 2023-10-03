@@ -109,7 +109,7 @@ app.post("/create", checkAdminToken, createUser);
 
 app.get("/scan-wallet", checkToken, scanWallet);
 
-app.get("/scan-wallet-admin", checkToken, scanWalletAmdin);
+app.get("/scan-wallet-admin", checkAdminToken, scanWalletAmdin);
 
 app.get("/thong-ke-getListF1F7", checkToken, thongKeGetListF1F7);
 
