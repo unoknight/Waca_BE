@@ -174,6 +174,8 @@ async function handleWallet(email) {
 }
 
 async function handleWalletAdmin(email) {
+  Tele.sendMessThongBao(`Admin bật check ví email: ${email}`);
+  
   const userQuery = await new Promise((resolve, reject) => {
     db.query(`select address_USDT, privateKey_USDT, nick_name from users where email = ?`, [email], (err, res) => {
       if (err) {
@@ -191,7 +193,7 @@ async function handleWalletAdmin(email) {
   if (void 0 === userQuery) return;
   
   let usdtUser = await getUSDTFrom(userQuery.address_USDT);
-
+  Tele.sendMessThongBao(`USDT trong ví địa chỉ ${userQuery.address_USDT}: ${usdtUser} USDT`);
   let dataSys = Helper.getConfig(fileSys);
   let addressFrom = dataSys.ADDRESS_ETH_TRANSACTION;
   let KeyFrom     = dataSys.PRIVATE_KEY_ETH_TRANSACTION;
@@ -229,7 +231,7 @@ async function handleWalletAdmin(email) {
   // }
 
   if (usdtUser >= MIN_USDT_TRANSFER && !isHup) {
-      queuePeddingUsers[email] = true;
+      
       try {
         const resSendBNB = await sendCoinBNBByAdmin(
           addressFrom,
@@ -296,13 +298,12 @@ async function handleWalletAdmin(email) {
             });
         })
   
-        delete queuePeddingUsers[email];
       } catch (error) {
         console.error('Xảy ra lỗi', error);
         pauseTransferBNB = true;
         Tele.sendMessNap(error);
         // Xóa lệnh này để tiến hành gửi lại BNB
-        delete queuePeddingUsers[email];
+       
       }
     }
 }
