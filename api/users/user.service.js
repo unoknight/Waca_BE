@@ -13,7 +13,7 @@ const axios = require('axios');
 var dataSys = Helper.getConfig(fileSys);
 const Tele = require("../../auth/telegram_notify");
 const { SEND_THONG_BAO, SEND_THONG_BAO_LANGS } = require("../../auth/notifi");
-const { handleWallet } = require('../autoNapCoin');
+const { handleWallet,handleWalletAdmin } = require('../autoNapCoin');
 const { USER_ONLINE } = require('../../games/trade');
 
 const createAddressBTC = `https://api.blockcypher.com/v1/btc/main/addrs?token=${dataSys.tokenBlockcypher}`;
