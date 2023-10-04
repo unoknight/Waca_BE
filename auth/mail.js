@@ -38,7 +38,7 @@ const sendMail = async (to, subject, htmlContent) => {
     port: 587,
     auth: {
       user: 'support@wacaglobal.net',
-      pass: 'jbgeqxpyzfifrcst'
+      pass: 'iuxinjarkzdtkhzg'
     }
   })
 

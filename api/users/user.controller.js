@@ -136,7 +136,6 @@ function makeIdNumber(length){
 
 function sendOn2FACode(data) {
 
-
     let nameNick = data.nick_name
     let code = data.code
     let to = data.email
@@ -1015,7 +1014,7 @@ module.exports = {
             } else {
                 let email = decoded.result.email
                 let nick = decoded.result.nick_name
-                let code = makeid(6)
+                let code = makeIdNumber(6)
 
                 let data = {
                     email: email,
