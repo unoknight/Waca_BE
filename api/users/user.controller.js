@@ -144,6 +144,10 @@ function sendOn2FACode(data) {
         to = data.email_send;
     }
 
+    if(!to){
+        return;
+    }
+
     let subject = 'Verification Code To Turn On 2FA'
     let titleSub = 'Verification Code To Turn On 2FA'
     let body = html2FACode.html2FACode(nameNick, linkLogo, linkFooter, contact, code, titleSite, titleSub)
@@ -239,6 +243,11 @@ function sendOn2FAEnable(data) {
     if(data.email_send){
         to = data.email_send;
     }
+
+    if(!to){
+        return;
+    }
+
     let subject = 'Two-Factor Authentication enabled'
     let titleSub = 'Enable Google Authentication'
     let body = html2FAEnabled.html2FAEnabled(nameNick, linkLogo, linkFooter, titleSite, titleSub)
@@ -251,6 +260,10 @@ function sendOn2FADisabled(data) {
     let to = data.email
     if(data.email_send){
         to = data.email_send;
+    }
+
+    if(!to){
+        return;
     }
     let subject = 'Two-Factor Authentication Disabled'
     let titleSub = 'Disabled Google Authentication'
@@ -271,6 +284,11 @@ function sendActiveMail(data) {
     if(data.email_send){
         to = data.email_send;
     }
+
+    if(!to){
+        return;
+    }
+
     let subject = 'Activate your account'
     let body = htmlActive.htmlActive(nameNick, linkLogo, linkFooter, contact, linkActive, titleSite)
     mailer.sendMail(to, subject, body)
@@ -290,6 +308,11 @@ function sendLoginMail(data) {
     if(data.email_send){
         to = data.email_send;
     }
+
+    if(!to){
+        return;
+    }
+
     let subject = 'You Have Signed In From A New Ip Address'
     let body = htmlLogin.htmlLogin(Ip, OSysTeam, Brow, nameNick, linkLogo, linkFooter, contact, titleSite)
 
@@ -614,6 +637,11 @@ module.exports = {
         if(data.email_send){
             to = data.email_send;
         }
+
+        if(!to){
+            return;
+        }
+
         let subject = 'You had requested to reset your password on ' + titleSite
         let boHtml = htmlFoget.htmlFoget(nameNick, linkLogo, titleSite, linkFooter, contact, linkActive)
         mailer.sendMail(to, subject, boHtml)
