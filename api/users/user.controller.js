@@ -1251,7 +1251,6 @@ module.exports = {
         let token = req.get('authorization');
         token = token.split(" ")[1];
         const body = req.body;
-        console.log("🚀 ~ file: user.controller.js:1159 ~ body:", body)
 
         verify(token, config.TOKEN_KEY, (err, decoded) => {
             if (err) {
@@ -1529,54 +1528,64 @@ module.exports = {
                 })
             } else {
 
-                
-                let secret = decoded.result.secret_2fa
-                let token = body.code
+                let email = decoded.result.email;
 
-                // Verify a given token
-                const tokenValidates = speakeasy.totp.verify({
-                    secret,
-                    encoding: 'base32',
-                    token,
-                    window: 2
-                });
+                getUserByUserEmail(email, (err, results) => {   
+                    if(results.length>0){
 
-                if (tokenValidates) {
-                    let email = decoded.result.email
-                    let password = decoded.result.password
-                    getUserByUserEmail(email, (err, results) => {
-                        console.log("🚀 ~ file: user.controller.js:1549 ~ getUserByUserEmail ~ email:", email)
-                        if (err) {
-                            console.log(err);
-                            return;
-                        }
+                        let token = body.code
 
-                        if (!results) {
-                            return res.json({
-                                success: 0,
-                                message: "Invalid email or password"
-                            })
-                        }
+                        if(results[0].active_type != 2){
+                            let secret = decoded.result.secret_2fa;
 
-                        const result = compareSync(password, results.password);
-                        if (result) {
+                            const tokenValidates = speakeasy.totp.verify({
+                                secret,
+                                encoding: 'base32',
+                                token,
+                                window: 2
+                            });
+                            if (tokenValidates) {
+                                let password = decoded.result.password;
+    
+                                const result = compareSync(password, results.password);
+                                if (result) {
+                                    return res.json({
+                                        success: 1,
+                                        message: "Login success",
+                                    })
+                                } else {
+                                    return res.json({
+                                        success: 0,
+                                        message: "Invalid email or password"
+                                    })
+                                }
+                            }else{
+                                return res.json({
+                                    success: 6,
+                                    message: "Google 2FA"
+                                })
+                            }
+                        }else{
+                            if(results[0].code_telegram != token){
+                                return res.json({
+                                    success: 6,
+                                    message: "Google 2FA"
+                                })
+                            }
+
                             return res.json({
                                 success: 1,
                                 message: "Login success",
                             })
-                        } else {
-                            return res.json({
-                                success: 0,
-                                message: "Invalid email or password"
-                            })
                         }
-                    })
-                } else {
-                    return res.json({
-                        success: 6,
-                        message: "Google 2FA"
-                    })
-                }
+                    }else{
+                        return res.json({
+                            success: 6,
+                            message: "Google 2FA"
+                        })
+                    }
+                });
+
             }
         })
     },

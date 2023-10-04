@@ -1123,7 +1123,7 @@ module.exports = {
 
     getUserByUserEmail: (email, callback) => {
         db.query(
-            `SELECT email, nick_name, password, active_2fa, secret_2fa, deleted_at,active,active_type FROM users WHERE email = ? OR username = ?`,
+            `SELECT email, nick_name, password, active_2fa, secret_2fa, deleted_at,active,active_type,code_telegram FROM users WHERE email = ? OR username = ?`,
             [email, email], (error, results, fields) => {
                 if (error) {
                     return callback(error);
@@ -4022,7 +4022,7 @@ module.exports = {
         }
 
         db.query(
-            `UPDATE users SET active_2fa = 1 WHERE email = ?`,
+            `UPDATE users SET active_2fa = 1,active_type = 2 WHERE email = ?`,
             [
                 data.email
             ], (error, results, fields) => {
