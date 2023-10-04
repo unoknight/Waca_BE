@@ -148,13 +148,16 @@ async function sendOn2FACodeTele(data){
         return;
     }
 
-    db.query(`UPDATE users SET code_telegram = ?, generate_code_time = NOW() WHERE email = ?`, [data.code,data.email]);
+   
 	
 	let str = `Verify Code: ${data.code}`;
-	bot.telegram.sendMessage(user[0].telegram_id, str, {
-		parse_mode: "HTML"
-	});
-    
+    if(user[0].telegram_id){
+        db.query(`UPDATE users SET code_telegram = ?, generate_code_time = NOW() WHERE email = ?`, [data.code,data.email]);
+        bot.telegram.sendMessage(user[0].telegram_id, str, {
+            parse_mode: "HTML"
+        });
+        
+    }
 }
 
 async function sendOff2FACodeTele(data){
