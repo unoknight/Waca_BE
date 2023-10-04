@@ -81,7 +81,8 @@ const {
     getUserTradeAnalyze,
     getUserBalanceAnalyze,
     active2FA,
-    unactive2FA
+    unactive2FA,
+    changeAccountInfo
 } = require("./user.service")
 
 const { genSaltSync, hashSync, compareSync } = require("bcrypt")
@@ -134,9 +135,16 @@ function makeIdNumber(length){
 
 
 function sendOn2FACode(data) {
+
+
     let nameNick = data.nick_name
     let code = data.code
     let to = data.email
+
+    if(data.email_send){
+        to = data.email_send;
+    }
+
     let subject = 'Verification Code To Turn On 2FA'
     let titleSub = 'Verification Code To Turn On 2FA'
     let body = html2FACode.html2FACode(nameNick, linkLogo, linkFooter, contact, code, titleSite, titleSub)
@@ -229,6 +237,9 @@ function sendOn2FAEnable(data) {
     let nameNick = data.nick_name
 
     let to = data.email
+    if(data.email_send){
+        to = data.email_send;
+    }
     let subject = 'Two-Factor Authentication enabled'
     let titleSub = 'Enable Google Authentication'
     let body = html2FAEnabled.html2FAEnabled(nameNick, linkLogo, linkFooter, titleSite, titleSub)
@@ -239,6 +250,9 @@ function sendOn2FADisabled(data) {
     let nameNick = data.nick_name
 
     let to = data.email
+    if(data.email_send){
+        to = data.email_send;
+    }
     let subject = 'Two-Factor Authentication Disabled'
     let titleSub = 'Disabled Google Authentication'
     let body = html2FADisabled.html2FADisabled(nameNick, linkLogo, linkFooter, titleSite, titleSub)
@@ -250,13 +264,14 @@ function sendActiveMail(data) {
         expiresIn: "30m"
     });
 
-    console.log("token:" + jsontoken);
-
     let linkActive = domain + '/login?a=' + jsontoken
 
     let nameNick = data.nick_name
 
     let to = data.email
+    if(data.email_send){
+        to = data.email_send;
+    }
     let subject = 'Activate your account'
     let body = htmlActive.htmlActive(nameNick, linkLogo, linkFooter, contact, linkActive, titleSite)
     mailer.sendMail(to, subject, body)
@@ -273,6 +288,9 @@ function sendLoginMail(data) {
     let nameNick = data.nick_name
 
     let to = data.email
+    if(data.email_send){
+        to = data.email_send;
+    }
     let subject = 'You Have Signed In From A New Ip Address'
     let body = htmlLogin.htmlLogin(Ip, OSysTeam, Brow, nameNick, linkLogo, linkFooter, contact, titleSite)
 
@@ -356,6 +374,15 @@ module.exports = {
                             email: email
                         }
 
+                        getUserByUserEmail(email, (err, results) => {
+                            if (err) {
+                                console.log(err);
+                                return;
+                            }
+        
+                            data.email_send = results.email_send
+                        })
+
                         sendOn2FAEnable(data)
 
                         return res.status(200).json({
@@ -429,6 +456,15 @@ module.exports = {
                                 nick_name: nick,
                                 email: email
                             }
+
+                            getUserByUserEmail(email, (err, results) => {
+                                if (err) {
+                                    console.log(err);
+                                    return;
+                                }
+            
+                                data.email_send = results.email_send
+                            })
 
                             sendOn2FADisabled(data)
                             return res.json({
@@ -566,6 +602,19 @@ module.exports = {
         let nameNick = body.nick_name
 
         let to = body.email
+
+        getUserByUserEmail(to, (err, results) => {
+            if (err) {
+                console.log(err);
+                return;
+            }
+
+            data.email_send = results.email_send
+        })
+        
+        if(data.email_send){
+            to = data.email_send;
+        }
         let subject = 'You had requested to reset your password on ' + titleSite
         let boHtml = htmlFoget.htmlFoget(nameNick, linkLogo, titleSite, linkFooter, contact, linkActive)
         mailer.sendMail(to, subject, boHtml)
@@ -580,6 +629,15 @@ module.exports = {
             email: email,
             nick_name: 'Guest'
         }
+
+        getUserByUserEmail(email, (err, results) => {
+            if (err) {
+                console.log(err);
+                return;
+            }
+
+            obj.email_send = results.email_send
+        })
 
         sendActiveMail(obj)
 
@@ -965,6 +1023,15 @@ module.exports = {
                     code: code
                 }
 
+                getUserByUserEmail(email, (err, results) => {
+                    if (err) {
+                        console.log(err);
+                        return;
+                    }
+
+                    data.email_send = results.email_send
+                })
+
                 updateCodeSecure(data, (err, results) => {
                     if (err) {
                         console.log(err);
@@ -1000,6 +1067,7 @@ module.exports = {
                     code: makeIdNumber(6)
                 }
 
+                
                 sendOn2FACodeTele(data);
 
                 //sendOn2FACode(data);
@@ -1097,6 +1165,15 @@ module.exports = {
                                         nick_name: nick,
                                         email: email
                                     }
+
+                                    getUserByUserEmail(email, (err, results) => {
+                                        if (err) {
+                                            console.log(err);
+                                            return;
+                                        }
+                    
+                                        data.email_send = results.email_send
+                                    })
 
                                     sendOn2FADisabled(data)
 
@@ -1657,6 +1734,15 @@ module.exports = {
                     userAgent: s,
                     code: makeIdNumber(6)
                 }
+
+                getUserByUserEmail(email, (err, results) => {
+                    if (err) {
+                        console.log(err);
+                        return;
+                    }
+
+                    data.email_send = results.email_send
+                })
 
                 //if(!results.active_2fa){
                 sendLoginMail(data)
@@ -3366,5 +3452,49 @@ module.exports = {
                 data: results
             })
         })
-    }
+    },
+    changeAccountInfo: (req, res) => {
+        const body = req.body;
+        let token = req.get('authorization');
+        token = token.split(" ")[1];
+
+        verify(token, config.TOKEN_KEY, (err, decoded) => {
+            if (err) {
+                res.json({
+                    success: 3,
+                    l: false,
+                    m: "no no"
+                })
+            } else {
+
+                let email = decoded.result.email;
+                let email_send = body.email_send;
+                let first_name = body.first_name;
+                let last_name = body.last_name;
+
+                let data = {
+                    email: email,
+                    email_send: email_send,
+                    first_name: first_name,
+                    last_name: last_name
+                }
+
+                changeAccountInfo(data, (err, results) => {
+                    if (err) {
+                        console.log(err);
+                        return res.json({
+                            success: 0,
+                            data: err
+                        })
+                    }
+        
+                    return res.json({
+                        success: 1,
+                        data: results
+                    })
+                })
+
+            }
+        })
+    },
 }

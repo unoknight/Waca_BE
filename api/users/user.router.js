@@ -85,7 +85,8 @@ const {
     getUserInfoAdmin,
     getUserTradeAnalyze,
     getUserBalanceAnalyze,
-    activeTelegram2FA
+    activeTelegram2FA,
+    changeAccountInfo
 } = require("./user.controller");
 const router = require("express");
 const app = router();
@@ -265,5 +266,7 @@ app.get("/check-on-2fa", checkAdminToken, checkOn2fa);
 app.get("/get-user-info-admin/:id", checkAdminToken, getUserInfoAdmin);
 app.get("/get-user-trade-analyze", checkAdminToken, getUserTradeAnalyze);
 app.get("/get-user-balance-analyze", checkAdminToken, getUserBalanceAnalyze);
+app.post("/change-account-info", checkToken, changeAccountInfo);
+
 
 module.exports = app;

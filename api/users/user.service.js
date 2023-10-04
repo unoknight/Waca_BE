@@ -578,7 +578,7 @@ module.exports = {
         let currUse = redataSys.typeCurrUseSys.toLowerCase()
 
         db.query(
-            (`select id, email, nick_name, first_name, last_name, verified as verify, money_${mysql_real_escape_string(currUse)} as balance, vip_user as vip, ref_code as ref, upline_id as upid, id_front, id_back, profile_image, active_2fa as fa2, code_secure as num_secury, so_cmnd, pending_commission, commission_vip, level_vip, country as c, marketing as mkt, language,is_expert,is_phone,active_type,verified_telegram from users WHERE email = ?`),
+            (`select id, email, nick_name, first_name, last_name, verified as verify, money_${mysql_real_escape_string(currUse)} as balance, vip_user as vip, ref_code as ref, upline_id as upid, id_front, id_back, profile_image, active_2fa as fa2, code_secure as num_secury, so_cmnd, pending_commission, commission_vip, level_vip, country as c, marketing as mkt, language,is_expert,is_phone,active_type,verified_telegram,email_send from users WHERE email = ?`),
             [data.email], (error, results, fields) => {
                 if (error) {
                     return callback(error);
@@ -1123,7 +1123,7 @@ module.exports = {
 
     getUserByUserEmail: (email, callback) => {
         db.query(
-            `SELECT email, nick_name, password, active_2fa, secret_2fa, deleted_at,active,active_type,code_telegram FROM users WHERE email = ? OR username = ?`,
+            `SELECT email, nick_name, password, active_2fa, secret_2fa, deleted_at,active,active_type,code_telegram,email_send FROM users WHERE email = ? OR username = ?`,
             [email, email], (error, results, fields) => {
                 if (error) {
                     return callback(error);
@@ -6181,6 +6181,22 @@ module.exports = {
         })
 
         return callback(null,balance_his[0]);
-    }
+    },
+    changeAccountInfo: (data, callback) => {
+        db.query(
+            `update users set first_name= ?,last_name=?, email_send=? where email = ?`,
+            [data.first_name,
+            data.last_name,
+            data.email_send,
+            data.email
+            ], (error, results, fields) => {
+                if (error) {
+                    return callback(error);
+                }
+
+                return callback(null, {success:1})
+            }
+        )
+    },
 }
 
