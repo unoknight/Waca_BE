@@ -31,7 +31,8 @@ bot.command('start', ctx => {
 	str += "- example: /verify example@gmail.com/456123\n";
 	str += "/code - Get verify code \n";
 	str += "/status - View <a href='https://wacatrade.com/'>Wacatrade.com</a> account verification.\n";
-
+	str += "/clear - remove account linked from <a href='https://wacatrade.com/'>Wacatrade.com</a> .\n";
+	
 	bot.telegram.sendMessage(ctx.chat.id, str, {
 		parse_mode: "HTML"
 	});
@@ -48,6 +49,7 @@ bot.command('help', ctx => {
 	str += "- **note: phone_number with dialCode(855,84, ...)";
 	str += "/code - Get verify code \n";
 	str += "/status - View <a href='https://wacatrade.com/'>Wacatrade.com</a> account verification.\n";
+	str += "/clear - remove account linked from <a href='https://wacatrade.com/'>Wacatrade.com</a> .\n";
 
 	bot.telegram.sendMessage(ctx.chat.id, str, {
 		parse_mode: "HTML"
@@ -157,6 +159,37 @@ bot.command('code', async ctx => {
 	});
 
 })
+
+bot.command('status', async ctx => {
+	
+	let user = await new Promise((resolve, reject) => {
+		db.query(
+			`SELECT email, nick_name, password, active_2fa, secret_2fa, deleted_at,active,verified_telegram,verified_time FROM users WHERE telegram_id = ?`, [ctx.chat.id], (error, results, fields) => {
+				if (error) {
+					resolve([]);
+				}
+
+				resolve(results);
+			})
+	});
+
+	if(user.length == 0){
+		let str = `Not found linked account with your telegram account`;
+			bot.telegram.sendMessage(ctx.chat.id, str, {
+				parse_mode: "HTML"
+			});
+
+		return;
+	}
+
+	let str = `Your active account: ${user[0].email}`;
+	bot.telegram.sendMessage(ctx.chat.id, str, {
+		parse_mode: "HTML"
+	});
+
+})
+
+
 
 bot.launch();
 
