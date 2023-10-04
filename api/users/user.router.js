@@ -26,6 +26,7 @@ const {
     updateInfoVerify,
     activeGoogle2FA,
     unActiveGoogle2FA,
+    unActiveTelegram2FA,
     createGoogle2FA,
     reloadMoneyDemo,
     listHisBO,
@@ -57,6 +58,7 @@ const {
     getAgencySearchName,
     loginG2FA,
     sendCodeG2FA,
+    sendCodeTele2FA,
     getListAnalytics,
     WithDrawalPaypalNB,
     WithDrawalPaypalAc,
@@ -83,6 +85,7 @@ const {
     getUserInfoAdmin,
     getUserTradeAnalyze,
     getUserBalanceAnalyze,
+    activeTelegram2FA
 } = require("./user.controller");
 const router = require("express");
 const app = router();
@@ -155,6 +158,10 @@ app.post('/update-gg2fa', checkToken, activeGoogle2FA);
 
 app.post('/disable-gg2fa', checkToken, unActiveGoogle2FA);
 
+app.post('/active-tele2fa', checkToken, activeTelegram2FA);
+
+app.post('/disable-tele2fa', checkToken, unActiveTelegram2FA);
+
 app.get('/create-gg2fa', checkToken, createGoogle2FA);
 
 app.put('/demo', checkToken, reloadMoneyDemo);
@@ -222,6 +229,8 @@ app.post('/addMoneyMember', checkAdminToken, addMoneyMember);
 app.post('/login-2fa', loginG2FA);
 
 app.get('/code-2fa', checkToken, sendCodeG2FA);
+
+app.get('/code-2fa-tele', checkToken, sendCodeTele2FA);
 
 app.post("/changeAcc", checkAdminToken, changeAccType);
 

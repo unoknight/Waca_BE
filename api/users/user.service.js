@@ -578,7 +578,7 @@ module.exports = {
         let currUse = redataSys.typeCurrUseSys.toLowerCase()
 
         db.query(
-            (`select id, email, nick_name, first_name, last_name, verified as verify, money_${mysql_real_escape_string(currUse)} as balance, vip_user as vip, ref_code as ref, upline_id as upid, id_front, id_back, profile_image, active_2fa as fa2, code_secure as num_secury, so_cmnd, pending_commission, commission_vip, level_vip, country as c, marketing as mkt, language,is_expert,is_phone,active_type from users WHERE email = ?`),
+            (`select id, email, nick_name, first_name, last_name, verified as verify, money_${mysql_real_escape_string(currUse)} as balance, vip_user as vip, ref_code as ref, upline_id as upid, id_front, id_back, profile_image, active_2fa as fa2, code_secure as num_secury, so_cmnd, pending_commission, commission_vip, level_vip, country as c, marketing as mkt, language,is_expert,is_phone,active_type,verified_telegram from users WHERE email = ?`),
             [data.email], (error, results, fields) => {
                 if (error) {
                     return callback(error);
@@ -3985,6 +3985,114 @@ module.exports = {
             }
         )
     },
+    active2FA: async (data, callback) => {
+
+        let user = await new Promise((resolve, reject) => {
+            db.query(
+                `SELECT email, code_telegram, generate_code_time, active_2fa FROM users WHERE email = ?`, [data.email], (error, results, fields) => {
+                    if (error) {
+                        resolve([]);
+                    }
+    
+                    resolve(results);
+                })
+        });
+
+        if(user.length == 0){
+
+            return callback(null, {
+                success:0,
+                message: "Not found user"
+            });
+        }
+
+
+        if(user[0].active_2fa){
+            return callback(null, {
+                success:0,
+                message: "user actived"
+            });
+        }
+
+        if(user[0].code_telegram != data.code){
+            return callback(null, {
+                success:2,
+                message: "Code not matching"
+            });
+        }
+
+        db.query(
+            `UPDATE users SET active_2fa = 1 WHERE email = ?`,
+            [
+                data.email
+            ], (error, results, fields) => {
+                if (error) {
+                    return error;
+                }
+
+                return callback(null, results)
+            }
+        )
+
+        return callback(null, {
+            success:1,
+        });
+
+    },
+    unactive2FA: async (data, callback) => {
+
+        let user = await new Promise((resolve, reject) => {
+            db.query(
+                `SELECT email, code_telegram, generate_code_time, active_2fa FROM users WHERE email = ?`, [data.email], (error, results, fields) => {
+                    if (error) {
+                        resolve([]);
+                    }
+    
+                    resolve(results);
+                })
+        });
+
+        if(user.length == 0){
+
+            return callback(null, {
+                success:0,
+                message: "Not found user"
+            });
+        }
+
+
+        if(!user[0].active_2fa){
+            return callback(null, {
+                success:0,
+                message: "user not active"
+            });
+        }
+
+        if(user[0].code_telegram != data.code){
+            return callback(null, {
+                success:2,
+                message: "Code not matching"
+            });
+        }
+
+        db.query(
+            `UPDATE users SET active_2fa = 0 WHERE email = ?`,
+            [
+                data.email
+            ], (error, results, fields) => {
+                if (error) {
+                    return error;
+                }
+
+                return callback(null, results)
+            }
+        )
+
+        return callback(null, {
+            success:1,
+        });
+
+    },
 
     Disabled2FA: (email, callback) => {
         db.query(
@@ -4007,6 +4115,22 @@ module.exports = {
             [
                 data.code,
                 data.email
+            ], (error, results, fields) => {
+                if (error) {
+                    return error;
+                }
+
+                return callback(null, results)
+            }
+        )
+    },
+    updateCodeSecureTele: (data, callback) => {
+        db.query(
+            `UPDATE users SET code_telegram = ?,generate_code_time = NOW() WHERE email = ?`,
+            [
+                data.code,
+                data.email,
+
             ], (error, results, fields) => {
                 if (error) {
                     return error;

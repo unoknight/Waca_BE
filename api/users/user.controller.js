@@ -52,6 +52,7 @@ const {
     getAgencySearchName,
     updateSecret2FA,
     updateCodeSecure,
+    updateCodeSecureTele,
     checkCodeSecure2FA,
     Disabled2FA,
     getListAnalytics,
@@ -79,6 +80,8 @@ const {
     getUserInfoAdmin,
     getUserTradeAnalyze,
     getUserBalanceAnalyze,
+    active2FA,
+    unactive2FA
 } = require("./user.service")
 
 const { genSaltSync, hashSync, compareSync } = require("bcrypt")
@@ -97,6 +100,7 @@ const QRCode = require('qrcode')
 const getIP = require('ipware')().get_ip
 const Sniffr = require("sniffr")
 const { log } = require("sharp/lib/libvips")
+const { Telegraf } = require('telegraf');
 
 let linkLogo = config.MAIL_LOGO
 let linkFooter = config.MAIL_IMG_FOOTER
@@ -125,6 +129,86 @@ function sendOn2FACode(data) {
     let body = html2FACode.html2FACode(nameNick, linkLogo, linkFooter, contact, code, titleSite, titleSub)
     mailer.sendMail(to, subject, body)
 }
+
+async function sendOn2FACodeTele(data){
+    const bot = new Telegraf("6431968423:AAFwPoE6L9eJMhV1p6hXknUUwpGNAzrp2O8");
+   
+    let user = await new Promise((resolve, reject) => {
+		db.query(
+			`SELECT email, nick_name, password, active_2fa, secret_2fa, deleted_at,active,verified_telegram,verified_time,telegram_id FROM users WHERE email = ?`, [data.email], (error, results, fields) => {
+				if (error) {
+					resolve([]);
+				}
+
+				resolve(results);
+			})
+	});
+
+    if(user.length == 0){
+        return;
+    }
+
+    db.query(`UPDATE users SET code_telegram = ?, generate_code_time = NOW() WHERE email = ?`, [data.code,data.email]);
+	
+	let str = `Verify Code: ${data.code}`;
+	bot.telegram.sendMessage(user[0].telegram_id, str, {
+		parse_mode: "HTML"
+	});
+    
+}
+
+async function sendOff2FACodeTele(data){
+    const bot = new Telegraf("6431968423:AAFwPoE6L9eJMhV1p6hXknUUwpGNAzrp2O8");
+   
+    let user = await new Promise((resolve, reject) => {
+		db.query(
+			`SELECT email, nick_name, password, active_2fa, secret_2fa, deleted_at,active,verified_telegram,verified_time,telegram_id FROM users WHERE email = ?`, [data.email], (error, results, fields) => {
+				if (error) {
+					resolve([]);
+				}
+
+				resolve(results);
+			})
+	});
+
+    if(user.length == 0){
+        return;
+    }
+
+    db.query(`UPDATE users SET code_telegram = ?, generate_code_time = NOW() WHERE email = ?`, ['',data.email]);
+
+	let str = `Your account disable 2fa`;
+	bot.telegram.sendMessage(user[0].telegram_id, str, {
+		parse_mode: "HTML"
+	});
+}
+
+async function sendOn2FACodeTeleNoti(data){
+    const bot = new Telegraf("6431968423:AAFwPoE6L9eJMhV1p6hXknUUwpGNAzrp2O8");
+   
+    let user = await new Promise((resolve, reject) => {
+		db.query(
+			`SELECT email, nick_name, password, active_2fa, secret_2fa, deleted_at,active,verified_telegram,verified_time,telegram_id FROM users WHERE email = ?`, [data.email], (error, results, fields) => {
+				if (error) {
+					resolve([]);
+				}
+
+				resolve(results);
+			})
+	});
+
+    if(user.length == 0){
+        return;
+    }
+
+    db.query(`UPDATE users SET code_telegram = ?, generate_code_time = NOW() WHERE email = ?`, [data.code,data.email]);
+	
+	let str = `Your account enable 2fa`;
+	bot.telegram.sendMessage(user[0].telegram_id, str, {
+		parse_mode: "HTML"
+	});
+}
+
 
 function sendOn2FAEnable(data) {
     let nameNick = data.nick_name
@@ -163,8 +247,8 @@ function sendActiveMail(data) {
     mailer.sendMail(to, subject, body)
 }
 
+
 function sendLoginMail(data) {
-    console.log("🚀 ~ file: user.controller.js:164 ~ sendLoginMail ~ data:", data)
     let Ip = data.ip
     let os = data.userAgent.os.name + ' ' + data.userAgent.os.versionString
     let OSysTeam = os.charAt(0).toUpperCase() + os.slice(1)
@@ -881,6 +965,38 @@ module.exports = {
         })
     },
 
+    sendCodeTele2FA: (req, res) => {
+        let token = req.get('authorization');
+        token = token.split(" ")[1];
+        verify(token, config.TOKEN_KEY, (err, decoded) => {
+            if (err) {
+                return res.json({
+                    success: 3,
+                    l: false,
+                    m: "no no"
+                })
+            } else {
+                let email = decoded.result.email
+                let nick = decoded.result.nick_name
+                let code = makeid(6)
+
+                let data = {
+                    email: email,
+                    nick_name: nick,
+                    code: makeid(6)
+                }
+
+                sendOn2FACodeTele(data);
+
+                //sendOn2FACode(data);
+
+                return res.json({
+                    success: 1
+                });
+            }
+        })
+    },
+
     unActiveGoogle2FA: (req, res) => {
         const body = req.body;
         let token = req.get('authorization');
@@ -990,6 +1106,48 @@ module.exports = {
         })
     },
 
+    unActiveTelegram2FA: (req, res) => {
+        const body = req.body;
+        let token = req.get('authorization');
+        token = token.split(" ")[1];
+        verify(token, config.TOKEN_KEY, (err, decoded) => {
+            if (err) {
+                res.json({
+                    success: 3,
+                    l: false,
+                    m: "no no"
+                })
+            } else {
+                let code = body.c
+                let email = decoded.result.email
+               
+                let data = {
+                    email: email,
+                    code: code
+                }
+                
+                unactive2FA(data, (err, results) => {
+                    if (err) {
+                        console.log(err);
+                        return;
+                    }
+
+                    if (!results) {
+                        return res.json({
+                            success: 0,
+                            message: "Record not Found"
+                        })
+                    }
+
+                    if(results.success == 1){
+                        sendOff2FACodeTele(data);
+                    }
+                    return res.json(results);
+                })
+            }
+        })
+    },
+
     activeGoogle2FA: (req, res) => {
         const body = req.body;
         let token = req.get('authorization');
@@ -1085,6 +1243,48 @@ module.exports = {
                             success: 0
                         })
                     }
+                })
+            }
+        })
+    },
+    activeTelegram2FA:(req,res) =>{
+        let token = req.get('authorization');
+        token = token.split(" ")[1];
+        const body = req.body;
+        console.log("🚀 ~ file: user.controller.js:1159 ~ body:", body)
+
+        verify(token, config.TOKEN_KEY, (err, decoded) => {
+            if (err) {
+                return res.json({
+                    success: 0,
+                    l: false,
+                    message: "Invalid token"
+                })
+            } else {
+                let email = decoded.result.email;
+
+                let data = {
+                    email : email,
+                    code : body.c
+                };
+
+                active2FA(data, (err, results) => {
+                    if (err) {
+                        console.log(err);
+                        return;
+                    }
+
+                    if (!results) {
+                        return res.json({
+                            success: 0,
+                            message: "Record not Found"
+                        })
+                    }
+
+                    if(results.success == 1){
+                        sendOn2FACodeTeleNoti(data);
+                    }
+                    return res.json(results);
                 })
             }
         })
@@ -1328,6 +1528,8 @@ module.exports = {
                     m: "no no"
                 })
             } else {
+
+                
                 let secret = decoded.result.secret_2fa
                 let token = body.code
 
@@ -1343,6 +1545,7 @@ module.exports = {
                     let email = decoded.result.email
                     let password = decoded.result.password
                     getUserByUserEmail(email, (err, results) => {
+                        console.log("🚀 ~ file: user.controller.js:1549 ~ getUserByUserEmail ~ email:", email)
                         if (err) {
                             console.log(err);
                             return;
