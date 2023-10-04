@@ -32,7 +32,7 @@ bot.command('start', ctx => {
 	str += "/code - Get verify code \n";
 	str += "/status - View <a href='https://wacatrade.com/'>Wacatrade.com</a> account verification.\n";
 	str += "/clear - remove account linked from <a href='https://wacatrade.com/'>Wacatrade.com</a> .\n";
-	
+
 	bot.telegram.sendMessage(ctx.chat.id, str, {
 		parse_mode: "HTML"
 	});
@@ -189,7 +189,36 @@ bot.command('status', async ctx => {
 
 })
 
+bot.command('clear', async ctx => {
+	
+	let user = await new Promise((resolve, reject) => {
+		db.query(
+			`SELECT email, nick_name, password, active_2fa, secret_2fa, deleted_at,active,verified_telegram,verified_time FROM users WHERE telegram_id = ?`, [ctx.chat.id], (error, results, fields) => {
+				if (error) {
+					resolve([]);
+				}
 
+				resolve(results);
+			})
+	});
+
+	if(user.length == 0){
+		let str = `Not found linked account with your telegram account`;
+			bot.telegram.sendMessage(ctx.chat.id, str, {
+				parse_mode: "HTML"
+			});
+
+		return;
+	}
+
+	db.query(`UPDATE users SET verified_telegram = ?,telegram_id=?,verified_time=NOW() WHERE email = ?`, [0,'',user[0].email]);
+
+	let str = `Account: ${user[0].email} is clear`;
+	bot.telegram.sendMessage(ctx.chat.id, str, {
+		parse_mode: "HTML"
+	});
+
+})
 
 bot.launch();
 
