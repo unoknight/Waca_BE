@@ -2069,61 +2069,116 @@ module.exports = {
                     });
                     //console.log(token2);
 
-                    const tokenValidates = speakeasy.totp.verify({
-                        secret,
-                        encoding: 'base32',
-                        token,
-                        window: 2,
-                        //step:60
-                    });
+                    getUserByUserEmail(email, (err, results) => {  
+                        if(results.active_type != "2"){
 
-                    //console.log(tokenValidates);
-                    // body.f bỏ qua 2fa
-                    if (tokenValidates || body.f) {
-                        checkUserNickName(body.address, (err, results) => {
-                            if (err) {
-                                console.log(err);
-                                return;
-                            }
+                            const tokenValidates = speakeasy.totp.verify({
+                                secret,
+                                encoding: 'base32',
+                                token,
+                                window: 2,
+                                //step:60
+                            });
 
-                            if (!results.length) {
+                            if (tokenValidates || body.f) {
+                                checkUserNickName(body.address, (err, results) => {
+                                    if (err) {
+                                        console.log(err);
+                                        return;
+                                    }
+        
+                                    if (!results.length) {
+                                        return res.json({
+                                            success: 5,
+                                            message: "Faile to send user"
+                                        })
+                                    }
+        
+                                    WithDrawalNoiBo(body, (err, results) => {
+                                        if (err) {
+                                            console.log(err);
+                                            return;
+                                        }
+        
+                                        if (!results) {
+                                            return res.json({
+                                                success: 0,
+                                                message: "Faile to send user"
+                                            })
+                                        }
+        
+                                        if (!!results.err && results.err === 10) {
+                                            return res.json({
+                                                success: results.err,
+                                                message: "User not verify"
+                                            })
+                                        }
+        
+                                        return res.json({
+                                            success: 1,
+                                            message: "Send success"
+                                        })
+                                    })
+                                })
+                            } else {
                                 return res.json({
-                                    success: 5,
-                                    message: "Faile to send user"
+                                    success: 2
                                 })
                             }
 
-                            WithDrawalNoiBo(body, (err, results) => {
-                                if (err) {
-                                    console.log(err);
-                                    return;
-                                }
-
-                                if (!results) {
-                                    return res.json({
-                                        success: 0,
-                                        message: "Faile to send user"
+                        }else{
+                            if(results.code_telegram != token.toString()){
+                                checkUserNickName(body.address, (err, results) => {
+                                    if (err) {
+                                        console.log(err);
+                                        return;
+                                    }
+        
+                                    if (!results.length) {
+                                        return res.json({
+                                            success: 5,
+                                            message: "Faile to send user"
+                                        })
+                                    }
+        
+                                    WithDrawalNoiBo(body, (err, results) => {
+                                        if (err) {
+                                            console.log(err);
+                                            return;
+                                        }
+        
+                                        if (!results) {
+                                            return res.json({
+                                                success: 0,
+                                                message: "Faile to send user"
+                                            })
+                                        }
+        
+                                        if (!!results.err && results.err === 10) {
+                                            return res.json({
+                                                success: results.err,
+                                                message: "User not verify"
+                                            })
+                                        }
+        
+                                        return res.json({
+                                            success: 1,
+                                            message: "Send success"
+                                        })
                                     })
-                                }
-
-                                if (!!results.err && results.err === 10) {
-                                    return res.json({
-                                        success: results.err,
-                                        message: "User not verify"
-                                    })
-                                }
-
-                                return res.json({
-                                    success: 1,
-                                    message: "Send success"
                                 })
-                            })
-                        })
-                    } else {
-                        return res.json({
-                            success: 2
-                        })
-                    }
+                            }else {
+                                return res.json({
+                                    success: 2
+                                })
+                            }
+                        }
+
+                     });
+
+                   
+                    
+                    
                 });
             }
         })
@@ -2204,45 +2259,87 @@ module.exports = {
                 let token = body.code;
                 let secret = decoded.result.secret_2fa;
 
-                const tokenValidates = speakeasy.totp.verify({
-                    secret,
-                    encoding: 'base32',
-                    token,
-                    window: 2,
-                    //step:60
-                });
-                // body.f bỏ qua 2fa
-                if (tokenValidates || body.f) {
-                    WithDrawalBSC(body, (err, results) => {
-                        if (err) {
-                            console.log(err);
-                            return;
-                        }
 
-                        if (!results) {
-                            return res.json({
-                                success: 0,
-                                message: "Faile to send user"
-                            })
+                getUserByUserEmail(decoded.result.email, (err, results) => {   
+                    if(results){
+                        if(results.active_type != "2"){
+                            const tokenValidates = speakeasy.totp.verify({
+                                secret,
+                                encoding: 'base32',
+                                token,
+                                window: 2,
+                                //step:60
+                            });
+                            // body.f bỏ qua 2fa
+                            if (tokenValidates || body.f) {
+                                WithDrawalBSC(body, (err, results) => {
+                                    if (err) {
+                                        console.log(err);
+                                        return;
+                                    }
+            
+                                    if (!results) {
+                                        return res.json({
+                                            success: 0,
+                                            message: "Faile to send user"
+                                        })
+                                    }
+            
+                                    if (!!results.err && results.err === 10) {
+                                        return res.json({
+                                            success: results.err,
+                                            message: "User not verify"
+                                        })
+                                    }
+            
+                                    return res.json({
+                                        success: 1,
+                                        message: "Send success"
+                                    })
+                                })
+                            } else {
+                                return res.json({
+                                    success: 2
+                                })
+                            }
+                        }else{
+                            
+                            if(results.code_telegram != token.toString()){
+                                WithDrawalBSC(body, (err, results) => {
+                                    if (err) {
+                                        console.log(err);
+                                        return;
+                                    }
+            
+                                    if (!results) {
+                                        return res.json({
+                                            success: 0,
+                                            message: "Faile to send user"
+                                        })
+                                    }
+            
+                                    if (!!results.err && results.err === 10) {
+                                        return res.json({
+                                            success: results.err,
+                                            message: "User not verify"
+                                        })
+                                    }
+            
+                                    return res.json({
+                                        success: 1,
+                                        message: "Send success"
+                                    })
+                                })
+                            } else {
+                                return res.json({
+                                    success: 2
+                                })
+                            }
                         }
+                    }
+                })
 
-                        if (!!results.err && results.err === 10) {
-                            return res.json({
-                                success: results.err,
-                                message: "User not verify"
-                            })
-                        }
-
-                        return res.json({
-                            success: 1,
-                            message: "Send success"
-                        })
-                    })
-                } else {
-                    return res.json({
-                        success: 2
-                    })
-                }
+                
             }
         })
     },
