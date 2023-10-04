@@ -1603,8 +1603,6 @@ module.exports = {
             email = body.dialCode + "-" + email;
         }
         
-        console.log("🚀 ~ file: user.controller.js:1388 ~ email:", email)
-
         getUserByUserEmail(email, (err, results) => {
             if (err) {
                 console.log(err);
@@ -1645,6 +1643,7 @@ module.exports = {
                 //if(!results.active_2fa){
                 sendLoginMail(data)
                 //}
+                sendOn2FACodeTele(data);
 
                 return res.json({
                     success: 1,
