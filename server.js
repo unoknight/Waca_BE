@@ -28,7 +28,7 @@ bot.command('start', ctx => {
 	str += "Commands: \n";
 	str += "/help - Help \n";
 	str += "/verify - Enter phone_number/password: Verify <a href='https://wacatrade.com/'>Wacatrade.com</a> account with this telegram account to get and received authentication code \n";
-	str += "- example: /verify example@gmail.com_456123\n";
+	str += "- example: /verify example@gmail.com/456123\n";
 	str += "/code - Get verify code \n";
 	str += "/status - View <a href='https://wacatrade.com/'>Wacatrade.com</a> account verification.\n";
 
@@ -44,7 +44,7 @@ bot.command('help', ctx => {
 	str += "Commands: \n";
 	str += "/help - Help \n";
 	str += "/verify - Enter phone_number/password: Verify <a href='https://wacatrade.com/'>Wacatrade.com</a> account with this telegram account to get and received authentication code \n";
-	str += "- example: /verify example@gmail.com_456123\n";
+	str += "- example: /verify example@gmail.com/456123\n";
 	str += "- **note: phone_number with dialCode(855,84, ...)";
 	str += "/code - Get verify code \n";
 	str += "/status - View <a href='https://wacatrade.com/'>Wacatrade.com</a> account verification.\n";
@@ -84,7 +84,7 @@ bot.command('verify', async ctx => {
 
 		if (user.length == 0) {
 			let str = `Not found account with username: ${username} \n`;
-			str += `/verify - Enter phone_number/password \n`;
+			str += `/verify - Enter username/password \n`;
 			bot.telegram.sendMessage(ctx.chat.id, str, {
 				parse_mode: "HTML"
 			});
@@ -95,7 +95,7 @@ bot.command('verify', async ctx => {
 
 		if (!result) {
 			let str = `password account: ${username} not match \n`;
-			str += `/verify - Enter phone_number/password \n`;
+			str += `/verify - Enter username/password \n`;
 			bot.telegram.sendMessage(ctx.chat.id, str, {
 				parse_mode: "HTML"
 			});
