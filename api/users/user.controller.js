@@ -120,6 +120,19 @@ function makeid(length) {
     return result.join('');
 }
 
+function makeIdNumber(length){
+    var result = [];
+    var characters = '0123456789';
+    var charactersLength = characters.length;
+    for (var i = 0; i < length; i++) {
+        result.push(characters.charAt(Math.floor(Math.random() *
+            charactersLength)));
+    }
+
+    return result.join('');
+}
+
+
 function sendOn2FACode(data) {
     let nameNick = data.nick_name
     let code = data.code
@@ -149,7 +162,6 @@ async function sendOn2FACodeTele(data){
     }
 
    
-	
 	let str = `Verify Code: ${data.code}`;
     if(user[0].telegram_id){
         db.query(`UPDATE users SET code_telegram = ?, generate_code_time = NOW() WHERE email = ?`, [data.code,data.email]);
@@ -981,12 +993,11 @@ module.exports = {
             } else {
                 let email = decoded.result.email
                 let nick = decoded.result.nick_name
-                let code = makeid(6)
-
+              
                 let data = {
                     email: email,
                     nick_name: nick,
-                    code: makeid(6)
+                    code: makeIdNumber(6)
                 }
 
                 sendOn2FACodeTele(data);
@@ -1534,11 +1545,12 @@ module.exports = {
                 let email = decoded.result.email;
 
                 getUserByUserEmail(email, (err, results) => {   
-                    if(results.length>0){
+                    console.log("🚀 ~ file: user.controller.js:1548 ~ getUserByUserEmail ~ results:", results)
+                    if(results){
 
                         let token = body.code
 
-                        if(results[0].active_type != 2){
+                        if(results.active_type != "2"){
                             let secret = decoded.result.secret_2fa;
 
                             const tokenValidates = speakeasy.totp.verify({
@@ -1569,7 +1581,9 @@ module.exports = {
                                 })
                             }
                         }else{
-                            if(results[0].code_telegram != token){
+                           
+                            if(results.code_telegram != token.toString()){
+                              
                                 return res.json({
                                     success: 6,
                                     message: "Google 2FA"
@@ -1640,7 +1654,8 @@ module.exports = {
                     email: body.email,
                     nick_name: results.nick_name,
                     ip: ip.clientIp,
-                    userAgent: s
+                    userAgent: s,
+                    code: makeIdNumber(6)
                 }
 
                 //if(!results.active_2fa){
