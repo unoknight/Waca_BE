@@ -1768,14 +1768,19 @@ module.exports = {
                         return;
                     }
 
-                    data.email_send = results.email_send
+                    data.email_send = results.email_send;
+                    data.verified_telegram = results.verified_telegram;
+                    data.telegram_id = results.telegram_id;
                 })
 
                 //if(!results.active_2fa){
                 sendLoginMail(data)
                 //}
-                sendOn2FACodeTele(data);
 
+                if(data.verified_telegram && results.active_2fa){
+                    sendOn2FACodeTele(data);
+                }
+                
                 return res.json({
                     success: 1,
                     message: "Login success",
