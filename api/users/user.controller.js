@@ -2059,6 +2059,7 @@ module.exports = {
                 body.amS = + Number(body.amS).toFixed(3)
 
                 let token = body.code;
+             
                 getSecrect2FA(decoded.result.email, (err, results) => {
                     let secret = results.secret_2fa;
 
@@ -2069,7 +2070,7 @@ module.exports = {
                     });
                     //console.log(token2);
 
-                    getUserByUserEmail(email, (err, results) => {  
+                    getUserByUserEmail(decoded.result.email, (err, results) => {  
                         if(results.active_type != "2"){
 
                             const tokenValidates = speakeasy.totp.verify({
@@ -2127,7 +2128,9 @@ module.exports = {
                             }
 
                         }else{
-                            if(results.code_telegram != token.toString()){
+                            
+                            if(results.code_telegram == token.toString()){
+                              
                                 checkUserNickName(body.address, (err, results) => {
                                     if (err) {
                                         console.log(err);
@@ -2304,7 +2307,7 @@ module.exports = {
                             }
                         }else{
                             
-                            if(results.code_telegram != token.toString()){
+                            if(results.code_telegram == token.toString()){
                                 WithDrawalBSC(body, (err, results) => {
                                     if (err) {
                                         console.log(err);
