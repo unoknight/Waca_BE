@@ -10,7 +10,7 @@ const bot = new Telegraf("6431968423:AAFwPoE6L9eJMhV1p6hXknUUwpGNAzrp2O8");
 
 function makeid(length) {
     var result = [];
-    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    var characters = '0123456789';
     var charactersLength = characters.length;
     for (var i = 0; i < length; i++) {
         result.push(characters.charAt(Math.floor(Math.random() *
@@ -46,7 +46,7 @@ bot.command('help', ctx => {
 	str += "/help - Help \n";
 	str += "/verify - Enter phone_number/password: Verify <a href='https://wacatrade.com/'>Wacatrade.com</a> account with this telegram account to get and received authentication code \n";
 	str += "- example: /verify example@gmail.com/456123\n";
-	str += "- **note: phone_number with dialCode(855,84, ...)";
+	str += "- **note: phone_number with dialCode(855,84, ...) \n";
 	str += "/code - Get verify code \n";
 	str += "/status - View <a href='https://wacatrade.com/'>Wacatrade.com</a> account verification.\n";
 	str += "/clear - remove account linked from <a href='https://wacatrade.com/'>Wacatrade.com</a> .\n";
@@ -153,7 +153,7 @@ bot.command('code', async ctx => {
 
 	db.query(`UPDATE users SET code_telegram = ?, generate_code_time = NOW() WHERE email = ?`, [id,ctx.chat.id,user[0].email]);
 	
-	let str = `Verify Code is: ${id} `;
+	let str = `Verify Code is: <strong>${id}</strong>`;
 	str += `\n  The code is valid for a time and 10 minutes`;
 	str += `\n  If you dif not request the code, your account may be compromised, please chnage your password as soon as possible.`;
 	bot.telegram.sendMessage(ctx.chat.id, str, {
