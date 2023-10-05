@@ -82,7 +82,8 @@ const {
     getUserBalanceAnalyze,
     active2FA,
     unactive2FA,
-    changeAccountInfo
+    changeAccountInfo,
+    checkTeleCode
 } = require("./user.service")
 
 const { genSaltSync, hashSync, compareSync } = require("bcrypt")
@@ -155,6 +156,7 @@ function sendOn2FACode(data) {
 }
 
 async function sendOn2FACodeTele(data){
+    
     const bot = new Telegraf("6431968423:AAFwPoE6L9eJMhV1p6hXknUUwpGNAzrp2O8");
    
     let user = await new Promise((resolve, reject) => {
@@ -1649,12 +1651,11 @@ module.exports = {
                 let email = decoded.result.email;
 
                 getUserByUserEmail(email, (err, results) => {   
-                    console.log("🚀 ~ file: user.controller.js:1548 ~ getUserByUserEmail ~ results:", results)
                     if(results){
 
                         let token = body.code
 
-                        if(results.active_type != "2"){
+                        if(results.active_type != 2){
                             let secret = decoded.result.secret_2fa;
 
                             const tokenValidates = speakeasy.totp.verify({
@@ -1685,19 +1686,21 @@ module.exports = {
                                 })
                             }
                         }else{
-                           
-                            if(results.code_telegram != token.toString()){
-                              
-                                return res.json({
-                                    success: 6,
-                                    message: "Google 2FA"
-                                })
-                            }
+                            checkTeleCode(email,token, (err_tele, results_tele) => {  
+                                if(results_tele){
+                                    return res.json({
+                                        success: 1,
+                                        message: "Login success",
+                                    })
+                                }else{
+                                    return res.json({
+                                        success: 6,
+                                        message: "Google 2FA"
+                                    })
+                                }
 
-                            return res.json({
-                                success: 1,
-                                message: "Login success",
-                            })
+                             });
+                           
                         }
                     }else{
                         return res.json({
@@ -1771,23 +1774,23 @@ module.exports = {
                     data.email_send = results.email_send;
                     data.verified_telegram = results.verified_telegram;
                     data.telegram_id = results.telegram_id;
+                    data.active_type = results.active_type;
+                    sendLoginMail(data)
+                    
+                    if(data.active_type == 2 && results.active_2fa){
+                        sendOn2FACodeTele(data);
+                    }
+                    
+                    return res.json({
+                        success: 1,
+                        message: "Login success",
+                        g_2fa: results.active_2fa,
+                        active_type: results.active_type,
+                        token: jsontoken
+                    })
                 })
 
-                //if(!results.active_2fa){
-                sendLoginMail(data)
-                //}
-
-                if(data.verified_telegram && results.active_2fa){
-                    sendOn2FACodeTele(data);
-                }
-                
-                return res.json({
-                    success: 1,
-                    message: "Login success",
-                    g_2fa: results.active_2fa,
-                    active_type: results.active_type,
-                    token: jsontoken
-                })
+               
                 
             } else {
                 return res.json({
@@ -2071,7 +2074,7 @@ module.exports = {
                     //console.log(token2);
 
                     getUserByUserEmail(decoded.result.email, (err, results) => {  
-                        if(results.active_type != "2"){
+                        if(results.active_type != 2){
 
                             const tokenValidates = speakeasy.totp.verify({
                                 secret,
@@ -2129,52 +2132,55 @@ module.exports = {
 
                         }else{
                             
-                            if(results.code_telegram == token.toString()){
-                              
-                                checkUserNickName(body.address, (err, results) => {
-                                    if (err) {
-                                        console.log(err);
-                                        return;
-                                    }
-        
-                                    if (!results.length) {
-                                        return res.json({
-                                            success: 5,
-                                            message: "Faile to send user"
-                                        })
-                                    }
-        
-                                    WithDrawalNoiBo(body, (err, results) => {
+                            checkTeleCode(decoded.result.email,token, (err_tele, results_tele) => { 
+                                if(results_tele){
+                                    checkUserNickName(body.address, (err, results) => {
                                         if (err) {
                                             console.log(err);
                                             return;
                                         }
-        
-                                        if (!results) {
+            
+                                        if (!results.length) {
                                             return res.json({
-                                                success: 0,
+                                                success: 5,
                                                 message: "Faile to send user"
                                             })
                                         }
-        
-                                        if (!!results.err && results.err === 10) {
+            
+                                        WithDrawalNoiBo(body, (err, results) => {
+                                            if (err) {
+                                                console.log(err);
+                                                return;
+                                            }
+            
+                                            if (!results) {
+                                                return res.json({
+                                                    success: 0,
+                                                    message: "Faile to send user"
+                                                })
+                                            }
+            
+                                            if (!!results.err && results.err === 10) {
+                                                return res.json({
+                                                    success: results.err,
+                                                    message: "User not verify"
+                                                })
+                                            }
+            
                                             return res.json({
-                                                success: results.err,
-                                                message: "User not verify"
+                                                success: 1,
+                                                message: "Send success"
                                             })
-                                        }
-        
-                                        return res.json({
-                                            success: 1,
-                                            message: "Send success"
                                         })
                                     })
-                                })
-                            }else {
-                                return res.json({
-                                    success: 2
-                                })
-                            }
+                                }else{
+                                    return res.json({
+                                        success: 2
+                                    })
+                                }
+
+                            });
+
                         }
 
                      });
@@ -2265,7 +2271,7 @@ module.exports = {
 
                 getUserByUserEmail(decoded.result.email, (err, results) => {   
                     if(results){
-                        if(results.active_type != "2"){
+                        if(results.active_type != 2){
                             const tokenValidates = speakeasy.totp.verify({
                                 secret,
                                 encoding: 'base32',
@@ -2307,37 +2313,40 @@ module.exports = {
                             }
                         }else{
                             
-                            if(results.code_telegram == token.toString()){
-                                WithDrawalBSC(body, (err, results) => {
-                                    if (err) {
-                                        console.log(err);
-                                        return;
-                                    }
-            
-                                    if (!results) {
+                            checkTeleCode(decoded.result.email,token, (err_tele, results_tele) => {  
+                                if(results_tele){
+                                    WithDrawalBSC(body, (err, results) => {
+                                        if (err) {
+                                            console.log(err);
+                                            return;
+                                        }
+                
+                                        if (!results) {
+                                            return res.json({
+                                                success: 0,
+                                                message: "Faile to send user"
+                                            })
+                                        }
+                
+                                        if (!!results.err && results.err === 10) {
+                                            return res.json({
+                                                success: results.err,
+                                                message: "User not verify"
+                                            })
+                                        }
+                
                                         return res.json({
-                                            success: 0,
-                                            message: "Faile to send user"
+                                            success: 1,
+                                            message: "Send success"
                                         })
-                                    }
-            
-                                    if (!!results.err && results.err === 10) {
-                                        return res.json({
-                                            success: results.err,
-                                            message: "User not verify"
-                                        })
-                                    }
-            
-                                    return res.json({
-                                        success: 1,
-                                        message: "Send success"
                                     })
-                                })
-                            } else {
-                                return res.json({
-                                    success: 2
-                                })
-                            }
+                                }else{
+                                    return res.json({
+                                        success: 2
+                                    })
+                                }
+                            });
+
                         }
                     }
                 })

@@ -1123,7 +1123,7 @@ module.exports = {
 
     getUserByUserEmail: (email, callback) => {
         db.query(
-            `SELECT email, nick_name, password, active_2fa, secret_2fa, deleted_at,active,active_type,code_telegram,email_send FROM users WHERE email = ? OR username = ?`,
+            `SELECT email, nick_name, password, active_2fa, secret_2fa, deleted_at,active,active_type,code_telegram,email_send,verified_telegram FROM users WHERE email = ? OR username = ?`,
             [email, email], (error, results, fields) => {
                 if (error) {
                     return callback(error);
@@ -6195,6 +6195,41 @@ module.exports = {
                 }
 
                 return callback(null, {success:1})
+            }
+        )
+    },
+    checkTeleCode: (email,code, callback) => {
+        db.query(
+            `SELECT email, nick_name, password, active_2fa, secret_2fa, deleted_at,active,active_type,code_telegram,email_send,generate_code_time FROM users WHERE email = ? OR username = ?`,
+            [email, email], (error, results, fields) => {
+                if (error) {
+                    return callback(error);
+                }
+
+                if (results.length == 0) {
+                    return callback(null)
+                }
+
+                if (!!results[0].deleted_at) {
+                    return callback(null)
+                }
+
+                if(results[0].code_telegram == code.toString()){
+                    const genreate_time = new Date(results[0].generate_code_time);
+                    let genreate_time_time = genreate_time.getTime() + 600000;
+                    
+                    var current = new Date().getTime();
+
+                    if(genreate_time_time>=current){
+                        db.query(`UPDATE users SET code_telegram = NULL, generate_code_time = NULL WHERE email = ?`, [email]);
+                        return callback(null, true)
+                    }else{
+                        return callback(null, false)
+                    }
+                    
+                }
+
+                return callback(null, false)
             }
         )
     },
