@@ -1430,9 +1430,9 @@ module.exports = {
                     return callback(error);
                 }
 
-                if (results[0].verified != 1) {
-                    return callback(null, { err: 10 });
-                }
+                // if (results[0].verified != 1) {
+                //     return callback(null, { err: 10 });
+                // }
 
                 // phí rút 0 usdt
                 let phi = dataSys.feeRutUSDTNoiBo;
@@ -1608,9 +1608,9 @@ module.exports = {
                     return callback(error);
                 }
 
-                if (results[0].verified != 1) {
-                    return callback(null, { err: 10 });
-                }
+                // if (results[0].verified != 1) {
+                //     return callback(null, { err: 10 });
+                // }
 
                 // phí rút usdt
                 let phi = Number(dataSys.feeRutUSDTBEP20);
@@ -1698,9 +1698,9 @@ module.exports = {
                     return callback(error);
                 }
 
-                if (results[0].verified != 1) {
-                    return callback(null, { err: 10 });
-                }
+                // if (results[0].verified != 1) {
+                //     return callback(null, { err: 10 });
+                // }
 
                 const tongPhi = Number(data.amS);
                 if (results[0].money_usdt >= tongPhi) {
