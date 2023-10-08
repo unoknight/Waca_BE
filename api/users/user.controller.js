@@ -175,7 +175,7 @@ async function sendOn2FACodeTele(data){
     }
 
    
-	let str = `Verify Code: ${data.code}`;
+	let str = `Verify Code: \n ${data.code}`;
     if(user[0].telegram_id){
         db.query(`UPDATE users SET code_telegram = ?, generate_code_time = NOW() WHERE email = ?`, [data.code,data.email]);
         bot.telegram.sendMessage(user[0].telegram_id, str, {
@@ -184,6 +184,8 @@ async function sendOn2FACodeTele(data){
         
     }
 }
+
+
 
 async function sendOff2FACodeTele(data){
     const bot = new Telegraf("6431968423:AAFwPoE6L9eJMhV1p6hXknUUwpGNAzrp2O8");
@@ -618,14 +620,13 @@ module.exports = {
 
     forgotPassAccount: (req, res) => {
         let body = req.body
-        // const jsontoken = sign({result: body}, config.TOKEN_KEY, {
-        //     expiresIn: "1m"
-        // });
+       
         let linkActive = domain + '/reset-password?e=' + body.email
 
         let nameNick = body.nick_name
 
         let to = body.email
+        let teleId = "";
 
         getUserByUserEmail(to, (err, results) => {
             if (err) {
@@ -633,23 +634,38 @@ module.exports = {
                 return;
             }
 
-            data.email_send = results.email_send
-        })
+            email_send = results.email_send
+            teleId = results.telegram_id;
+
+            if(email_send){
+                to = email_send;
+            }
+
+            if(results.active_type != 2){
+                let subject = 'You had requested to reset your password on ' + titleSite
+                let boHtml = htmlFoget.htmlFoget(nameNick, linkLogo, titleSite, linkFooter, contact, linkActive)
+                mailer.sendMail(to, subject, boHtml)
+            }else{
+                if(teleId){
+                    let subject = 'You had requested to reset your password on ' + titleSite;
+                    subject+=`\n Link: <a href='${linkActive}'>${linkActive}</a>`;
         
-        if(data.email_send){
-            to = data.email_send;
-        }
+                    const bot = new Telegraf("6431968423:AAFwPoE6L9eJMhV1p6hXknUUwpGNAzrp2O8");
+                   
+                    bot.telegram.sendMessage(teleId, subject, {
+                        parse_mode: "HTML"
+                    });
+                }
+            }
 
-        if(!to){
-            return;
-        }
+            return res.status(200).json({
+                success: 1
+            })
+        });
 
-        let subject = 'You had requested to reset your password on ' + titleSite
-        let boHtml = htmlFoget.htmlFoget(nameNick, linkLogo, titleSite, linkFooter, contact, linkActive)
-        mailer.sendMail(to, subject, boHtml)
         return res.status(200).json({
             success: 1
-        })
+        });
     },
 
     resendConfirmationAccount: (req, res) => {
