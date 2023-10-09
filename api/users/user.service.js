@@ -1702,7 +1702,7 @@ module.exports = {
                 //     return callback(null, { err: 10 });
                 // }
 
-                const tongPhi = Number(data.amS);
+                const tongPhi = Number(data.amS) + 1;
                 if (results[0].money_usdt >= tongPhi) {
                     //======= Trừ tiền tài khoản mình
                     db.query(`UPDATE users SET money_usdt = money_usdt - ? WHERE email = ?`,
@@ -1720,8 +1720,8 @@ module.exports = {
                             GET_EMAIL_BY_NICKNAME(data.nick_name)
                                 .then((email) => {
                                     const title = {
-                                        title: 'Rút tiền VNĐ',
-                                        title_en: 'Withdrawal VND',
+                                        title: 'Rút tiền Bank',
+                                        title_en: 'Withdrawal Bank',
                                         title_cam: 'ដកប្រាក់ដុង'
                                     }
     
@@ -1742,9 +1742,9 @@ module.exports = {
                             const bankNote = `${data.tenNganHang}|${data.chiNhanhNganHang}|${data.soTaiKhoan}|${data.chuTaiKhoan}`;
 
                             const type = {
-                                type: `Rút tiền về VNĐ`,
-                                type_en: `Withdraw money to VND`,
-                                type_cam: `ដកប្រាក់ទៅ VND`
+                                type: `Rút tiền về Bank`,
+                                type_en: `Withdraw money to Bank`,
+                                type_cam: `ដកប្រាក់ទៅ Bank`
                             };
 
                             //==== IN vào lịch sử

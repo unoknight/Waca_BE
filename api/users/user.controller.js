@@ -2388,47 +2388,101 @@ module.exports = {
                 body['email'] = decoded.result.email;
                 body['nick_name'] = decoded.result.nick_name;
 
-                let token = body.code;
-                let secret = decoded.result.secret_2fa;
-                const tokenValidates = speakeasy.totp.verify({
-                    secret,
-                    encoding: 'base32',
-                    token,
-                    window: 2,
-                    //step:60
-                });
-                // body.f bỏ qua 2fa
-                if (tokenValidates || body.f) {
-                    WithDrawalVND(body, (err, results) => {
-                        if (err) {
-                            console.log(err);
-                            return;
-                        }
+                getUserByUserEmail(decoded.result.email, (err, results) => {   
+                    if(results){
+                        let token = body.code;
+                        if(results.active_type != 2){
+                            let secret = decoded.result.secret_2fa;
 
-                        if (!results) {
-                            return res.json({
-                                success: 0,
-                                message: "Faile to send user"
-                            })
-                        }
+                            const tokenValidates = speakeasy.totp.verify({
+                                secret,
+                                encoding: 'base32',
+                                token,
+                                window: 2,
+                                //step:60
+                            });
+                            // body.f bỏ qua 2fa
+                            if (tokenValidates || body.f) {
+                                WithDrawalVND(body, (err, results) => {
+                                    if (err) {
+                                        console.log(err);
+                                        return;
+                                    }
+            
+                                    if (!results) {
+                                        return res.json({
+                                            success: 0,
+                                            message: "Faile to send user"
+                                        })
+                                    }
+            
+                                    if (!!results.err && results.err === 10) {
+                                        return res.json({
+                                            success: results.err,
+                                            message: "User not verify"
+                                        })
+                                    }
+            
+                                    return res.json({
+                                        success: 1,
+                                        message: "Send success"
+                                    })
+                                })
+                            } else {
+                                return res.json({
+                                    success: 2
+                                })
+                            }
+                        }else{
+                            checkTeleCode(decoded.result.email,token, (err_tele, results_tele) => {  
+                                if(results_tele){
+                                    WithDrawalVND(body, (err, results) => {
+                                        if (err) {
+                                            console.log(err);
+                                            return;
+                                        }
+                
+                                        if (!results) {
+                                            return res.json({
+                                                success: 0,
+                                                message: "Faile to send user"
+                                            })
+                                        }
+                
+                                        if (!!results.err && results.err === 10) {
+                                            return res.json({
+                                                success: results.err,
+                                                message: "User not verify"
+                                            })
+                                        }
+                
+                                        return res.json({
+                                            success: 1,
+                                            message: "Send success"
+                                        })
+                                    })
+                                }else{
+                                    return res.json({
+                                        success: 2,
+                                        message: "Google 2FA"
+                                    })
+                                }
 
-                        if (!!results.err && results.err === 10) {
-                            return res.json({
-                                success: results.err,
-                                message: "User not verify"
-                            })
+                             });
                         }
-
+                    }else{
                         return res.json({
-                            success: 1,
-                            message: "Send success"
+                            success: 2,
+                            message: "Google 2FA"
                         })
-                    })
-                } else {
-                    return res.json({
-                        success: 2
-                    })
-                }
+                    }
+                })
+
+                
+
+
+
+               
             }
         })
     },
