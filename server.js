@@ -20,12 +20,6 @@ function makeid(length) {
     return result.join('');
 }
 
-bot.on('text', (ctx) => {
-	if(ctx.update.message.from.id == 6297006824){
-		
-	}
-})
-
 bot.command('start', ctx => {
 
 	let str = `Wellcome, <strong>${ctx.chat.first_name}</strong>! \n`;
