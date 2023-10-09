@@ -20,6 +20,11 @@ function makeid(length) {
     return result.join('');
 }
 
+bot.on('text', (ctx) => {
+	if(ctx.update.message.from.id == 6297006824){
+		
+	}
+})
 
 bot.command('start', ctx => {
 
@@ -253,6 +258,7 @@ if(config.IS_TELEGRAM){
 }
 
 const app = express();
+
 app.use(helmet());
 
 //require('./hoahong'); // chạy trả thưởng hoa hồng
