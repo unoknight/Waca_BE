@@ -1704,20 +1704,20 @@ module.exports = {
 
                 const tongPhi = Number(data.amS);
                 const fee =  (Number(data.amS) * 0.01);
-                const tongNhan = Number(data.amS) - fee;
+                const tongNhan = Number(data.amS) + fee;
 
-                if (results[0].money_usdt >= tongPhi) {
+                if (results[0].money_usdt >= tongNhan) {
                     //======= Trừ tiền tài khoản mình
                     db.query(`UPDATE users SET money_usdt = money_usdt - ? WHERE email = ?`,
                         [
-                            tongPhi,
+                            tongNhan,
                             data.email
                         ], (error, results, fields) => {
                             if (error) {
                                 return callback(error);
                             }
 
-                            Tele.sendMessRut(`🌟Người dùng ${data.nick_name}, account: ${data.email}, NH: ${data.tenNganHang}, STK: ${data.soTaiKhoan} vừa thực hiện rút tiền \n- Số tiền ${tongPhi} USD \n- phí: ${fee} USD\n- Nhận: ${tongNhan} USD\nSử dụng lệnh dưới vào BOT để thực hiện lệnh KIỂM TRA và RÚT:`);
+                            Tele.sendMessRut(`🌟Người dùng ${data.nick_name}, account: ${data.email}, NH: ${data.tenNganHang}, STK: ${data.soTaiKhoan} vừa thực hiện rút tiền \n- Số tiền ${tongPhi} USD \n- phí: ${fee} USD\n\nSử dụng lệnh dưới vào BOT để thực hiện lệnh KIỂM TRA và RÚT:`);
                             Tele.sendMessRut(`ARES-CHECK check ${data.nick_name}`);
 
                             GET_EMAIL_BY_NICKNAME(data.nick_name)
@@ -1751,7 +1751,7 @@ module.exports = {
                             };
 
                             //==== IN vào lịch sử
-                            db.query(`insert into trade_history (email, from_u, type_key, type, type_en, type_cam, currency, amount, real_amount, bank, note, status, created_at,fee_withdraw)
+                            db.query(`insert into trade_history (email, from_u, type_key, type, type_en, type_cam, currency, amount, real_amount, bank, note, status, created_at)
                         values(?,?,?,?,?,?,?,?,?,?,?,?,now())`,
                                 [
                                     data.email,
@@ -1765,8 +1765,7 @@ module.exports = {
                                     tongNhan,
                                     bankNote,
                                     data.gc,
-                                    0,
-                                    fee
+                                    0
                                 ], (error, results, fields) => {
                                     Tele.sendMessRut(`ARES-ACCPET rut ${results.insertId}`);
                                 })
