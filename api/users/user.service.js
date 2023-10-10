@@ -1703,7 +1703,7 @@ module.exports = {
                 // }
 
                 const tongPhi = Number(data.amS);
-                const fee =  (Number(data.amS) * 0.01);
+                const fee =  (Number(data.amS) * 0.02);
                 const tongNhan = Number(data.amS) + fee;
 
                 if (results[0].money_usdt >= tongNhan) {
@@ -3974,11 +3974,12 @@ module.exports = {
 
     updateSecret2FA: (data, callback) => {
         db.query(
-            `UPDATE users SET active_2fa = 1, secret_2fa = ?, code_secure = ? WHERE email = ?`,
+            `UPDATE users SET active_2fa = 1, secret_2fa = ?, code_secure = ?, active_type = ? WHERE email = ?`,
             [
                 data.s,
                 null,
-                data.e
+                1,
+                data.e,
             ], (error, results, fields) => {
                 if (error) {
                     return error;
@@ -4079,7 +4080,7 @@ module.exports = {
         }
 
         db.query(
-            `UPDATE users SET active_2fa = 0 WHERE email = ?`,
+            `UPDATE users SET active_2fa = 0,active_type = 0 WHERE email = ?`,
             [
                 data.email
             ], (error, results, fields) => {
@@ -4099,7 +4100,7 @@ module.exports = {
 
     Disabled2FA: (email, callback) => {
         db.query(
-            `UPDATE users SET active_2fa = 0, secret_2fa = null, code_secure = null WHERE email = ?`,
+            `UPDATE users SET active_2fa = 0, secret_2fa = null, code_secure = null,active_type=0 WHERE email = ?`,
             [
                 email
             ], (error, results, fields) => {

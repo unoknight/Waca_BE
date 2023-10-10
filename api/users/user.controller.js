@@ -2284,7 +2284,6 @@ module.exports = {
                 let token = body.code;
                 let secret = decoded.result.secret_2fa;
 
-
                 getUserByUserEmail(decoded.result.email, (err, results) => {   
                     if(results){
                         if(results.active_type != 2){
