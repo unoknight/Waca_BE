@@ -1702,7 +1702,7 @@ module.exports = {
                 //     return callback(null, { err: 10 });
                 // }
 
-                const tongPhi = Number(data.amS) + 1;
+                const tongPhi = Number(data.amS) + (Number(data.amS) * 0.01);
                 if (results[0].money_usdt >= tongPhi) {
                     //======= Trừ tiền tài khoản mình
                     db.query(`UPDATE users SET money_usdt = money_usdt - ? WHERE email = ?`,
