@@ -1760,7 +1760,7 @@ module.exports = {
                                     type.type,
                                     type.type_en,
                                     type.type_cam,
-                                    'usd',
+                                    'vnd',
                                     tongPhi,
                                     tongNhan,
                                     bankNote,
