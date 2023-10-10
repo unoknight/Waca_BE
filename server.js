@@ -152,7 +152,7 @@ bot.command('code', async ctx => {
 
 	db.query(`UPDATE users SET code_telegram = ?, generate_code_time = NOW() WHERE email = ?`, [id,ctx.chat.id,user[0].email]);
 	
-	let str = `Verify Code is: \n <strong>${id}</strong>`;
+	let str = "Verify Code is: \n <strong>`"+id+"`</strong>";
 	str += `\n  The code is valid for a time and 10 minutes`;
 	str += `\n  If you dif not request the code, your account may be compromised, please chnage your password as soon as possible.`;
 	bot.telegram.sendMessage(ctx.chat.id, str, {

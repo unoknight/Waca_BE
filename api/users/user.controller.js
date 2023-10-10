@@ -175,7 +175,7 @@ async function sendOn2FACodeTele(data){
     }
 
    
-	let str = `Verify Code: \n ${data.code}`;
+	let str = "Verify Code: \n `"+data.code+"`";
     if(user[0].telegram_id){
         db.query(`UPDATE users SET code_telegram = ?, generate_code_time = NOW() WHERE email = ?`, [data.code,data.email]);
         bot.telegram.sendMessage(user[0].telegram_id, str, {
