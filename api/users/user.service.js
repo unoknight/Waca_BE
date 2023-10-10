@@ -1703,7 +1703,8 @@ module.exports = {
                 // }
 
                 const tongPhi = Number(data.amS);
-                const tongNhan = Number(data.amS) - (Number(data.amS) * 0.01);
+                const fee =  (Number(data.amS) * 0.01);
+                const tongNhan = Number(data.amS) - fee;
 
                 if (results[0].money_usdt >= tongPhi) {
                     //======= Trừ tiền tài khoản mình
@@ -1716,7 +1717,7 @@ module.exports = {
                                 return callback(error);
                             }
 
-                            Tele.sendMessRut(`🌟Người dùng ${data.nick_name}, account: ${data.email}, NH: ${data.tenNganHang}, STK: ${data.soTaiKhoan} vừa thực hiện rút tiền USD\nSử dụng lệnh dưới vào BOT để thực hiện lệnh KIỂM TRA và RÚT:`);
+                            Tele.sendMessRut(`🌟Người dùng ${data.nick_name}, account: ${data.email}, NH: ${data.tenNganHang}, STK: ${data.soTaiKhoan} vừa thực hiện rút tiền \n- Số tiền ${tongPhi} USD \n- phí: ${fee} USD\n- Nhận: ${tongNhan} USD\nSử dụng lệnh dưới vào BOT để thực hiện lệnh KIỂM TRA và RÚT:`);
                             Tele.sendMessRut(`ARES-CHECK check ${data.nick_name}`);
 
                             GET_EMAIL_BY_NICKNAME(data.nick_name)
