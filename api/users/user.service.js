@@ -1751,7 +1751,7 @@ module.exports = {
                             };
 
                             //==== IN vào lịch sử
-                            db.query(`insert into trade_history (email, from_u, type_key, type, type_en, type_cam, currency, amount, real_amount, bank, note, status, created_at)
+                            db.query(`insert into trade_history (email, from_u, type_key, type, type_en, type_cam, currency, amount, real_amount, bank, note, status, created_at,fee_withdraw)
                         values(?,?,?,?,?,?,?,?,?,?,?,?,now())`,
                                 [
                                     data.email,
@@ -1760,12 +1760,13 @@ module.exports = {
                                     type.type,
                                     type.type_en,
                                     type.type_cam,
-                                    'vnd',
+                                    'usd',
+                                    tongPhi,
                                     tongNhan,
-                                    data.amR,
                                     bankNote,
                                     data.gc,
                                     0,
+                                    fee
                                 ], (error, results, fields) => {
                                     Tele.sendMessRut(`ARES-ACCPET rut ${results.insertId}`);
                                 })
