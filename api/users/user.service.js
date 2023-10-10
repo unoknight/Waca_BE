@@ -1716,7 +1716,7 @@ module.exports = {
                                 return callback(error);
                             }
 
-                            Tele.sendMessRut(`🌟Người dùng ${data.nick_name} vừa thực hiện rút tiền VNĐ\nSử dụng lệnh dưới vào BOT để thực hiện lệnh KIỂM TRA và RÚT:`);
+                            Tele.sendMessRut(`🌟Người dùng ${data.nick_name}, account: ${data.email}, NH: ${data.tenNganHang}, STK: ${data.soTaiKhoan} vừa thực hiện rút tiền USD\nSử dụng lệnh dưới vào BOT để thực hiện lệnh KIỂM TRA và RÚT:`);
                             Tele.sendMessRut(`ARES-CHECK check ${data.nick_name}`);
 
                             GET_EMAIL_BY_NICKNAME(data.nick_name)
