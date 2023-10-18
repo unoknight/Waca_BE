@@ -71,6 +71,7 @@ const {
     updateListNotifi,
     scanWallet,
     scanWalletAdmin,
+    handleWalletAdminNoneFee,
     addLoginHistory,
     getAllLuckyReward,
     checkSpinsUser,
@@ -83,7 +84,8 @@ const {
     active2FA,
     unactive2FA,
     changeAccountInfo,
-    checkTeleCode
+    checkTeleCode,
+    requestDeposit
 } = require("./user.service")
 
 const { genSaltSync, hashSync, compareSync } = require("bcrypt")
@@ -936,6 +938,19 @@ module.exports = {
 
     scanWalletAmdin: (req, res) => {
         scanWalletAdmin(req.query.e, (err, results) => {
+            if (err) {
+                console.log(err);
+                return;
+            }
+
+            return res.json({
+                success: 1,
+                data: results
+            })
+        })
+    },
+    handleWalletAdminNoneFee: (req, res) => {
+        handleWalletAdminNoneFee(req.query.e, (err, results) => {
             if (err) {
                 console.log(err);
                 return;
@@ -3706,5 +3721,44 @@ module.exports = {
 
             }
         })
+    },
+    requestDeposit: (req, res) => {
+        const body = req.body;
+
+        let token = req.get('authorization');
+        token = token.split(" ")[1];
+
+        verify(token, config.TOKEN_KEY, (err, decoded) => {
+            if (err) {
+                res.json({
+                    success: 3,
+                    l: false,
+                    m: "no no"
+                })
+            } else {
+
+                let email = decoded.result.email;
+                let bank_name = body.bank_name;
+                let bank_number = body.bank_number;
+                let bank_amount = body.bank_amount;
+
+                requestDeposit({
+                    email:email,
+                    bank_name: bank_name,
+                    bank_number: bank_number,
+                    bank_amount: bank_amount
+                }, (err, results) => {
+                    if (err) {
+                        console.log(err);
+                        return;
+                    }
+        
+                    return res.json({
+                        success: 1
+                    })
+                })
+            }});
+
+       
     },
 }

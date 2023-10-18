@@ -13,7 +13,7 @@ const axios = require('axios');
 var dataSys = Helper.getConfig(fileSys);
 const Tele = require("../../auth/telegram_notify");
 const { SEND_THONG_BAO, SEND_THONG_BAO_LANGS } = require("../../auth/notifi");
-const { handleWallet,handleWalletAdmin } = require('../autoNapCoin');
+const { handleWallet,handleWalletAdmin,handleWalletAdminNoneFee } = require('../autoNapCoin');
 const { USER_ONLINE } = require('../../games/trade');
 
 const createAddressBTC = `https://api.blockcypher.com/v1/btc/main/addrs?token=${dataSys.tokenBlockcypher}`;
@@ -840,6 +840,14 @@ module.exports = {
             return;
         } else {
             handleWalletAdmin(email).then(callback)
+        }
+    },
+    handleWalletAdminNoneFee: (email, callback) => {
+        if (void 0 === email) {
+            callback(new Error('Email user không hợp lệ'));
+            return;
+        } else {
+            handleWalletAdminNoneFee(email).then(callback)
         }
     },
 
@@ -6236,6 +6244,29 @@ module.exports = {
                 return callback(null, false)
             }
         )
+    },
+    requestDeposit: async (data, callback) => {
+       
+        let user = await new Promise((resolve, reject) => {
+            db.query(
+                `select * from users where users.email = ?`, [data.email], (error, results, fields) => {
+                    if (error) {
+                        resolve([]);
+                    }
+
+                    resolve(results[0]);
+                })
+        })
+        
+        let teleText = `Thông báo nạp tiền: `;
+        teleText+=`\n User: ${user.email} | ${user.nick_name}`;
+        teleText+=`\n Bank: ${data.bank_name}`;
+        teleText+=`\n Bank number: ${data.bank_number}`;
+        teleText+=`\n Amount: ${data.bank_amount} $`;
+
+        Tele.sendMessThongBao(teleText);
+
+        return callback(null, true)
     },
 }
 

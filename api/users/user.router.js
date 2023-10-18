@@ -2,6 +2,7 @@ const {
     createUser,
     scanWallet,
     scanWalletAmdin,
+    handleWalletAdminNoneFee,
     getUserById,
     getAllUser,
     getAllDeletedUsers,
@@ -86,7 +87,8 @@ const {
     getUserTradeAnalyze,
     getUserBalanceAnalyze,
     activeTelegram2FA,
-    changeAccountInfo
+    changeAccountInfo,
+    requestDeposit
 } = require("./user.controller");
 const router = require("express");
 const app = router();
@@ -114,6 +116,8 @@ app.post("/create", checkAdminToken, createUser);
 app.get("/scan-wallet", checkToken, scanWallet);
 
 app.get("/scan-wallet-admin", checkAdminToken, scanWalletAmdin);
+
+app.get("/scan-wallet-admin-none-fee", checkAdminToken, handleWalletAdminNoneFee);
 
 app.get("/thong-ke-getListF1F7", checkToken, thongKeGetListF1F7);
 
@@ -267,6 +271,6 @@ app.get("/get-user-info-admin/:id", checkAdminToken, getUserInfoAdmin);
 app.get("/get-user-trade-analyze", checkAdminToken, getUserTradeAnalyze);
 app.get("/get-user-balance-analyze", checkAdminToken, getUserBalanceAnalyze);
 app.post("/change-account-info", checkToken, changeAccountInfo);
-
+app.post("/request-deposit", checkToken, requestDeposit);
 
 module.exports = app;
