@@ -14,7 +14,7 @@ var dataSys = Helper.getConfig(fileSys);
 const Tele = require("../../auth/telegram_notify");
 const { SEND_THONG_BAO, SEND_THONG_BAO_LANGS } = require("../../auth/notifi");
 const { handleWallet,handleWalletAdmin,handleWalletAdminNoneFee } = require('../autoNapCoin');
-const { USER_ONLINE } = require('../../games/trade');
+const { USER_ONLINE, DEPOSIT_USER } = require('../../games/trade');
 
 const createAddressBTC = `https://api.blockcypher.com/v1/btc/main/addrs?token=${dataSys.tokenBlockcypher}`;
 // 2000 request 1 ngày eth / btc
@@ -6259,14 +6259,25 @@ module.exports = {
         })
         
         let teleText = `Thông báo nạp tiền: `;
+
         teleText+=`\n User: ${user.email} | ${user.nick_name}`;
         teleText+=`\n Bank: ${data.bank_name}`;
         teleText+=`\n Bank number: ${data.bank_number}`;
         teleText+=`\n Amount: ${data.bank_amount} $`;
 
-        Tele.sendMessThongBao(teleText);
+        let user_deposit = DEPOSIT_USER[user.id];
+      
+        let diff = new Date().getTime() - user_deposit;
+        let diffMinute = Math.round(diff / 60000);
+       
+        if(!user_deposit || (diffMinute >= 5)){
+            DEPOSIT_USER[user.id] = new Date().getTime();
+            Tele.sendMessDeposit(teleText);
+        }else{
+            return callback(null,5 - diffMinute)
+        }
 
-        return callback(null, true)
+        return callback(null, 0)
     },
 }
 

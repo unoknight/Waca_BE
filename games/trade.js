@@ -147,6 +147,7 @@ class PlayerData {
 }
 
 const users = {};
+const depositUsers = {};
 
 console.log(`- SV ${SEVER_GET} START \n- Server started port: ${config.PORT_TRADE}.`);
 
@@ -2551,4 +2552,4 @@ function getGameAvaiable() {
 }
 
 getGameAvaiable()
-module.exports = { USER_ONLINE: users }
+module.exports = { USER_ONLINE: users, DEPOSIT_USER: depositUsers }
