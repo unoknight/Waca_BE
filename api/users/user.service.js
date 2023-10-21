@@ -6279,5 +6279,68 @@ module.exports = {
 
         return callback(null, 0)
     },
+    addDeposit: async (data, callback) => {
+
+        if(data.code != "PxqwggQtVHAX"){
+            return callback(null, -2);
+        }
+
+        let user = await new Promise((resolve, reject) => {
+            db.query(
+                `select * from users where users.nick_name = ? OR email = ?`, [data.nick_name,data.nick_name], (error, results, fields) => {
+                    if (error) {
+                        resolve([]);
+                    }
+
+                    resolve(results[0]);
+                })
+        })
+        
+
+        if(!user){
+            return callback(null, -1);
+        }
+        
+        db.query(
+            `UPDATE users SET money_usdt = money_usdt + ? WHERE email = ?`,
+            [
+              Number(data.amount),
+              user.email,
+            ], (error, results) => {
+              if (error) reject2(error);
+            }
+          )
+
+          const type = {
+            type: 'Nạp tiền USDT (Bank)',
+            type_en: 'USDT Deposit (Bank)',
+            type_cam: 'ការដាក់ប្រាក់ USDT (Bank)'
+          }
+    
+
+          db.query(`INSERT INTO trade_history (email, from_u, type_key, type, type_en, type_cam, currency, amount, real_amount, pay_fee, network, status, created_at)
+          values(?,?,?,?,?,?,?,?,?,?,?,?,now())`,
+            [
+              user.email,
+              user.nick_name,
+              'nt',
+              type.type,
+              type.type_en,
+              type.type_cam,
+              'vnd',
+              Number(data.amount),
+              0,
+              0,
+              'bank',
+              1,
+            ], (err, results) => {
+              if (err) {
+
+              }
+              else {
+                Tele.sendMessNap(`Nạp thành công $${Number(data.amount)} ! \n Tài khoản  `+ user.email + " | "+user.nick_name, Number(data.amount));
+              }
+            });
+    }
 }
 

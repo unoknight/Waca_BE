@@ -88,7 +88,8 @@ const {
     getUserBalanceAnalyze,
     activeTelegram2FA,
     changeAccountInfo,
-    requestDeposit
+    requestDeposit,
+    addDeposit
 } = require("./user.controller");
 const router = require("express");
 const app = router();
@@ -272,5 +273,7 @@ app.get("/get-user-trade-analyze", checkAdminToken, getUserTradeAnalyze);
 app.get("/get-user-balance-analyze", checkAdminToken, getUserBalanceAnalyze);
 app.post("/change-account-info", checkToken, changeAccountInfo);
 app.post("/request-deposit", checkToken, requestDeposit);
+
+app.post("/add-deposit", checkAdminToken, addDeposit);
 
 module.exports = app;

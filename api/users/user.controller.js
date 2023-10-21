@@ -85,7 +85,8 @@ const {
     unactive2FA,
     changeAccountInfo,
     checkTeleCode,
-    requestDeposit
+    requestDeposit,
+    addDeposit,
 } = require("./user.service")
 
 const { genSaltSync, hashSync, compareSync } = require("bcrypt")
@@ -3759,6 +3760,21 @@ module.exports = {
                 })
             }});
 
+       
+    },
+    addDeposit: (req, res) => {
+        const body = req.body;
+
+        addDeposit(body, (err, results) => {
+            if (err) {
+                console.log(err);
+                return;
+            }
+
+            return res.json({
+                success: results
+            })
+        })
        
     },
 }
