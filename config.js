@@ -61,6 +61,6 @@ module.exports = {
 	TELEGRAM_NAP_ID: 'wacabot4',
 	TELEGRAM_BET_AMOUNT: 'wacabot3',
 	TELEGRAM_BET_THONG_BAO: 'wacabot2',
-	TELEGRAM_BET_PHIM_LENH: 'wacatradebotai',
+	TELEGRAM_BET_PHIM_LENH: 'wacabot1',
 	TELEGRAM_DEPOSIT: 'checkwc8',
 }
