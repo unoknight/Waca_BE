@@ -12,7 +12,8 @@ const {
     getShowDT,
     historyAllAddMoney,
     totalAddMoney,
-    doneRefuseWithdrawal
+    doneRefuseWithdrawal,
+    getRevenueBank
 } = require("./trade.service")
 
 const config = require("./../../config")
@@ -226,6 +227,20 @@ module.exports = {
     totalAddMoney: (req, res) => {
 
         totalAddMoney((err, results) => {
+            if(err){
+                console.log(err);
+                return;
+            }
+            return res.json({
+                success: 1,
+                data: results
+            })
+        })
+
+    },
+    getRevenueBank: (req, res) => {
+
+        getRevenueBank(req.query,(err, results) => {
             if(err){
                 console.log(err);
                 return;

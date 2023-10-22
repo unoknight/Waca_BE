@@ -762,4 +762,61 @@ module.exports = {
             }
         )
     },
+    getRevenueBank: async(query,callback) => {
+
+      
+        if(query.limit || query.offset || query.s){
+            const offset = Number(query.offset || 0);
+            const limit = Number(query.limit || 20);
+            const searchTxt = query.s
+            let count = 0;
+        
+            if(searchTxt) {
+               
+                count = await new Promise((res, rej) => {
+                    db.query(
+                        `SELECT count(bank_orders.id) FROM bank_orders WHERE email LIKE ? OR nick_name LIKE ?`,
+                        [`%${searchTxt}%`,`%${searchTxt}%`], (error, results, fields) => {
+                           res(results[0].count) 
+                        }
+                    )
+                });
+
+                db.query(
+                    `SELECT bank_orders.* FROM bank_orders WHERE email LIKE ? OR nick_name LIKE ?  ORDER BY bank_orders.id DESC LIMIT ? OFFSET ?`,
+                    [`%${searchTxt}%`,`%${searchTxt}%`, limit, offset], (error, results, fields) => {
+                        if (error) {
+                            return callback(error);
+                        }
+ 
+                        return callback(null, {count, items: results})
+                    }
+                )
+            }else{
+                count = await new Promise((res, rej) => {
+                    db.query(
+                        `SELECT count(bank_orders.id) FROM bank_orders `,
+                        [], (error, results, fields) => {
+                           res(results[0].count) 
+                        }
+                    )
+                });
+
+                db.query(
+                    `SELECT * FROM bank_orders ORDER BY id DESC LIMIT ? OFFSET ?`,
+                    [limit, offset], (error, results, fields) => {
+                       
+                        if (error) {
+                            return callback(error);
+                        }
+ 
+                        return callback(null, {count, items: results})
+                    }
+                )
+            }
+
+        }else{
+            return callback(null, {count: 0, items: []})
+        }
+    },
 }

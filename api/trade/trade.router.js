@@ -12,7 +12,8 @@ const {
     getShowDT,
     historyAllAddMoney,
     totalAddMoney,
-    doneRefuseWithdrawal
+    doneRefuseWithdrawal,
+    getRevenueBank
 }  = require("./trade.controller");
 const router = require("express");
 const app = router();
@@ -58,5 +59,7 @@ app.post("/getShowDT", checkAdminToken, getShowDT);
 app.get("/historyAllAddMoney", checkAdminToken, historyAllAddMoney);
 
 app.get("/totalAddMoney", checkAdminToken, totalAddMoney);
+
+app.get("/getRevenueBank", checkAdminToken, getRevenueBank);
 
 module.exports = app;
