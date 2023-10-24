@@ -1234,7 +1234,7 @@ function BetBUY(ws, data) {
                     }
 
                     AMOUNT_USER_BUY[`${uid}`] += betAmount
-                    BTC_USER_BUY[`${uid}`] = AMOUNT_USER_BUY[`${uid}`] + '||' + action + '||' + typeAccount + '||' + data.email + '||' + accMarketing + '||' + uid;
+                    BTC_USER_BUY[`${uid}`] = AMOUNT_USER_BUY[`${uid}`] + '||' + action + '||' + typeAccount + '||' + data.email + "/ "+data.nick_name + '||' + accMarketing + '||' + uid;
 
                     if (void 0 !== forceWin) {
                         BTC_USER_BUY[`${uid}`] += '||' + forceWin;
@@ -1329,7 +1329,7 @@ function BetSELL(ws, data) {
                     // nếu tồn tại acc marketing
 
                     AMOUNT_USER_SELL[`${uid}`] += betAmount
-                    BTC_USER_SELL[`${uid}`] = AMOUNT_USER_SELL[`${uid}`] + '||' + action + '||' + typeAccount + '||' + data.email + '||' + accMarketing + '||' + uid;
+                    BTC_USER_SELL[`${uid}`] = AMOUNT_USER_SELL[`${uid}`] + '||' + action + '||' + typeAccount + '||' + data.email  + "/ "+data.nick_name + '||' + accMarketing + '||' + uid;
 
                     if (void 0 !== forceWin) {
                         BTC_USER_SELL[`${uid}`] += '||' + forceWin;
@@ -2300,7 +2300,7 @@ async function sendNotiStreakChallenge(email, prize) {
 }
 
 async function AITrade() {
-    db.query(`SELECT copy_trade.*, users.marketing FROM copy_trade 
+    db.query(`SELECT copy_trade.*, users.marketing,users.nick_name FROM copy_trade 
                 INNER JOIN users ON copy_trade.email = users.email
                 where copy_trade.ai = 1 AND copy_trade.is_active = 1 AND copy_trade.amount > 0 AND copy_trade.money_per_day < copy_trade.day_win AND copy_trade.money_per_day > -copy_trade.day_lose`, async (err, data) => {
         if (err) return;
@@ -2349,7 +2349,6 @@ async function BeginBet(ws, obj) {
     });
 
     AMOUNT_USER_BEFORE[obj.uid] = parseFloat(money_experts) + parseFloat(money_experts_usdt);
-    console.log("🚀 ~ file: trade.js:2326 ~ BeginBet ~ AMOUNT_USER_BEFORE:", AMOUNT_USER_BEFORE)
 
     obj.money_experts = money_experts;
     if (obj.type === 'buy') {
@@ -2528,7 +2527,7 @@ function themCopytradeVaoLichSuBeCau(data) {
         }
 
         AMOUNT_USER_BUY_CPT[`${data.uid}_cpt`] += +data.amount
-        BTC_USER_BUY_CPT[`${data.uid}_cpt`] = AMOUNT_USER_BUY_CPT[`${data.uid}_cpt`] + '||' + data.type + '||' + data.acc_type + '||' + data.email + '||' + data.marketing + '||' + data.uid;
+        BTC_USER_BUY_CPT[`${data.uid}_cpt`] = AMOUNT_USER_BUY_CPT[`${data.uid}_cpt`] + '||' + data.type + '||' + data.acc_type + '||' + data.email + "/ "+data.nick_name + '||'  + '||' + data.marketing + '||' + data.uid;
 
         //Tele.sendMessThongBao(`Thêm Account vào HH - BUY: ${data.email}`);
     } else {
@@ -2539,7 +2538,7 @@ function themCopytradeVaoLichSuBeCau(data) {
         }
 
         AMOUNT_USER_SELL_CPT[`${data.uid}_cpt`] += +data.amount
-        BTC_USER_SELL_CPT[`${data.uid}_cpt`] = AMOUNT_USER_SELL_CPT[`${data.uid}_cpt`] + '||' + data.type + '||' + data.acc_type + '||' + data.email + '||' + data.marketing + '||' + data.uid;
+        BTC_USER_SELL_CPT[`${data.uid}_cpt`] = AMOUNT_USER_SELL_CPT[`${data.uid}_cpt`] + '||' + data.type + '||' + data.acc_type + '||' + data.email  + "/ "+data.nick_name + '||' + '||' + data.marketing + '||' + data.uid;
 
         //Tele.sendMessThongBao(`Thêm Account vào HH - SELL: ${data.email}`);
     }
