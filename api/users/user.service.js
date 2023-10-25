@@ -6303,6 +6303,10 @@ module.exports = {
         if(!user){
             return callback(null, -1);
         }
+
+        if(Number(data.amount <= 0)){
+            return callback(null, -1);
+        }
         
         db.query(
             `UPDATE users SET money_usdt = money_usdt + ? WHERE email = ?`,
