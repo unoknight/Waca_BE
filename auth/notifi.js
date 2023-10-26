@@ -246,7 +246,7 @@ async function SEND_COMMISSION_USER() { // tổng kết hoa hồng mỗi ngày
 
                     const content = {
                         content: `Bạn đã nhận thành công hoa hồng giao dịch giá <b>${formatPrice(result[0].totalCM, 2)} USDT</b> cho ngày <b>${cach1ngay}</b>`,
-                        content_en: `<b>Congratulations to the player: ${user[0]['email'].substring(0, 3)}*** won $${reward_result.name} in lucky spin.</b>`,
+                        content_en: `You have successfully received the price trading commission total <b>${formatPrice(result[0].totalCM, 2)} USDT</b> for day <b>${cach1ngay}</b>`,
                         content_cam: `អ្នកបានទទួលដោយជោគជ័យនូវកម្រៃជើងសារពាណិជ្ជកម្ម <b>${formatPrice(result[0].totalCM, 2)} USDT</b> សម្រាប់ <b>${cach1ngay}</b>`
                     }
 

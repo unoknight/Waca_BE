@@ -6348,6 +6348,19 @@ module.exports = {
                 Tele.sendMessNap(`Nạp thành công $${Number(data.amount)} ! \n Tài khoản  `+ user.email + " | "+user.nick_name, Number(data.amount));
               }
             });
-    }
+    },
+    getAllUsers: async (callback) => {
+
+        const balance_his = await new Promise((res, rej) => {
+            db.query(`SELECT email as e, nick_name FROM users`,
+                [],
+                (error, results, fields) => {
+                    res(results)
+                }
+            )
+        })
+
+        return callback(null,balance_his);
+    },
 }
 

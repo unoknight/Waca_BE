@@ -109,6 +109,7 @@ const gameConfig = Helper.getConfig('game');
 DATA_GL.PRICE_FUND_PROFITS = parseFloat(gameConfig.Profit);
 AMOUNT_NEGA_AMOUNT_BREAK_BRIDGE = parseFloat(gameConfig.Break);
 AMOUNT_MAX_BREAK_BRIDGE = parseFloat(gameConfig.MaxBreak);
+WRITE_ACCOUNT_BREAK = gameConfig.Email;
 
 console.log("Write");
 console.log(DATA_GL);
@@ -132,10 +133,11 @@ function writeStaticDB() {
     Helper.setConfig('trade', tradeConfig);
 }
 
-function writeGameDB(profit, breakValue, max) {
+function writeGameDB(profit, breakValue, max, email) {
     gameConfig.Profit = profit;
     gameConfig.Break = breakValue;
     gameConfig.MaxBreak = max;
+    gameConfig.Email = email;
     Helper.setConfig('game', gameConfig);
 }
 
@@ -1076,7 +1078,7 @@ async function XU_LY_QUY_BOT(PRICE_WIN, PRICE_LOSE) {
         DATA_GL.PRICE_FUND_PROFITS = 0;
     }
 
-    writeGameDB(DATA_GL.PRICE_FUND_PROFITS, AMOUNT_NEGA_AMOUNT_BREAK_BRIDGE, AMOUNT_MAX_BREAK_BRIDGE);
+    writeGameDB(DATA_GL.PRICE_FUND_PROFITS, AMOUNT_NEGA_AMOUNT_BREAK_BRIDGE, AMOUNT_MAX_BREAK_BRIDGE, WRITE_ACCOUNT_BREAK);
 
     // thoát BOT nếu là acc marketing chơi
     if ((AMOUNT_MARKETING_WIN > 0 || AMOUNT_MARKETING_LOSE > 0) && DATA_GL.PRICE_FUND_PROFITS == 0) {

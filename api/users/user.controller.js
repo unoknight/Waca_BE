@@ -87,6 +87,7 @@ const {
     checkTeleCode,
     requestDeposit,
     addDeposit,
+    getAllUsers
 } = require("./user.service")
 
 const { genSaltSync, hashSync, compareSync } = require("bcrypt")
@@ -3774,6 +3775,18 @@ module.exports = {
             return res.json({
                 success: results
             })
+        })
+       
+    },
+    getAllUsers: (req, res) => {
+        
+        getAllUsers((err, results) => {
+            if (err) {
+                console.log(err);
+                return;
+            }
+
+            return res.json({data:results})
         })
        
     },

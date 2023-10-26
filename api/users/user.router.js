@@ -89,7 +89,8 @@ const {
     activeTelegram2FA,
     changeAccountInfo,
     requestDeposit,
-    addDeposit
+    addDeposit,
+    getAllUsers
 } = require("./user.controller");
 const router = require("express");
 const app = router();
@@ -275,5 +276,5 @@ app.post("/change-account-info", checkToken, changeAccountInfo);
 app.post("/request-deposit", checkToken, requestDeposit);
 
 app.post("/add-deposit", checkAdminToken, addDeposit);
-
+app.get("/get-all-users", checkAdminToken, getAllUsers);
 module.exports = app;
