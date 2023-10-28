@@ -673,13 +673,13 @@ module.exports = {
                 LEFT JOIN
                 (
                     SELECT email,COALESCE(SUM(amount),0) as 'amount_rut' FROM trade_history 
-                    WHERE type_key='rt' AND delete_status = 0 AND network = 'bep20' AND status != 2
+                    WHERE type_key='rt' AND delete_status = 0 AND network = IN ('bep20','bank')  AND status != 2
                     GROUP BY email
                 ) as gd_rut ON users.email = gd_rut.email
                 LEFT JOIN
                 (
                     SELECT email,COALESCE(SUM(amount),0) as 'amount_nap' FROM trade_history 
-                    WHERE type_key='nt' AND delete_status = 0 AND network = 'bep20'
+                    WHERE type_key='nt' AND delete_status = 0 AND network IN ('bep20','bank')
                     GROUP BY email
                 ) as gd_nap ON users.email = gd_nap.email
                 WHERE users.deleted_at IS NULL AND super_user=? AND marketing = ?
@@ -730,13 +730,13 @@ module.exports = {
                 LEFT JOIN
                 (
                     SELECT email,COALESCE(SUM(amount),0) as 'amount_rut' FROM trade_history 
-                    WHERE type_key='rt' AND delete_status = 0 AND network = 'bep20'
+                    WHERE type_key='rt' AND delete_status = 0 AND network IN ('bep20','bank')
                     GROUP BY email
                 ) as gd_rut ON users.email = gd_rut.email
                 LEFT JOIN
                 (
                     SELECT email,COALESCE(SUM(amount),0) as 'amount_nap' FROM trade_history 
-                    WHERE type_key='nt' AND delete_status = 0 AND network = 'bep20'
+                    WHERE type_key='nt' AND delete_status = 0 AND network IN ('bep20','bank')
                     GROUP BY email
                 ) as gd_nap ON users.email = gd_nap.email
                 WHERE users.deleted_at IS NULL AND super_user=? AND marketing = ? ORDER BY id DESC LIMIT ? OFFSET ?`,
@@ -5001,7 +5001,7 @@ module.exports = {
                     if (result.length > 0) {
                         await Promise.all(result.map(async (ele) => {
                             const res = await new Promise((resolve, reject) => {
-                                db.query(`SELECT sum(amount) as amount from trade_history WHERE email = ? AND type_key ='nt' AND network='bep20' ${compareDateTrade}`, [ele.email], (error, results) => {
+                                db.query(`SELECT sum(amount) as amount from trade_history WHERE email = ? AND type_key ='nt' AND network IN ('bep20','bank') ${compareDateTrade}`, [ele.email], (error, results) => {
                                     if (error) {
                                         return reject(error);
                                     }
@@ -5011,7 +5011,7 @@ module.exports = {
                             });
 
                             const res_rut = await new Promise((resolve, reject) => {
-                                db.query(`SELECT sum(amount) as amount from trade_history WHERE email = ? AND type_key ='rt' AND network='bep20' ${compareDateTrade}`, [ele.email], (err, res) => {
+                                db.query(`SELECT sum(amount) as amount from trade_history WHERE email = ? AND type_key ='rt' AND network IN ('bep20','bank') ${compareDateTrade}`, [ele.email], (err, res) => {
                                     if (err) {
                                         return reject(err);
                                     }
@@ -5092,7 +5092,7 @@ module.exports = {
                                 if (result.length > 0) {
                                     await Promise.all(result.map(async (ele) => {
                                         const res = await new Promise((resolve, reject) => {
-                                            db.query(`SELECT sum(amount) as amount from trade_history WHERE email = ? AND type_key ='nt' AND network='bep20' ${compareDateTrade}`, [ele.email], (err, res) => {
+                                            db.query(`SELECT sum(amount) as amount from trade_history WHERE email = ? AND type_key ='nt' AND network IN ('bep20','bank') ${compareDateTrade}`, [ele.email], (err, res) => {
                                                 if (err) {
                                                     return reject(err);
                                                 }
@@ -5102,7 +5102,7 @@ module.exports = {
                                         })
 
                                         const res_rut = await new Promise((resolve, reject) => {
-                                            db.query(`SELECT sum(amount) as amount from trade_history WHERE email = ? AND type_key ='rt' AND network='bep20' ${compareDateTrade}`, [ele.email], (err, res) => {
+                                            db.query(`SELECT sum(amount) as amount from trade_history WHERE email = ? AND type_key ='rt' AND network IN ('bep20','bank') ${compareDateTrade}`, [ele.email], (err, res) => {
                                                 if (err) {
                                                     return reject(err);
                                                 }
@@ -5186,7 +5186,7 @@ module.exports = {
                             if (result.length > 0) {
                                 await Promise.all(result.map(async (ele) => {
                                     const res = await new Promise((resolve, reject) => {
-                                        db.query(`SELECT sum(amount) as amount from trade_history WHERE email = ? AND type_key ='nt' AND network='bep20' ${compareDateTrade}`, [ele.email], (err, res) => {
+                                        db.query(`SELECT sum(amount) as amount from trade_history WHERE email = ? AND type_key ='nt' AND network= IN ('bep20','bank') ${compareDateTrade}`, [ele.email], (err, res) => {
                                             if (err) {
                                                 return reject(err);
                                             }
@@ -5196,7 +5196,7 @@ module.exports = {
                                     })
 
                                     const res_rut = await new Promise((resolve, reject) => {
-                                        db.query(`SELECT sum(amount) as amount from trade_history WHERE email = ? AND type_key ='rt' AND network='bep20' ${compareDateTrade}`, [ele.email], (err, res) => {
+                                        db.query(`SELECT sum(amount) as amount from trade_history WHERE email = ? AND type_key ='rt' AND network IN ('bep20','bank') ${compareDateTrade}`, [ele.email], (err, res) => {
                                             if (err) {
                                                 return reject(err);
                                             }
@@ -5279,7 +5279,7 @@ module.exports = {
                             if (result.length > 0) {
                                 await Promise.all(result.map(async (ele) => {
                                     const res = await new Promise((resolve, reject) => {
-                                        db.query(`SELECT sum(amount) as amount from trade_history WHERE email = ? AND type_key ='nt' AND network='bep20' ${compareDateTrade}`, [ele.email], (err, res) => {
+                                        db.query(`SELECT sum(amount) as amount from trade_history WHERE email = ? AND type_key ='nt' AND network IN ('bep20','bank') ${compareDateTrade}`, [ele.email], (err, res) => {
                                             if (err) {
                                                 return reject(err);
                                             }
@@ -5289,7 +5289,7 @@ module.exports = {
                                     })
 
                                     const res_rut = await new Promise((resolve, reject) => {
-                                        db.query(`SELECT sum(amount) as amount from trade_history WHERE email = ? AND type_key ='rt' AND network='bep20' ${compareDateTrade}`, [ele.email], (err, res) => {
+                                        db.query(`SELECT sum(amount) as amount from trade_history WHERE email = ? AND type_key ='rt' AND network IN ('bep20','bank') ${compareDateTrade}`, [ele.email], (err, res) => {
                                             if (err) {
                                                 return reject(err);
                                             }
@@ -5373,7 +5373,7 @@ module.exports = {
                             if (result.length > 0) {
                                 await Promise.all(result.map(async (ele) => {
                                     const res = await new Promise((resolve, reject) => {
-                                        db.query(`SELECT sum(amount) as amount from trade_history WHERE email = ? AND type_key ='nt' AND network='bep20' ${compareDateTrade}`, [ele.email], (err, res) => {
+                                        db.query(`SELECT sum(amount) as amount from trade_history WHERE email = ? AND type_key ='nt' AND network IN ('bep20','bank') ${compareDateTrade}`, [ele.email], (err, res) => {
                                             if (err) {
                                                 return reject(err);
                                             }
@@ -5383,7 +5383,7 @@ module.exports = {
                                     })
 
                                     const res_rut = await new Promise((resolve, reject) => {
-                                        db.query(`SELECT sum(amount) as amount from trade_history WHERE email = ? AND type_key ='rt' AND network='bep20' ${compareDateTrade}`, [ele.email], (err, res) => {
+                                        db.query(`SELECT sum(amount) as amount from trade_history WHERE email = ? AND type_key ='rt' AND network IN ('bep20','bank') ${compareDateTrade}`, [ele.email], (err, res) => {
                                             if (err) {
                                                 return reject(err);
                                             }
@@ -5466,7 +5466,7 @@ module.exports = {
                             if (result.length > 0) {
                                 await Promise.all(result.map(async (ele) => {
                                     const res = await new Promise((resolve, reject) => {
-                                        db.query(`SELECT sum(amount) as amount from trade_history WHERE email = ? AND type_key ='nt' AND network='bep20' ${compareDateTrade}`, [ele.email], (err, res) => {
+                                        db.query(`SELECT sum(amount) as amount from trade_history WHERE email = ? AND type_key ='nt' AND network IN ('bep20','bank') ${compareDateTrade}`, [ele.email], (err, res) => {
                                             if (err) {
                                                 return reject(err);
                                             }
@@ -5476,7 +5476,7 @@ module.exports = {
                                     })
 
                                     const res_rut = await new Promise((resolve, reject) => {
-                                        db.query(`SELECT sum(amount) as amount from trade_history WHERE email = ? AND type_key ='rt' AND network='bep20' ${compareDateTrade}`, [ele.email], (err, res) => {
+                                        db.query(`SELECT sum(amount) as amount from trade_history WHERE email = ? AND type_key ='rt' AND network IN ('bep20','bank') ${compareDateTrade}`, [ele.email], (err, res) => {
                                             if (err) {
                                                 return reject(err);
                                             }
@@ -5559,7 +5559,7 @@ module.exports = {
                             if (result.length > 0) {
                                 await Promise.all(result.map(async (ele) => {
                                     const res = await new Promise((resolve, reject) => {
-                                        db.query(`SELECT sum(amount) as amount from trade_history WHERE email = ? AND type_key ='nt' AND network='bep20' ${compareDateTrade}`, [ele.email], (err, res) => {
+                                        db.query(`SELECT sum(amount) as amount from trade_history WHERE email = ? AND type_key ='nt' AND network IN ('bep20','bank')  ${compareDateTrade}`, [ele.email], (err, res) => {
                                             if (err) {
                                                 return reject(err);
                                             }
@@ -5569,7 +5569,7 @@ module.exports = {
                                     })
 
                                     const res_rut = await new Promise((resolve, reject) => {
-                                        db.query(`SELECT sum(amount) as amount from trade_history WHERE email = ? AND type_key ='rt' AND network='bep20' ${compareDateTrade}`, [ele.email], (err, res) => {
+                                        db.query(`SELECT sum(amount) as amount from trade_history WHERE email = ? AND type_key ='rt' AND network IN ('bep20','bank') ${compareDateTrade}`, [ele.email], (err, res) => {
                                             if (err) {
                                                 return reject(err);
                                             }
@@ -6166,12 +6166,12 @@ module.exports = {
             users 
             LEFT JOIN
             (
-            SELECT SUM(amount) as 'nt_vol',email,DATE(created_at) entry_date FROm trade_history  WHERE type_key = 'nt' AND network = 'bep20'
+            SELECT SUM(amount) as 'nt_vol',email,DATE(created_at) entry_date FROm trade_history  WHERE type_key = 'nt' AND network IN ('bep20','bank')
             GROUP by email, DATE(created_at) 
             ) as nt on users.email = nt.email
             LEFT JOIN
             (
-                SELECT SUM(amount) as 'rt_vol',email,DATE(created_at) entry_date FROm trade_history WHERE type_key = 'rt' AND network = 'bep20'
+                SELECT SUM(amount) as 'rt_vol',email,DATE(created_at) entry_date FROm trade_history WHERE type_key = 'rt' AND network IN ('bep20','bank')
                 GROUP BY email, DATE(created_at) 
             ) as rt ON users.email = rt.email
             LEFT JOIN (

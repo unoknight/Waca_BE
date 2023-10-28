@@ -607,10 +607,11 @@ module.exports = {
 
     getRevenueNap: callback => {
         db.query(
-            `SELECT SUM(amount) AS dtUSD, SUM(real_amount) AS dtBNB, SUM(pay_fee) AS freeBNB FROM trade_history WHERE type_key = ? AND status = 1 AND network = ?`,
+            `SELECT SUM(amount) AS dtUSD, SUM(real_amount) AS dtBNB, SUM(pay_fee) AS freeBNB FROM trade_history WHERE type_key = ? AND status = 1 AND (network = ? OR network = ?)`,
             [
                 'nt', // nạp tiền
-                'bep20'
+                'bep20',
+                'bank'
             ], (error, results, fields) => {
                 if (error) {
                     return callback(error);
@@ -623,10 +624,11 @@ module.exports = {
 
     getRevenueRut: callback => {
         db.query(
-            `SELECT SUM(amount) AS dtUSD, SUM(real_amount) AS dtBNB, SUM(pay_fee) AS freeBNB FROM trade_history WHERE type_key = ? AND status = 1 AND network = ?`,
+            `SELECT SUM(amount) AS dtUSD, SUM(real_amount) AS dtBNB, SUM(pay_fee) AS freeBNB FROM trade_history WHERE type_key = ? AND status = 1 AND (network = ? OR network = ?)`,
             [
                 'rt', // rút tiền
-                'bep20'
+                'bep20',
+                'bank'
             ], (error, results, fields) => {
                 if (error) {
                     return callback(error);
@@ -639,9 +641,10 @@ module.exports = {
 
     getRevenueTrans: callback => {
         db.query(
-            `SELECT SUM(amount) AS dtUSD, SUM(real_amount) AS dtBNB, SUM(pay_fee) AS freeBNB FROM trade_history WHERE status = 1 AND network = ?`,
+            `SELECT SUM(amount) AS dtUSD, SUM(real_amount) AS dtBNB, SUM(pay_fee) AS freeBNB FROM trade_history WHERE status = 1 AND (network = ? OR network = ?)`,
             [
-                'bep20'
+                'bep20',
+                'bank'
             ], (error, results, fields) => {
                 if (error) {
                     return callback(error);
