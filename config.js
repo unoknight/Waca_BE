@@ -34,7 +34,7 @@ module.exports = {
 	PAYPAL_CLIENT_SECRET: 'EMEZw9QceAhl2UztIWGH62xh95z7---kuu6npJTRj09TVJRQnG-hyIfKUfsptfPIGcBvuwxeBhCtjYT_',//'',
 	// KẾT THÚC THANH TOÁN PAYPAL
 
-	DATA_HOST: '194.233.76.98',
+	DATA_HOST: 'localhost',
 	DATA_USER: 'root',
 	DATA_PASS: '8GFy9CQwCCSfanCI',
 	DATA_DB: 'db_production',
