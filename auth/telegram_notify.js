@@ -69,5 +69,11 @@ module.exports = {
         }
 
     },
- 
+    sendMessAccount: (content = '') => {
+        if (content == '' || content == null) return
+        if (global['ARESTele']) {
+            global['ARESTele'].sendMessage(`@${TELEGRAM_ACCOUNT}`, content, { parse_mode: "HTML" })
+        }
+          
+    },
 }

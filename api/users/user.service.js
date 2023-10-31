@@ -445,7 +445,7 @@ module.exports = {
                             return callback(error);
                         }
 
-                        Tele.sendMessThongBao(`🛫 Account verify: <b>${username}</b>\nBiệt danh: ${data.nick_name} balance: ${data.accountBalance} `);
+                        Tele.sendMessAccount(`🛫 Account verify: <b>${username}</b>\nBiệt danh: ${data.nick_name} balance: ${data.accountBalance} `);
 
                         Tele.sendMessThongBao(`🛫 Vừa thêm mới TÀI KHOẢN vào hệ thống: Account: <b>${username}</b>\nBiệt danh: ${data.nick_name}`);
                         if (data.isOpt) {
