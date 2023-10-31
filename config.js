@@ -54,7 +54,7 @@ module.exports = {
 
 	ABI_USDT_MAINNET: 'USDT_BEP20_mainnet',
 	ABI_USDT_TESTNNET: 'USDT_BEP20_testnet',
-	IS_TELEGRAM:true,
+	IS_TELEGRAM:false,
 	TELEGRAM_TOKEN: '6363572622:AAEcIiX7LY_ywMoOeETZesrx914OIWNEvXk',
 	TELEGRAM_BET_ID: 'wacabot6',
 	TELEGRAM_RUT_ID: 'wacabot5',
