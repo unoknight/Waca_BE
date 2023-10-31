@@ -863,7 +863,7 @@ module.exports = {
                             }
 
                             if(body.isCreateNew){
-                                Tele.sendMessAccount(`Account verify: ${body.nick_name} balance: ${body.accountBalance}`);
+                                Tele.sendMessThongBao(`Account verify: ${body.nick_name} balance: ${body.accountBalance}`);
                             }
 
                             // regPresenterUser({
