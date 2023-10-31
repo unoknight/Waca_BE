@@ -603,12 +603,15 @@ module.exports = {
                 }
 
                 db.query(`SELECT content,user_recieved,type,active FROM mst_super_copytrade WHERE email = ?`, [data.email], (error, results2, fields) => {
-                    if (results2.length > 0) {
-                        dataList['super'] = results2[0];
-                    } else {
-                        dataList['super'] = {};
-                    }
+                    if(error){
 
+                    }else{
+                        if (results2.length > 0) {
+                            dataList['super'] = results2[0];
+                        } else {
+                            dataList['super'] = {};
+                        }
+                    }
                 });
 
                 db.query(
