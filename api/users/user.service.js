@@ -6290,6 +6290,7 @@ module.exports = {
         return callback(null, 0)
     },
     addDeposit: async (data, callback) => {
+   
 
         if(data.code != "PxqwggQtVHAX"){
             return callback(null, -2);
@@ -6305,13 +6306,13 @@ module.exports = {
                     resolve(results[0]);
                 })
         })
+       
         
-
         if(!user){
             return callback(null, -1);
         }
 
-        if(Number(data.amount <= 0)){
+        if(Number(data.amount) <= 0){
             return callback(null, -1);
         }
         
@@ -6353,7 +6354,8 @@ module.exports = {
               }
               else {
                 Tele.sendMessNap(`Nạp thành công $${Number(data.amount)} ! \n Tài khoản  `+ user.email + " | "+user.nick_name, Number(data.amount));
-              }
+                return callback(null, 1);
+            }
             });
     },
     getAllUsers: async (callback) => {
