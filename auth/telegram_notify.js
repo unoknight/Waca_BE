@@ -7,7 +7,7 @@ const TELEGRAM_BET_AMOUNT = config.TELEGRAM_BET_AMOUNT;
 const TELEGRAM_BET_THONG_BAO = config.TELEGRAM_BET_THONG_BAO;
 const TELEGRAM_BET_PHIM_LENH = config.TELEGRAM_BET_PHIM_LENH;
 const TELEGRAM_DEPOSIT = config.TELEGRAM_DEPOSIT;
-
+const TELEGRAM_ACCOUNT = config.TELEGRAM_ACCOUNT;
 
 module.exports = {
     sendMessBOTTrade: (content = '') => {
