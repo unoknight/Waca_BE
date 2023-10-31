@@ -7,11 +7,12 @@ const TELEGRAM_BET_AMOUNT = config.TELEGRAM_BET_AMOUNT;
 const TELEGRAM_BET_THONG_BAO = config.TELEGRAM_BET_THONG_BAO;
 const TELEGRAM_BET_PHIM_LENH = config.TELEGRAM_BET_PHIM_LENH;
 const TELEGRAM_DEPOSIT = config.TELEGRAM_DEPOSIT;
+const TELEGRAM_ACCOUNT = config.TELEGRAM_ACCOUNT;
 
 module.exports = {
     sendMessBOTTrade: (content = '') => {
         if (content == '' || content == null) return
-        global['ARESTele'].sendMessage(`@${TELEGRAM_BET_PHIM_LENH}`, content, { parse_mode: "HTML" })
+       global['ARESTele'].sendMessage(`@${TELEGRAM_BET_PHIM_LENH}`, content, { parse_mode: "HTML" })
     },
 
     sendMessThongBao: (content = '') => {
@@ -67,5 +68,12 @@ module.exports = {
             global['ARESTele'].sendMessage(`@${TELEGRAM_DEPOSIT}`, content, { parse_mode: "HTML" })
         }
 
+    },
+    sendMessAccount: (content = '') => {
+        if (content == '' || content == null) return
+        if (global['ARESTele']) {
+            global['ARESTele'].sendMessage(`@${TELEGRAM_ACCOUNT}`, content, { parse_mode: "HTML" })
+        }
+          
     },
 }

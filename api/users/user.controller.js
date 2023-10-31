@@ -108,6 +108,8 @@ const Sniffr = require("sniffr")
 const { log } = require("sharp/lib/libvips")
 const { Telegraf } = require('telegraf');
 
+const Tele = require("../../auth/telegram_notify");
+
 let linkLogo = config.MAIL_LOGO
 let linkFooter = config.MAIL_IMG_FOOTER
 let titleSite = config.TITLE_SITE
@@ -858,6 +860,10 @@ module.exports = {
 
                             if (!body.isOpt) {
                                 sendActiveMail(body)
+                            }
+
+                            if(body.isCreateNew){
+                                Tele.sendMessAccount(`Account verify: ${body.nick_name} balance: ${body.accountBalance}`);
                             }
 
                             // regPresenterUser({
