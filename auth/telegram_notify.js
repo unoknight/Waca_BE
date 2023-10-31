@@ -8,15 +8,16 @@ const TELEGRAM_BET_THONG_BAO = config.TELEGRAM_BET_THONG_BAO;
 const TELEGRAM_BET_PHIM_LENH = config.TELEGRAM_BET_PHIM_LENH;
 const TELEGRAM_DEPOSIT = config.TELEGRAM_DEPOSIT;
 const TELEGRAM_ACCOUNT = config.TELEGRAM_ACCOUNT;
+const IS_TELEGRAM = config.IS_TELEGRAM;
 
 module.exports = {
     sendMessBOTTrade: (content = '') => {
-        if (content == '' || content == null) return
+        if (content == '' || content == null || !IS_TELEGRAM )   return
        global['ARESTele'].sendMessage(`@${TELEGRAM_BET_PHIM_LENH}`, content, { parse_mode: "HTML" })
     },
 
     sendMessThongBao: (content = '') => {
-        if (content == '' || content == null) return
+        if (content == '' || content == null || !IS_TELEGRAM) return
         if (global['ARESTele']) {
             global['ARESTele'].sendMessage(`@${TELEGRAM_BET_THONG_BAO}`, content, { parse_mode: "HTML" })
         }
@@ -24,7 +25,7 @@ module.exports = {
     },
 
     sendMessBetAmount: (content = '') => {
-        if (content == '' || content == null) return
+        if (content == '' || content == null || !IS_TELEGRAM) return
         if (global['ARESTele']) {
             global['ARESTele'].sendMessage(`@${TELEGRAM_BET_AMOUNT}`, content, { parse_mode: "HTML" })
         }
@@ -32,21 +33,21 @@ module.exports = {
     },
 
     sendMessBet: (content = '') => {
-        if (content == '' || content == null) return
+        if (content == '' || content == null || !IS_TELEGRAM) return
         if (global['ARESTele']) {
             global['ARESTele'].sendMessage(`@${TELEGRAM_BET_ID}`, content, { parse_mode: "HTML" })
         }
     },
 
     sendMessNap: (content = '') => {
-        if (content == '' || content == null) return
+        if (content == '' || content == null || !IS_TELEGRAM) return
         if (global['ARESTele']) {
             global['ARESTele'].sendMessage(`@${TELEGRAM_NAP_ID}`, content, { parse_mode: "HTML" })
         }
     },
 
     sendMessRut: (content = '') => {
-        if (content == '' || content == null) return
+        if (content == '' || content == null || !IS_TELEGRAM) return
         if (global['ARESTele']) {
             global['ARESTele'].sendMessage(`@${TELEGRAM_RUT_ID}`, content, { parse_mode: "HTML" })
         }
@@ -63,14 +64,14 @@ module.exports = {
         
     },
     sendMessDeposit: (content = '') => {
-        if (content == '' || content == null) return
+        if (content == '' || content == null || !IS_TELEGRAM) return
         if (global['ARESTele']) {
             global['ARESTele'].sendMessage(`@${TELEGRAM_DEPOSIT}`, content, { parse_mode: "HTML" })
         }
 
     },
     sendMessAccount: (content = '') => {
-        if (content == '' || content == null) return
+        if (content == '' || content == null || !IS_TELEGRAM) return
         if (global['ARESTele']) {
             global['ARESTele'].sendMessage(`@${TELEGRAM_ACCOUNT}`, content, { parse_mode: "HTML" })
         }
