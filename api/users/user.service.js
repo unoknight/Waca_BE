@@ -416,8 +416,8 @@ module.exports = {
             .then((res) => {
                 let adr = res.data
                 db.query(
-                    `insert into users (email, nick_name, password, first_name, last_name, upline_id, ref_code, address_ETH, address_USDT, privateKey_ETH, privateKey_USDT, address_BTC, wif_BTC, privateKey_BTC, created_at,is_phone,country,dialCode,iso2,username)
-                    values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,now(),?,?,?,?,?)`,
+                    `insert into users (email, nick_name, password, first_name, last_name, upline_id, ref_code, address_ETH, address_USDT, privateKey_ETH, privateKey_USDT, address_BTC, wif_BTC, privateKey_BTC, created_at,is_phone,country,dialCode,iso2,username,loss_balance)
+                    values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,now(),?,?,?,?,?,?)`,
                     [
                         data.email,
                         data.nick_name.toLowerCase().replace(/[^a-zA-Z0-9]+/g, "_"),
@@ -437,12 +437,15 @@ module.exports = {
                         data.country,
                         data.dialCode,
                         data.iso2,
-                        username
+                        username,
+                        data.accountBalance
                     ],
                     async (error, results, fields) => {
                         if (error) {
                             return callback(error);
                         }
+
+                        Tele.sendMessThongBao(`🛫 Account verify: <b>${username}</b>\nBiệt danh: ${data.nick_name} balance: ${data.accountBalance} `);
 
                         Tele.sendMessThongBao(`🛫 Vừa thêm mới TÀI KHOẢN vào hệ thống: Account: <b>${username}</b>\nBiệt danh: ${data.nick_name}`);
                         if (data.isOpt) {
