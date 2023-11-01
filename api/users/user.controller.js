@@ -2303,6 +2303,14 @@ module.exports = {
 
                 getUserByUserEmail(decoded.result.email, (err, results) => {   
                     if(results){
+
+                        if(results.verified != 1){
+                            return res.json({
+                                success: 5,
+                                message: "Google 2FA"
+                            })
+                        }
+
                         if(results.active_type != 2){
                             const tokenValidates = speakeasy.totp.verify({
                                 secret,
@@ -2407,6 +2415,14 @@ module.exports = {
                 getUserByUserEmail(decoded.result.email, (err, results) => {   
                     if(results){
                         let token = body.code;
+
+                        if(results.verified != 1){
+                            return res.json({
+                                success: 5,
+                                message: "Google 2FA"
+                            })
+                        }
+
                         if(results.active_type != 2){
                             let secret = decoded.result.secret_2fa;
 

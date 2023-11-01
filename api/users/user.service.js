@@ -1137,7 +1137,7 @@ module.exports = {
 
     getUserByUserEmail: (email, callback) => {
         db.query(
-            `SELECT email, nick_name, password, active_2fa, secret_2fa, deleted_at,active,active_type,code_telegram,email_send,verified_telegram,telegram_id FROM users WHERE email = ? OR username = ?`,
+            `SELECT email, nick_name, password, active_2fa, secret_2fa, deleted_at,active,active_type,code_telegram,email_send,verified_telegram,telegram_id,verified FROM users WHERE email = ? OR username = ?`,
             [email, email], (error, results, fields) => {
                 if (error) {
                     return callback(error);
