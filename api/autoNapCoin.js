@@ -9,7 +9,7 @@ const { SAVE_LOG_NOTIFI } = require('../auth/notifi');
 var db = require("../database");
 const fileSys = config.PATH_SYS_CONFIG
 
-const TIME_SCAN_WALLET_USER = 1000 * 60; // ms
+const TIME_SCAN_WALLET_USER = 1000 * 15; // ms
 const TIME_SCAN_ADDRESS_ADMIN = 5000; // 5s
 
 //const TelegramAll = new TelegramBot("6032884729:AAGoRcnJnU8-YHeJ6p9gpF5AAE9503YNyZQ3", { polling: true })

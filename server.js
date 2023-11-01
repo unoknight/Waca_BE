@@ -59,8 +59,8 @@ bot.command('verify', async ctx => {
 	try {
 		let arr_payload = ctx.payload.trim().split('/');
 		
-		let username = arr_payload[0];
-		let password = arr_payload[1];
+		let username = arr_payload[0].trim();
+		let password = arr_payload[1].trim();
 
 		if (!username || !password) {
 			let str = "Please enter phone_number & password \n";
