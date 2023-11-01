@@ -5744,16 +5744,16 @@ module.exports = {
     },
 
     getListNotifi: async (data, callback) => {
-        let email = data.e;
-
+        let email = data.email;
+    
         let rs = [];
         await new Promise((resolve, reject) => {
             db.query(
                 // `SELECT * FROM notifi WHERE cu_email = ? OR email = ? ORDER BY id DESC`, 
-                `SELECT * FROM notifi WHERE cu_email = ? ORDER BY id DESC`,
+                `SELECT * FROM notifi WHERE cu_email = ? OR email = ? ORDER BY id DESC`,
                 [
                     email,
-                    // email
+                    email
                 ], (error, results, fields) => {
                     rs = results;
 

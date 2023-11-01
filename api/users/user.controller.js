@@ -3498,17 +3498,33 @@ module.exports = {
 
     getListNotifi: (req, res) => {
         const body = req.body;
-        getListNotifi(body, (err, results) => {
-            if (err) {
-                console.log(err);
-                return;
-            }
 
-            return res.json({
-                success: 1,
-                data: results
-            })
-        })
+        let token = req.get('authorization');
+        token = token.split(" ")[1];
+        verify(token, config.TOKEN_KEY, (err, decoded) => {
+            if (err) {
+                res.json({
+                    success: 3,
+                    l: false,
+                    m: "no no"
+                })
+            } else {
+                body['email'] = decoded.result.email
+                getListNotifi(body, (err, results) => {
+                    if (err) {
+                        console.log(err);
+                        return;
+                    }
+        
+                    return res.json({
+                        success: 1,
+                        data: results
+                    })
+                })
+            }
+        });
+
+        
     },
 
     updateListNotifi: (req, res) => {
