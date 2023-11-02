@@ -2529,7 +2529,7 @@ function themCopytradeVaoLichSuBeCau(data) {
         }
 
         AMOUNT_USER_BUY_CPT[`${data.uid}_cpt`] += +data.amount
-        BTC_USER_BUY_CPT[`${data.uid}_cpt`] = AMOUNT_USER_BUY_CPT[`${data.uid}_cpt`] + '||' + data.type + '||' + data.acc_type + '||' + data.email + '||'  + '||' + data.marketing + '||' + data.uid;
+        BTC_USER_BUY_CPT[`${data.uid}_cpt`] = AMOUNT_USER_BUY_CPT[`${data.uid}_cpt`] + '||' + data.type + '||' + data.acc_type + '||' + data.email  + '||' + data.marketing + '||' + data.uid;
 
         //Tele.sendMessThongBao(`Thêm Account vào HH - BUY: ${data.email}`);
     } else {
@@ -2540,7 +2540,7 @@ function themCopytradeVaoLichSuBeCau(data) {
         }
 
         AMOUNT_USER_SELL_CPT[`${data.uid}_cpt`] += +data.amount
-        BTC_USER_SELL_CPT[`${data.uid}_cpt`] = AMOUNT_USER_SELL_CPT[`${data.uid}_cpt`] + '||' + data.type + '||' + data.acc_type + '||' + data.email + '||' + '||' + data.marketing + '||' + data.uid;
+        BTC_USER_SELL_CPT[`${data.uid}_cpt`] = AMOUNT_USER_SELL_CPT[`${data.uid}_cpt`] + '||' + data.type + '||' + data.acc_type + '||' + data.email + '||' + data.marketing + '||' + data.uid;
 
         //Tele.sendMessThongBao(`Thêm Account vào HH - SELL: ${data.email}`);
     }
