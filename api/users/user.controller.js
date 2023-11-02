@@ -2304,7 +2304,7 @@ module.exports = {
                 getUserByUserEmail(decoded.result.email, (err, results) => {   
                     if(results){
 
-                        if(results.verified != 1){
+                        if(Number(results.verified) != 1){
                             return res.json({
                                 success: 5,
                                 message: "Google 2FA"
@@ -2416,7 +2416,7 @@ module.exports = {
                     if(results){
                         let token = body.code;
 
-                        if(results.verified != 1){
+                        if(Number(results.verified) != 1){
                             return res.json({
                                 success: 5,
                                 message: "Google 2FA"
