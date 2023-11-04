@@ -312,7 +312,7 @@ function SAVE_LOG_NOTIFI_LANGS(type, cue, email, title, content) {
                 console.log(error);
             }
 
-            console.log('insert notifi success!');
+            //console.log('insert notifi success!');
         })
 }
 
@@ -331,7 +331,7 @@ function SAVE_LOG_NOTIFI(type, cue, email, title, content) {
                 console.log(error);
             }
 
-            console.log('insert notifi success!');
+           // console.log('insert notifi success!');
         })
 }
 

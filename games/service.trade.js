@@ -102,9 +102,8 @@ module.exports = {
                 if (error) {
                     return callback(error);
                 }
-                console.log("🚀 ~ file: service.trade.js:107 ~ results[0].main_user:", results[0].main_user)
+                
                 if(results[0].main_user){
-                    console.log("🚀 ~ file: service.trade.js:107 ~ results[0].main_user:", results[0].main_user)
                     
                     db.query(
                         `SELECT level_vip, ref_code, upline_id, nick_name FROM users WHERE email = ?`,
@@ -112,7 +111,7 @@ module.exports = {
                             results[0].main_user
                         ],
                         (error1, results1, fields1) => {
-                            console.log("🚀 ~ file: service.trade.js:115 ~ results1:", results1)
+                          
                             if (error1) {
                                 return callback(error1);
                             }
@@ -318,7 +317,6 @@ module.exports = {
     updateAmountRateCommission: (data, callback) => {
         //if(data.upID == '' || data.upID == null) return;
         let m = data.penCom * 1;
-        console.log("HHGD",data);
         
         db.query(
             `UPDATE users SET money_usdt = money_usdt + ?, pending_commission = pending_commission + ?, commission_update = now() WHERE ref_code = ?`,

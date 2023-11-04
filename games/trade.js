@@ -1797,12 +1797,9 @@ async function HandlingCommissionBUY() {
         sourceLevelId: 0
     }
 
-    console.log("HH BUY");
-    console.log(BTC_USER_BUY_BACK);
-
     for (let xl in BTC_USER_BUY_BACK) {
         try {
-            console.log(`HH BUY DETAIL BEGIN ${BTC_USER_BUY_BACK[xl]}`);
+           
             let moneyAndActionBuy = BTC_USER_BUY_BACK[xl];
             let moneyAndAction = moneyAndActionBuy.split("||");
             let money = moneyAndAction[0];
@@ -1811,8 +1808,6 @@ async function HandlingCommissionBUY() {
             let email = moneyAndAction[3];
             let accMarketingBuy = moneyAndAction[4];
             let uid = moneyAndAction[5];
-
-            console.log(`HH BUY DETAIL ${moneyAndActionBuy}`);
 
             if (type == 1 || type == "1") {
                 //Tele.sendMessThongBao(`HH: BUY user ${email} trả thưởng cấp trên  `);
@@ -2006,8 +2001,6 @@ async function HandlingCommissionSELL() {
                                     if (i != 0) {
                                         obj.volum = 0;
                                     }
-
-                                    console.log("HH GD SELL: " + obj.email + " levelVip = " + levelVip + " count=" + (i + 1));
 
                                     if (levelVip >= (i + 1) && levelVip != 0) {
                                         updateAmountRateCommission(obj);
