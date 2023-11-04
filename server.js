@@ -266,7 +266,7 @@ require('./auth/notifi'); // chạy thông báo
 require('./auth/cleanData');
 require('./auth/cleanAutoTrade');
 require('./auth/autolevel');
-require('./auth/autoNotiChampions');
+//require('./auth/autoNotiChampions');
 //require('./auth/autoAddSpin');
 // const mailer = require('./auth/mail')
 // mailer.sendMail("trungnm.it@gmail.com", "Test", "Test")

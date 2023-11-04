@@ -684,8 +684,9 @@ module.exports = {
                 console.log(err);
                 return;
             }
-
-            obj.email_send = results.email_send
+            if(results){
+                obj.email_send = results.email_send
+            }
         })
 
         sendActiveMail(obj)
