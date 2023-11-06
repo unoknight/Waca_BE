@@ -139,7 +139,7 @@ app.post('/approval-bank', async function (req, res) {
   } = body;
 
   if (code !== "PxqwggQtVHAX") {
-    res.status(200).json({ success: -2 });
+   return res.status(200).json({ success: -2 });
   }
 
   let order = await new Promise((resolve, reject) => {
@@ -206,10 +206,10 @@ app.post('/approval-bank', async function (req, res) {
           });
         
 
-        res.status(200).json({ success: 1 });
+          return res.status(200).json({ success: 1 });
       } else {
        
-        res.status(200).json({ success: 1 });
+        return res.status(200).json({ success: 1 });
       }
     });
 });
