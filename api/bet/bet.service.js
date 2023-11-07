@@ -14,7 +14,8 @@ module.exports = {
                                     acc_type as type_account,
                                     copy_trade_history.created_at as created_at,
                                     copy_trade_history.id,
-                                    users.marketing as marketing
+                                    users.marketing as marketing,
+                                    users.nick_name
                             FROM copy_trade_history
                             JOIN users ON copy_trade_history.email = users.email
                             WHERE acc_type = 1 AND sum IS NOT NULL`
