@@ -2,7 +2,7 @@ const db = require("./../../database");
 
 module.exports = {
    getAllBetHis: async (query, callback) => {
-        let sql = `SELECT * FROM bet_history WHERE status = 1`
+        let sql = `SELECT bet_history.*,users.nick_name FROM bet_history JOIN users ON bet_history.email = users.email WHERE bet_history.status = 1`
         let copyTradeSql = `SELECT  value as amount_bet,
                                     sum as amount_win, 
                                     trend as buy_sell, 
@@ -20,7 +20,7 @@ module.exports = {
                             JOIN users ON copy_trade_history.email = users.email
                             WHERE acc_type = 1 AND sum IS NOT NULL`
         if (void 0 !== query.email) {
-            sql += ` and email = '${query.email}'`;
+            sql += ` and bet_history.email = '${query.email}' `;
             copyTradeSql += ` and copy_trade_history.email = '${query.email}'`;
         }
 
@@ -28,22 +28,22 @@ module.exports = {
             let f = '';
             switch (query.f) {
                 case 'hom-nay':
-                    f = ' and DATE(created_at) = DATE(NOW())'
+                    f = ' and DATE(bet_history.created_at) = DATE(NOW())'
                     break;
                 case 'hom-qua':
-                    f = ' and DATE(created_at) = DATE(NOW()) - 1'
+                    f = ' and DATE(bet_history.created_at) = DATE(NOW()) - 1'
                     break;
                 case 'tuan-nay':
-                    f = ' and WEEK(created_at)=WEEK(now())'
+                    f = ' and WEEK(bet_history.created_at)=WEEK(now())'
                     break;
                 case 'tuan-truoc':
-                    f = ' and WEEK(created_at)=WEEK(now()) - 1'
+                    f = ' and WEEK(bet_history.created_at)=WEEK(now()) - 1'
                     break;
                 case 'thang-nay':
-                    f = ' and MONTH(created_at)=MONTH(now())'
+                    f = ' and MONTH(bet_history.created_at)=MONTH(now())'
                     break;
                 case 'thang-truoc':
-                    f = ' and MONTH(created_at)=MONTH(now()) - 1'
+                    f = ' and MONTH(bet_history.created_at)=MONTH(now()) - 1'
                     break;
 
                 default:
@@ -74,7 +74,7 @@ module.exports = {
                 default:
                     break;
             }
-            f = ' and WEEK(created_at)=WEEK(now())';
+            f = ' and WEEK(bet_history.created_at)=WEEK(now())';
             fcopy = ' and WEEK(copy_trade_history.created_at)=WEEK(now())';
             sql += f;
 
@@ -83,11 +83,11 @@ module.exports = {
 
         if (void 0 !== query.from && void 0 !== query.to) {
             // YYYY-MM-DD
-            sql += ` and created_at BETWEEN '${query.from}' and '${query.to}'`;
+            sql += ` and bet_history.created_at BETWEEN '${query.from}' and '${query.to}'`;
             copyTradeSql += ` and copy_trade_history.created_at BETWEEN '${query.from}' and '${query.to}'`;
         }
 
-        sql += ' ORDER BY id DESC ';
+        sql += ' ORDER BY bet_history.id DESC ';
         copyTradeSql += ' ORDER BY copy_trade_history.id DESC LIMIT 1000';
         const betOrders = await new Promise((res, rej) => {
             db.query(

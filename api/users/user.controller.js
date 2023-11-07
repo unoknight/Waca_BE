@@ -1868,7 +1868,7 @@ module.exports = {
             if (result) {
                 results.password = undefined;
                 const jsontoken = sign({ result: results, x: 1 }, config.TOKEN_KEY, {
-                    expiresIn: "1h"
+                    expiresIn: "8h"
                 });
                 //res.header('Authorization', 'sky '+jsontoken);
                 return res.json({
