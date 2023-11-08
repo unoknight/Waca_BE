@@ -90,7 +90,8 @@ const {
     changeAccountInfo,
     requestDeposit,
     addDeposit,
-    getAllUsers
+    getAllUsers,
+    changeAdminInfo
 } = require("./user.controller");
 const router = require("express");
 const app = router();
@@ -276,5 +277,6 @@ app.post("/change-account-info", checkToken, changeAccountInfo);
 app.post("/request-deposit", checkToken, requestDeposit);
 
 app.post("/add-deposit", checkAdminToken, addDeposit);
+app.post("/change-admin-info", checkAdminToken, changeAdminInfo);
 app.get("/get-all-users", checkAdminToken, getAllUsers);
 module.exports = app;

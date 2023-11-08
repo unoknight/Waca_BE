@@ -87,7 +87,8 @@ const {
     checkTeleCode,
     requestDeposit,
     addDeposit,
-    getAllUsers
+    getAllUsers,
+    changeAdminInfo
 } = require("./user.service")
 
 const { genSaltSync, hashSync, compareSync } = require("bcrypt")
@@ -3820,6 +3821,21 @@ module.exports = {
             }
 
             return res.json({data:results})
+        })
+       
+    },
+    changeAdminInfo: (req, res) => {
+        const body = req.body;
+
+        changeAdminInfo(body, (err, results) => {
+            if (err) {
+                console.log(err);
+                return;
+            }
+
+            return res.json({
+                success: results
+            })
         })
        
     },

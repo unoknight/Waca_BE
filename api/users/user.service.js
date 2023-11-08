@@ -6371,5 +6371,34 @@ module.exports = {
 
         return callback(null,balance_his);
     },
+    changeAdminInfo: async (data, callback) => {
+   
+        let user = await new Promise((resolve, reject) => {
+            db.query(
+                `select * from users where users.nick_name = ?`, [data.upline_id], (error, results, fields) => {
+                    if (error) {
+                        resolve([]);
+                    }
+
+                    resolve(results[0]);
+                })
+        })
+       
+        
+        if(!user){
+            return callback(null, -1);
+        }
+
+        db.query(`UPDATE users 
+        SET upline_id = ? WHERE email = ?`,
+        [user.ref_code, data.email
+        ], (error, results, fields) => {
+            if (error) {
+                return callback(error)
+            }
+
+            return callback(null, 1)
+        })
+    },
 }
 
