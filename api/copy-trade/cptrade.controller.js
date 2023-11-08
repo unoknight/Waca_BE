@@ -1,5 +1,6 @@
 const {
     saveConfig,
+    saveAdminConfig,
     getConfig,
     saveAiConfig,
     getExpertsList,
@@ -31,6 +32,19 @@ module.exports = {
         const data = req.body
         data.email = email;
         saveConfig(data, (err, ressult) => {
+            if (err) {
+                console.log(err);
+                return;
+            }
+            
+            return res.json({
+                success: 1,
+            })
+        })
+    },
+    saveConfigAdmin: (req, res) => {
+        const data = req.body;
+        saveAdminConfig(data, (err, ressult) => {
             if (err) {
                 console.log(err);
                 return;

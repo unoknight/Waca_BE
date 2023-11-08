@@ -22,7 +22,8 @@ const {
     saveFollowSuper,
     getSuperFollowAccount,
     getSuperProfitHistory,
-    getRevenueSuper
+    getRevenueSuper,
+    saveConfigAdmin
 } = require("./cptrade.controller");
 
 const router = require("express");
@@ -62,5 +63,6 @@ app.post("/logout-cpt", checkToken, logout);
 
 app.post("/remove-follow-cpt", checkToken, removeFollow);
 app.post("/reset-money", checkToken, resetMoneyPerDay);
+app.post("/save-copy-trade-admin", checkAdminToken, saveConfigAdmin);
 
 module.exports = app;

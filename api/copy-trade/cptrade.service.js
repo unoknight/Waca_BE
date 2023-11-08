@@ -40,6 +40,19 @@ module.exports = {
                 })
         }
     },
+    saveAdminConfig: async (data, callback) => {
+        db.query(`UPDATE copy_trade 
+        SET amount = ?, day_win = ?, day_lose = ?, experts = ?, ai = 0, rate = ?, run = ?, is_active = ?, updated_at = now() 
+        WHERE email = ?`,
+        [data.amount, data.day_win, data.day_lose, data.experts, data.rate, data.run, data.is_active, data.email
+        ], (error, results, fields) => {
+            if (error) {
+                return callback(error)
+            }
+
+            return callback(null, 1)
+        })
+    },
     saveFollowSuper: async (data, callback) => {
         console.log("🚀 ~ file: cptrade.service.js:41 ~ saveFollowSuper: ~ data:", data)
 
