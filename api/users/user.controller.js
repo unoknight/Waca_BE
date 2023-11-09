@@ -2109,6 +2109,8 @@ module.exports = {
                     //console.log(token2);
 
                     getUserByUserEmail(decoded.result.email, (err, results) => {  
+                        let marketing = results.marketing;
+                       
                         if(results.active_type != 2){
 
                             const tokenValidates = speakeasy.totp.verify({
@@ -2118,6 +2120,8 @@ module.exports = {
                                 window: 2,
                                 //step:60
                             });
+
+                           
 
                             if (tokenValidates || body.f) {
                                 checkUserNickName(body.address, (err, results) => {
@@ -2132,7 +2136,16 @@ module.exports = {
                                             message: "Faile to send user"
                                         })
                                     }
-        
+                                    
+                                   let targetMaketing = results[0].marketing;
+                                   
+                                   if(marketing!=targetMaketing){
+                                        return res.json({
+                                            success: 100,
+                                            message: "Faile to send user"
+                                        })
+                                    }
+
                                     WithDrawalNoiBo(body, (err, results) => {
                                         if (err) {
                                             console.log(err);
@@ -2182,6 +2195,16 @@ module.exports = {
                                             })
                                         }
             
+                                        let targetMaketing = results[0].marketing;
+
+                                        if(marketing!=targetMaketing){
+                                            return res.json({
+                                                success: 100,
+                                                message: "Faile to send user"
+                                            })
+                                        }
+
+                                        
                                         WithDrawalNoiBo(body, (err, results) => {
                                             if (err) {
                                                 console.log(err);
