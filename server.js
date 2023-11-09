@@ -111,7 +111,7 @@ bot.command('verify', async ctx => {
 			return;
 		}
 
-		db.query(`UPDATE users SET verified_telegram = ?,telegram_id=?,verified_time=NOW() WHERE email = ?`, [1,ctx.chat.id,user[0].email]);
+		db.query(`UPDATE users SET verified_telegram = ?,telegram_id=?,verified_time=NOW(),active_2fa = ? WHERE email = ?`, [1,ctx.chat.id,1,user[0].email]);
 
 		let str = `Account ${username} verified`;
 
@@ -150,7 +150,7 @@ bot.command('code', async ctx => {
 
 	let id = makeid(6);
 
-	db.query(`UPDATE users SET code_telegram = ?, generate_code_time = NOW() WHERE email = ?`, [id,ctx.chat.id,user[0].email]);
+	db.query(`UPDATE users SET code_telegram = ?, generate_code_time = NOW() WHERE email = ?`, [id,user[0].email]);
 	
 	let str = "Verify Code is: \n <strong><u>"+id+"</u></strong>";
 	str += `\n  The code is valid for a time and 10 minutes`;
