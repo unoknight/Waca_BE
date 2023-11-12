@@ -2146,6 +2146,8 @@ module.exports = {
                                         })
                                     }
 
+                                    body.marketing = marketing;
+                                    
                                     WithDrawalNoiBo(body, (err, results) => {
                                         if (err) {
                                             console.log(err);
@@ -2204,6 +2206,7 @@ module.exports = {
                                             })
                                         }
 
+                                        body.marketing = marketing;
                                         
                                         WithDrawalNoiBo(body, (err, results) => {
                                             if (err) {

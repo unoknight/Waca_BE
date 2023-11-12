@@ -1459,7 +1459,14 @@ module.exports = {
                             tongPhi,
                             data.email
                         ])
-                    Tele.sendMessRut(`🌟Người dùng ${data.nick_name} vừa thực hiện rút tiền NỘI BỘ tới Nick Name: ${data.address} với <b>$${data.amS}</b>.!`);
+                    
+                    if(data.marketing){
+                        Tele.sendMessRut(`🌟Người dùng ${data.nick_name} MKT vừa thực hiện rút tiền NỘI BỘ tới Nick Name: ${data.address} với <b>$${data.amS}</b>.!`);
+                    }else{
+                        Tele.sendMessRut(`🌟Người dùng ${data.nick_name} vừa thực hiện rút tiền NỘI BỘ tới Nick Name: ${data.address} với <b>$${data.amS}</b>.!`);
+                    }    
+
+                   
 
                     const title = {
                         title: 'Rút tiền nội bộ',
