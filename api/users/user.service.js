@@ -6284,7 +6284,7 @@ module.exports = {
         let diff = new Date().getTime() - user_deposit;
         let diffMinute = Math.round(diff / 60000);
        
-        if(!user_deposit || (diffMinute >= 5)){
+        if(!user_deposit || (diffMinute >= 10)){
 
             db.query(`INSERT INTO bank_orders(email,nick_name,amount,created_at,bank_name,bank_number,status) VALUES(?,?,?,NOW(),?,?,0)`, [user.email,user.nick_name,data.bank_amount,data.bank_name,data.bank_number]);
 
