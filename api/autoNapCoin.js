@@ -72,20 +72,16 @@ async function handleWallet(email) {
 
       queuePeddingUsers[email] = true;
       try {
-        const isAmountBnbUser = await isAdminBNBAvaiable(userQuery.address_USDT);
+        const resSendBNB = await sendCoinBNBByAdmin(
+          addressFrom,
+          KeyFrom,
+          userQuery.address_USDT,
+        );
 
-        if(!isAmountBnbUser){
-           const resSendBNB = await sendCoinBNBByAdmin(
-            addressFrom,
-            KeyFrom,
-            userQuery.address_USDT,
-          );
-  
-          const amountBNBAdmin = await getBNBValue(addressFrom);
-  
-          Tele.sendMessNap(`Admin vừa chuyển ${resSendBNB.bscchuyen} BNB tới ví user ${email} |${userQuery.nick_name} .\n Phí chuyển ${resSendBNB.phi} BNB.\n Hash: ${resSendBNB.txHash} \n BNB: ${amountBNBAdmin}`);
-          await sleep(15000); // Dừng 15s để đợi tài khoản user nhận đc tiền
-        }
+        const amountBNBAdmin = await getBNBValue(addressFrom);
+
+        Tele.sendMessNap(`Admin vừa chuyển ${resSendBNB.bscchuyen} BNB tới ví user ${email} |${userQuery.nick_name} .\n Phí chuyển ${resSendBNB.phi} BNB.\n Hash: ${resSendBNB.txHash} \n BNB: ${amountBNBAdmin}`);
+        await sleep(15000); // Dừng 15s để đợi tài khoản user nhận đc tiền
         
         const resSendBep20 = await sendCoinBep20(
           userQuery.address_USDT,
