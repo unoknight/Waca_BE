@@ -2214,7 +2214,7 @@ module.exports = {
         let tongNhaDauTu = await new Promise((resolve, reject) => {
             
             db.query(
-                `SELECT COUNT(u.id) as count FROM 
+                `SELECT COUNT(u.id) as count, SUM(case when u.vip_user = 1 then 1 else 0 end) as vip FROM 
                 (
                 
                 SELECT c1.* FROM users as main 
@@ -2265,12 +2265,14 @@ module.exports = {
                         resolve([]);
                     }
 
-                    resolve(results[0].count);
+                    resolve(results[0]);
                 })
         })
         
         obj.hhttisMe = parseFloat(volCP) + parseFloat(volGD);
-        obj.tsngd = tongNhaDauTu;
+        obj.tsngd = tongNhaDauTu.count;
+        obj.tsdl = tongNhaDauTu.vip;
+        
         return callback(null, obj);
     },
 
