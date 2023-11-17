@@ -2211,8 +2211,66 @@ module.exports = {
                 })
         })
 
-        obj.hhttisMe = parseFloat(volCP) + parseFloat(volGD);
+        let tongNhaDauTu = await new Promise((resolve, reject) => {
+            
+            db.query(
+                `SELECT COUNT(u.id) as count FROM 
+                (
+                
+                SELECT c1.* FROM users as main 
+                JOIN users as c1 ON c1.upline_id = main.ref_code 
+                WHERE main.ref_code = ?
+                
+                UNION
+                SELECT c2.* FROM users as main 
+                JOIN users as c1 ON c1.upline_id = main.ref_code 
+                JOIN users as c2 ON c1.ref_code = c2.upline_id
+                WHERE main.ref_code = ?
+                
+                UNION 
+                SELECT c3.* FROM users as main 
+                JOIN users as c1 ON c1.upline_id = main.ref_code 
+                JOIN users as c2 ON c1.ref_code = c2.upline_id
+                JOIN users as c3 ON c2.ref_code = c3.upline_id
+                WHERE main.ref_code = ?
+                
+                UNION 
+                
+                SELECT c4.* FROM users as main 
+                JOIN users as c1 ON c1.upline_id = main.ref_code 
+                JOIN users as c2 ON c1.ref_code = c2.upline_id
+                JOIN users as c3 ON c2.ref_code = c3.upline_id
+                JOIN users as c4 ON c3.ref_code = c4.upline_id
+                WHERE main.ref_code = ?
+                
+                UNION
+                
+                SELECT c5.* FROM users as main 
+                JOIN users as c1 ON c1.upline_id = main.ref_code 
+                JOIN users as c2 ON c1.ref_code = c2.upline_id
+                JOIN users as c3 ON c2.ref_code = c3.upline_id
+                JOIN users as c4 ON c3.ref_code = c4.upline_id
+                JOIN users as c5 ON c4.ref_code = c5.upline_id
+                WHERE main.ref_code = ?
+                ) as u 
+                WHERE u.marketing = 0`,
+                [
+                    refForMe,
+                    refForMe,
+                    refForMe,
+                    refForMe,
+                    refForMe,
+                ], (error, results, fields) => {
+                    if (error) {
+                        resolve([]);
+                    }
+
+                    resolve(results[0].count);
+                })
+        })
         
+        obj.hhttisMe = parseFloat(volCP) + parseFloat(volGD);
+        obj.tsngd = tongNhaDauTu;
         return callback(null, obj);
     },
 
