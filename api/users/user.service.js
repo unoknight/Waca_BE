@@ -2272,7 +2272,32 @@ module.exports = {
         obj.hhttisMe = parseFloat(volCP) + parseFloat(volGD);
         obj.tsngd = tongNhaDauTu.count;
         obj.tsdl = tongNhaDauTu.vip;
-        
+
+        if (upline_id !== '') {
+            await new Promise((resolve, reject) => {
+                // nếu tồn tại F0 của mình 
+                db.query(
+                    `SELECT nick_name FROM users WHERE ref_code = ?`,
+                    [upline_id], (error, results, fields) => {
+                        if (error) {
+                            resolve([]);
+                        }
+
+                        try {
+                            obj.nick = results[0].nick_name
+                        } catch (error) {
+                            upline_id = '-------';
+                        }
+
+                        //==================================================
+                        resolve();
+                        //return callback(null, obj)
+                    })
+            })
+        } else {
+            upline_id = '-------';
+        }
+
         return callback(null, obj);
     },
 
