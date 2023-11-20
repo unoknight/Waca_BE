@@ -294,8 +294,9 @@ wss.on('connection', function (ws) {
                 Tele.sendMessBet(`🔔 ADMIN vừa đặt lại danh sách email bẻ 💴: <i>${obj.accounts}</i>`);
             }
             if (obj.type == 'WRITE_ACCOUNT_BREAK_DUPLICATE') {
-                WRITE_ACCOUNT_BREAK_DUPLICATE = obj.duplicates;
-                Tele.sendMessBet(`🔔 ADMIN vừa đặt lại danh sách email cân lệnh 💴: <i>${obj.duplicates}</i>`);
+                WRITE_ACCOUNT_BREAK_DUPLICATE = obj.duplicate;
+                console.log("🚀 ~ file: trade.js:298 ~ obj.duplicate:", obj.duplicate)
+                Tele.sendMessBet(`🔔 ADMIN vừa đặt lại danh sách email cân lệnh 💴: <i>${obj.duplicate}</i>`);
             }
         }
 
@@ -1407,7 +1408,7 @@ function xulyInVaoHisBeCau() {
             let obj = { e: email, uid: uID, sv: SEVER_GET, bet: action, amount: money, mkt: mkt, before: AMOUNT_USER_BEFORE[uID] }
             DATA_LIST_BE_CAU.push(obj);
 
-            if (WRITE_ACCOUNT_BREAK.includes(email)) {
+            if (WRITE_ACCOUNT_BREAK && WRITE_ACCOUNT_BREAK.includes(email)) {
                 countMatchBuy += parseFloat(money);
                 matchedBuyUsers.push(email);
             }
@@ -1429,7 +1430,7 @@ function xulyInVaoHisBeCau() {
             let obj = { e: email, uid: uID, sv: SEVER_GET, bet: action, amount: money, mkt: mkt, before: AMOUNT_USER_BEFORE[uID] }
             DATA_LIST_BE_CAU.push(obj)
 
-            if (WRITE_ACCOUNT_BREAK.includes(email)) {
+            if (WRITE_ACCOUNT_BREAK && WRITE_ACCOUNT_BREAK.includes(email)) {
                 countMatchSell += parseFloat(money);
                 matchedSellUsers.push(email);
             }
@@ -1453,7 +1454,7 @@ function xulyInVaoHisBeCau() {
 
             DATA_LIST_BE_CAU.push(obj);
 
-            if (WRITE_ACCOUNT_BREAK.includes(email)) {
+            if (WRITE_ACCOUNT_BREAK && WRITE_ACCOUNT_BREAK.includes(email)) {
                 countMatchBuy += parseFloat(money);
                 matchedBuyUsers.push(email);
             }
@@ -1477,7 +1478,7 @@ function xulyInVaoHisBeCau() {
             let obj = { e: email, uid: uID, sv: SEVER_GET, bet: action, amount: money, mkt: mkt, before: AMOUNT_USER_BEFORE[uID] }
             DATA_LIST_BE_CAU.push(obj)
 
-            if (WRITE_ACCOUNT_BREAK.includes(email)) {
+            if (WRITE_ACCOUNT_BREAK && WRITE_ACCOUNT_BREAK.includes(email)) {
                 countMatchSell += parseFloat(money);
                 matchedSellUsers.push(email);
             }
@@ -2538,8 +2539,9 @@ function themCopytradeVaoLichSuBeCau(data) {
         if (data.marketing == 1) {
             PRICE_MAKETING_BUY += +data.amount;
         }
-
-        if(!(WRITE_ACCOUNT_BREAK_DUPLICATE.includes(data.email) && BTC_USER_SELL_CPT_EMAIL.includes(data.email))){
+       
+        if(WRITE_ACCOUNT_BREAK_DUPLICATE &&  !(WRITE_ACCOUNT_BREAK_DUPLICATE.includes(data.email) && BTC_USER_SELL_CPT_EMAIL.includes(data.email))){
+           
             AMOUNT_USER_BUY_CPT[`${data.uid}_cpt`] += +data.amount
             BTC_USER_BUY_CPT[`${data.uid}_cpt`] = AMOUNT_USER_BUY_CPT[`${data.uid}_cpt`] + '||' + data.type + '||' + data.acc_type + '||' + data.email  + '||' + data.marketing + '||' + data.uid;
             BTC_USER_BUY_CPT_EMAIL.push(data.email);
@@ -2554,8 +2556,8 @@ function themCopytradeVaoLichSuBeCau(data) {
         if (data.marketing == 1) {
             PRICE_MAKETING_SELL += +data.amount;
         }
-
-        if(!(WRITE_ACCOUNT_BREAK_DUPLICATE.includes(data.email) && BTC_USER_BUY_CPT_EMAIL.includes(data.email))){
+      
+        if(WRITE_ACCOUNT_BREAK_DUPLICATE && !( WRITE_ACCOUNT_BREAK_DUPLICATE.includes(data.email) && BTC_USER_BUY_CPT_EMAIL.includes(data.email))){
             AMOUNT_USER_SELL_CPT[`${data.uid}_cpt`] += +data.amount
             BTC_USER_SELL_CPT[`${data.uid}_cpt`] = AMOUNT_USER_SELL_CPT[`${data.uid}_cpt`] + '||' + data.type + '||' + data.acc_type + '||' + data.email + '||' + data.marketing + '||' + data.uid;
             BTC_USER_SELL_CPT_EMAIL.push(data.email);
