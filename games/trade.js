@@ -92,9 +92,15 @@ var BUY = [], SELL = [], STATIC = [], getLoadStaticGue = {}, tCountDown, LIST_US
 let AMOUNT_MAX_BREAK_BRIDGE = 400, AMOUNT_NEGA_AMOUNT_BREAK_BRIDGE = -30, CLOSE_CHECK = 0, OPEN_CHECK = 0;
 let WRITE_ACCOUNT_BREAK = [];
 let GAME_CHAPION = {};
+let WRITE_ACCOUNT_BREAK_DUPLICATE = [];
 
 //Copy trade
-var AMOUNT_USER_BUY_CPT = [], BTC_USER_BUY_CPT = [], AMOUNT_USER_SELL_CPT = [], BTC_USER_SELL_CPT = []
+var AMOUNT_USER_BUY_CPT = [], BTC_USER_BUY_CPT = [], AMOUNT_USER_SELL_CPT = [], BTC_USER_SELL_CPT = [];
+
+var BTC_USER_BUY_CPT_EMAIL = [];
+var BTC_USER_SELL_CPT_EMAIL = [];
+
+
 // Config tỉ lệ nến râu dài
 const BIEN_DO = 2;
 const TI_LE = 0.9;
@@ -110,6 +116,7 @@ DATA_GL.PRICE_FUND_PROFITS = parseFloat(gameConfig.Profit);
 AMOUNT_NEGA_AMOUNT_BREAK_BRIDGE = parseFloat(gameConfig.Break);
 AMOUNT_MAX_BREAK_BRIDGE = parseFloat(gameConfig.MaxBreak);
 WRITE_ACCOUNT_BREAK = gameConfig.Email;
+WRITE_ACCOUNT_BREAK_DUPLICATE = gameConfig.Duplicate;
 
 console.log("Write");
 console.log(DATA_GL);
@@ -133,11 +140,12 @@ function writeStaticDB() {
     Helper.setConfig('trade', tradeConfig);
 }
 
-function writeGameDB(profit, breakValue, max, email) {
+function writeGameDB(profit, breakValue, max, email, duplicate) {
     gameConfig.Profit = profit;
     gameConfig.Break = breakValue;
     gameConfig.MaxBreak = max;
     gameConfig.Email = email;
+    gameConfig.Duplicate = duplicate;
     Helper.setConfig('game', gameConfig);
 }
 
@@ -214,7 +222,7 @@ wss.on('connection', function (ws) {
                 if (uid == 'ADMIN_BO') {
                     //console.log(uid);
                     let ws = users[obj].ws;
-                    ws.send(JSON.stringify({ type: 'getTruck', data: DATA_GL, min_am_go: AMOUNT_NEGA_AMOUNT_BREAK_BRIDGE, max_amount_be: AMOUNT_MAX_BREAK_BRIDGE, account_break: WRITE_ACCOUNT_BREAK }));
+                    ws.send(JSON.stringify({ type: 'getTruck', data: DATA_GL, min_am_go: AMOUNT_NEGA_AMOUNT_BREAK_BRIDGE, max_amount_be: AMOUNT_MAX_BREAK_BRIDGE, account_break: WRITE_ACCOUNT_BREAK, duplicate: WRITE_ACCOUNT_BREAK_DUPLICATE }));
                 }
             }
         }
@@ -284,6 +292,10 @@ wss.on('connection', function (ws) {
             if (obj.type == 'WRITE_ACCOUNT_BREAK') {
                 WRITE_ACCOUNT_BREAK = obj.accounts;
                 Tele.sendMessBet(`🔔 ADMIN vừa đặt lại danh sách email bẻ 💴: <i>${obj.accounts}</i>`);
+            }
+            if (obj.type == 'WRITE_ACCOUNT_BREAK_DUPLICATE') {
+                WRITE_ACCOUNT_BREAK_DUPLICATE = obj.duplicates;
+                Tele.sendMessBet(`🔔 ADMIN vừa đặt lại danh sách email cân lệnh 💴: <i>${obj.duplicates}</i>`);
             }
         }
 
@@ -1078,7 +1090,7 @@ async function XU_LY_QUY_BOT(PRICE_WIN, PRICE_LOSE) {
         DATA_GL.PRICE_FUND_PROFITS = 0;
     }
 
-    writeGameDB(DATA_GL.PRICE_FUND_PROFITS, AMOUNT_NEGA_AMOUNT_BREAK_BRIDGE, AMOUNT_MAX_BREAK_BRIDGE, WRITE_ACCOUNT_BREAK);
+    writeGameDB(DATA_GL.PRICE_FUND_PROFITS, AMOUNT_NEGA_AMOUNT_BREAK_BRIDGE, AMOUNT_MAX_BREAK_BRIDGE, WRITE_ACCOUNT_BREAK, WRITE_ACCOUNT_BREAK_DUPLICATE);
 
     // thoát BOT nếu là acc marketing chơi
     if ((AMOUNT_MARKETING_WIN > 0 || AMOUNT_MARKETING_LOSE > 0) && DATA_GL.PRICE_FUND_PROFITS == 0) {
@@ -1438,12 +1450,15 @@ function xulyInVaoHisBeCau() {
         let mkt = moneyAndAction[4];
         if (typeAcc == 1) {
             let obj = { e: email, uid: uID, sv: SEVER_GET, bet: action, amount: money, mkt: mkt, before: AMOUNT_USER_BEFORE[uID] }
+
             DATA_LIST_BE_CAU.push(obj);
 
             if (WRITE_ACCOUNT_BREAK.includes(email)) {
                 countMatchBuy += parseFloat(money);
                 matchedBuyUsers.push(email);
             }
+
+          
 
             allBuy += parseFloat(money);
         }
@@ -1755,6 +1770,9 @@ async function HandlingBuySell2(title) {
 
     BTC_USER_BUY_CPT = [];
     BTC_USER_SELL_CPT = [];
+
+    BTC_USER_BUY_CPT_EMAIL = [];
+    BTC_USER_SELL_CPT_EMAIL = [];
 
     AMOUNT_USER_BUY_CPT = [];
     AMOUNT_USER_SELL_CPT = [];
@@ -2521,8 +2539,13 @@ function themCopytradeVaoLichSuBeCau(data) {
             PRICE_MAKETING_BUY += +data.amount;
         }
 
-        AMOUNT_USER_BUY_CPT[`${data.uid}_cpt`] += +data.amount
-        BTC_USER_BUY_CPT[`${data.uid}_cpt`] = AMOUNT_USER_BUY_CPT[`${data.uid}_cpt`] + '||' + data.type + '||' + data.acc_type + '||' + data.email  + '||' + data.marketing + '||' + data.uid;
+        if(!(WRITE_ACCOUNT_BREAK_DUPLICATE.includes(data.email) && BTC_USER_SELL_CPT_EMAIL.includes(data.email))){
+            AMOUNT_USER_BUY_CPT[`${data.uid}_cpt`] += +data.amount
+            BTC_USER_BUY_CPT[`${data.uid}_cpt`] = AMOUNT_USER_BUY_CPT[`${data.uid}_cpt`] + '||' + data.type + '||' + data.acc_type + '||' + data.email  + '||' + data.marketing + '||' + data.uid;
+            BTC_USER_BUY_CPT_EMAIL.push(data.email);
+        }else{
+            Tele.sendMessThongBao(`Email: ${data.email} dup lệnh BUY`);
+        }
 
         //Tele.sendMessThongBao(`Thêm Account vào HH - BUY: ${data.email}`);
     } else {
@@ -2532,9 +2555,13 @@ function themCopytradeVaoLichSuBeCau(data) {
             PRICE_MAKETING_SELL += +data.amount;
         }
 
-        AMOUNT_USER_SELL_CPT[`${data.uid}_cpt`] += +data.amount
-        BTC_USER_SELL_CPT[`${data.uid}_cpt`] = AMOUNT_USER_SELL_CPT[`${data.uid}_cpt`] + '||' + data.type + '||' + data.acc_type + '||' + data.email + '||' + data.marketing + '||' + data.uid;
-
+        if(!(WRITE_ACCOUNT_BREAK_DUPLICATE.includes(data.email) && BTC_USER_BUY_CPT_EMAIL.includes(data.email))){
+            AMOUNT_USER_SELL_CPT[`${data.uid}_cpt`] += +data.amount
+            BTC_USER_SELL_CPT[`${data.uid}_cpt`] = AMOUNT_USER_SELL_CPT[`${data.uid}_cpt`] + '||' + data.type + '||' + data.acc_type + '||' + data.email + '||' + data.marketing + '||' + data.uid;
+            BTC_USER_SELL_CPT_EMAIL.push(data.email);
+        }else{
+            Tele.sendMessThongBao(`Email: ${data.email} dup lệnh SELL`);
+        }
         //Tele.sendMessThongBao(`Thêm Account vào HH - SELL: ${data.email}`);
     }
 }
