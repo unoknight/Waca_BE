@@ -1888,7 +1888,7 @@ async function HandlingCommissionBUY() {
                                     //     }
                                     // }
 
-                                    console.log("HH GD BUY: " + obj.email + " levelVip = " + levelVip + " count=" + (i + 1));
+                                    //console.log("HH GD BUY: " + obj.email + " levelVip = " + levelVip + " count=" + (i + 1));
                                     if (levelVip >= (i + 1) && levelVip != 0) {
                                         updateAmountRateCommission(obj);
                                     } else {
@@ -1951,8 +1951,8 @@ async function HandlingCommissionSELL() {
         sourceLevelId: 0
     }
 
-    console.log("HH SELL");
-    console.log(BTC_USER_SELL_BACK);
+    // console.log("HH SELL");
+    // console.log(BTC_USER_SELL_BACK);
 
     for (let xl in BTC_USER_SELL_BACK) {
         try {

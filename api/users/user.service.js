@@ -3007,60 +3007,95 @@ module.exports = {
                     let min = 0;
 
                     if (data.t == 1) {
-                        // khối lượng hoa hồng giao dịch
-                        for (let i = 0; i < daysBetween; i++) {
-                            db.query(
-                                `SELECT 
-                                    SUM(pending_commission) AS thanhtoan, 
-                                    SUM(personal_trading_volume) AS klgd,
-                                    COUNT(pending_commission) AS soluongGD,
-                                    DATE_FORMAT(created_at, '%Y-%m-%d') AS dt 
-                                    FROM commission_history WHERE type = ? AND ref_id = ? AND DATE(created_at) = DATE(?) - ? GROUP BY DATE_FORMAT(created_at, '%Y-%m-%d')`,
-                                [
-                                    'klgd', // hoa hồng giao dịch
-                                    uid,
-                                    data.e,
-                                    i
-                                ],
-                                (error, results, fields) => {
-                                    if (error) {
-                                        //return callback(error);
-                                        res(Rs);
-                                    }
+                        db.query(
+                            `SELECT
+                            SUM( pending_commission ) AS thanhtoan,
+                            SUM( personal_trading_volume ) AS klgd,
+                            COUNT( pending_commission ) AS soluongGD,
+                            DATE_FORMAT( created_at, '%Y-%m-%d' ) AS dt 
+                        FROM
+                            commission_history 
+                        WHERE
+                            type = ? 
+                            AND ref_id = ?
+                            AND DATE(created_at) >= ? AND DATE(created_at) <= ?
+                        GROUP BY
+                            DATE_FORMAT(
+                            created_at,
+                            '%Y-%m-%d')`,
+                            [
+                                'klgd', // hoa hồng giao dịch
+                                uid,
+                                data.s,
+                                data.e,
+                            ],
+                            (error, results, fields) => {
+                              
+                                if (error) {
+                                    //return callback(error);
+                                    res(Rs);
+                                }
 
-                                    min++;
-                                    if (Array.isArray(results) && results.length > 0) Rs.push(results[0]);
-                                    if (min == daysBetween) res();
-                                })
-                        }
+                                // min++;
+                                 if (Array.isArray(results) && results.length > 0) {
+                                    Rs=results;
+                                   
+                                 };
+                                 res();
+                                // if (min == daysBetween) res();
+                            })
+
+                       
                     } else {
                         // khối lượng hoa hồng vip giao dịch
-                        for (let i = 0; i < daysBetween; i++) {
-                            db.query(
-                                `SELECT 
-                                    SUM(vip_commission) AS doanhso, 
-                                    created_at AS dt 
-                                    FROM commission_history WHERE type = ? AND ref_id = ? AND DATE(created_at) = DATE(?) - ? GROUP BY DATE(created_at)`,
-                                [
-                                    'hhv',
-                                    uid,
-                                    data.e,
-                                    i
-                                ],
-                                (error, results, fields) => {
-                                    if (error) {
-                                        res(error);
-                                    }
+                        // for (let i = 0; i < daysBetween; i++) {
+                        //     db.query(
+                        //         `SELECT 
+                        //             SUM(vip_commission) AS doanhso, 
+                        //             created_at AS dt 
+                        //             FROM commission_history WHERE type = ? AND ref_id = ? AND DATE(created_at) = DATE(?) - ? GROUP BY DATE(created_at)`,
+                        //         [
+                        //             'hhv',
+                        //             uid,
+                        //             data.e,
+                        //             i
+                        //         ],
+                        //         (error, results, fields) => {
+                        //             if (error) {
+                        //                 res(error);
+                        //             }
 
-                                    min++;
-                                    if (results.length > 0) Rs.push(results[0])
-                                    if (min == daysBetween) res();
-                                })
-                        }
+                        //             min++;
+                        //             if (results.length > 0) Rs.push(results[0])
+                        //             if (min == daysBetween) res();
+                        //         })
+                        // }
+
+                        db.query(
+                            `SELECT 
+                            SUM(vip_commission) AS doanhso, 
+                        created_at AS dt 
+                        FROM commission_history WHERE type = ? AND upline_id = ? AND DATE(created_at) >= ? AND DATE(created_at) <= ? GROUP BY DATE(created_at)`,
+                            [
+                                'hhv',
+                                uid,
+                                data.s,
+                                data.e,
+                            ],
+                            (error, results, fields) => {
+                                if (error) {
+                                    res(error);
+                                }
+                                Rs = results;
+                                res();
+                            })
                     }
                 })
         })
+
+        
         return callback(null, Rs);
+        
     },
 
     getAgencySearchLevel: async (data, callback) => {
