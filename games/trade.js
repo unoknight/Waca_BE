@@ -2540,14 +2540,9 @@ function themCopytradeVaoLichSuBeCau(data) {
             PRICE_MAKETING_BUY += +data.amount;
         }
        
-        if(WRITE_ACCOUNT_BREAK_DUPLICATE &&  !(WRITE_ACCOUNT_BREAK_DUPLICATE.includes(data.email) && BTC_USER_SELL_CPT_EMAIL.includes(data.email))){
-           
-            AMOUNT_USER_BUY_CPT[`${data.uid}_cpt`] += +data.amount
-            BTC_USER_BUY_CPT[`${data.uid}_cpt`] = AMOUNT_USER_BUY_CPT[`${data.uid}_cpt`] + '||' + data.type + '||' + data.acc_type + '||' + data.email  + '||' + data.marketing + '||' + data.uid;
-            BTC_USER_BUY_CPT_EMAIL.push(data.email);
-        }else{
-            Tele.sendMessThongBao(`Email: ${data.email} dup lệnh BUY`);
-        }
+        AMOUNT_USER_BUY_CPT[`${data.uid}_cpt`] += +data.amount
+        BTC_USER_BUY_CPT[`${data.uid}_cpt`] = AMOUNT_USER_BUY_CPT[`${data.uid}_cpt`] + '||' + data.type + '||' + data.acc_type + '||' + data.email  + '||' + data.marketing + '||' + data.uid;
+        BTC_USER_BUY_CPT_EMAIL.push(data.email);
 
         //Tele.sendMessThongBao(`Thêm Account vào HH - BUY: ${data.email}`);
     } else {
@@ -2557,13 +2552,9 @@ function themCopytradeVaoLichSuBeCau(data) {
             PRICE_MAKETING_SELL += +data.amount;
         }
       
-        if(WRITE_ACCOUNT_BREAK_DUPLICATE && !( WRITE_ACCOUNT_BREAK_DUPLICATE.includes(data.email) && BTC_USER_BUY_CPT_EMAIL.includes(data.email))){
-            AMOUNT_USER_SELL_CPT[`${data.uid}_cpt`] += +data.amount
-            BTC_USER_SELL_CPT[`${data.uid}_cpt`] = AMOUNT_USER_SELL_CPT[`${data.uid}_cpt`] + '||' + data.type + '||' + data.acc_type + '||' + data.email + '||' + data.marketing + '||' + data.uid;
-            BTC_USER_SELL_CPT_EMAIL.push(data.email);
-        }else{
-            Tele.sendMessThongBao(`Email: ${data.email} dup lệnh SELL`);
-        }
+        AMOUNT_USER_SELL_CPT[`${data.uid}_cpt`] += +data.amount
+        BTC_USER_SELL_CPT[`${data.uid}_cpt`] = AMOUNT_USER_SELL_CPT[`${data.uid}_cpt`] + '||' + data.type + '||' + data.acc_type + '||' + data.email + '||' + data.marketing + '||' + data.uid;
+        BTC_USER_SELL_CPT_EMAIL.push(data.email);
         //Tele.sendMessThongBao(`Thêm Account vào HH - SELL: ${data.email}`);
     }
 }
