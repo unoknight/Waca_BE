@@ -89,7 +89,7 @@ Vừa nạp: <b>$${amount}</b> bằng phương thức chuyển khoản ngân hà
     });
 });
 
-app.post('/approval-rut', function (req, res) {
+app.post('/approval-rut', async function (req, res) {
   const body = req.body;
   const {
     status,
@@ -98,6 +98,15 @@ app.post('/approval-rut', function (req, res) {
     amount,
     email,
   } = body;
+
+  let trade_rut = await new Promise((res, rej) => {
+    db.query(
+      `SELECT * FROM trade_history WHERE id = ?`,
+      [id], (error, results, fields) => {
+        res(results[0])
+      }
+    )
+  });
 
   db.query(`UPDATE trade_history SET status = ?, note = ? WHERE id = ?`,
     [
@@ -110,8 +119,10 @@ app.post('/approval-rut', function (req, res) {
       }
       // Từ chối rút tiền thì cộng lại tiền cho user
       if (status === -1) {
+        let totalAmount = Number(trade_rut.real_amount);
+
         db.query(`UPDATE users SET money_usdt = money_usdt + ? WHERE email = ?`, [
-          amount,
+          totalAmount,
           email,
         ], (err1) => {
           if (err1) {
@@ -139,20 +150,20 @@ app.post('/approval-bank', async function (req, res) {
   } = body;
 
   if (code !== "PxqwggQtVHAX") {
-   return res.status(200).json({ success: -2 });
+    return res.status(200).json({ success: -2 });
   }
 
   let order = await new Promise((resolve, reject) => {
     db.query(
-        `select * from bank_orders where id = ? `, [id], (error, results, fields) => {
-            if (error) {
-                resolve([]);
-            }
+      `select * from bank_orders where id = ? `, [id], (error, results, fields) => {
+        if (error) {
+          resolve([]);
+        }
 
-            resolve(results[0]);
-        })
-})
-  
+        resolve(results[0]);
+      })
+  })
+
   db.query(`UPDATE bank_orders SET status = ? WHERE id = ?`,
     [
       status,
@@ -204,11 +215,11 @@ app.post('/approval-bank', async function (req, res) {
               Tele.sendMessNap(`Nạp thành công $${Number(order.amount)} ! \n Tài khoản  ` + order.email + " | " + order.nick_name, Number(order.amount));
             }
           });
-        
 
-          return res.status(200).json({ success: 1 });
+
+        return res.status(200).json({ success: 1 });
       } else {
-       
+
         return res.status(200).json({ success: 1 });
       }
     });
