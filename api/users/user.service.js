@@ -679,7 +679,7 @@ module.exports = {
                 LEFT JOIN
                 (
                     SELECT email,COALESCE(SUM(amount),0) as 'amount_rut' FROM trade_history 
-                    WHERE type_key='rt' AND delete_status = 0 AND network IN ('bep20','bank')  AND status != 2
+                    WHERE type_key='rt' AND delete_status = 0 AND network IN ('bep20','bank')  AND status = 1
                     GROUP BY email
                 ) as gd_rut ON users.email = gd_rut.email
                 LEFT JOIN
@@ -736,7 +736,7 @@ module.exports = {
                 LEFT JOIN
                 (
                     SELECT email,COALESCE(SUM(amount),0) as 'amount_rut' FROM trade_history 
-                    WHERE type_key='rt' AND delete_status = 0 AND network IN ('bep20','bank')
+                    WHERE type_key='rt' AND delete_status = 0 AND network IN ('bep20','bank') AND status = 1
                     GROUP BY email
                 ) as gd_rut ON users.email = gd_rut.email
                 LEFT JOIN
