@@ -5631,7 +5631,7 @@ module.exports = {
     },
     getUserInfoAdmin: async (data, callback) => {
         db.query(
-            `SELECT users.email, users.nick_name, users.address_USDT,account.balance as 'live_balance', users.money_usdt as 'wallet_balance',(users.money_usdt + account.balance) as 'total_balance', copy_trade.experts as 'expert',copy_trade.day_lose as 'cp_lose',copy_trade.day_win as 'cp_win', copy_trade.amount 'cp_amount', copy_trade.money_per_day as 'cp_today', copy_trade.rate = 1 as 'cp_rate',copy_trade.is_active = 1 as 'cp_active', user_up.nick_name as 'upline_user' FROm users
+            `SELECT users.email, users.nick_name, users.address_USDT,account.balance as 'live_balance', users.money_usdt as 'wallet_balance',(users.money_usdt + account.balance) as 'total_balance', copy_trade.experts as 'expert',copy_trade.day_lose as 'cp_lose',copy_trade.day_win as 'cp_win', copy_trade.amount 'cp_amount', copy_trade.money_per_day as 'cp_today',copy_trade.run as 'cp_run', copy_trade.rate = 1 as 'cp_rate',copy_trade.is_active = 1 as 'cp_active', user_up.nick_name as 'upline_user' FROm users
             LEFT JOIN users as user_up ON users.upline_id = user_up.ref_code
             JOIN account ON users.email = account.email AND account.type = ?
             LEFT JOIN copy_trade ON users.email = copy_trade.email
