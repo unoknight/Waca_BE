@@ -5203,76 +5203,7 @@ module.exports = {
             }
         }
 
-        //if(cap7){
-        //   for(let i = 0;  i < listData['cap7'].length; i++){
-        //      db.query(
-        //           `SELECT level_vip, pricePlay AS tklgd, ref_code, upline_id, nick_name FROM users WHERE upline_id = ?`, 
-        //         [
-        //               listData['cap7'][i].ref_code
-        //          ], (error, result, fields) => {
-        //              if(result.length > 0){
-        //                   result.forEach((ele) => {
-        //                      listData['cap7'].push(ele);
-        //                   });
-        //cap7 = true;
-        //               }
-        //           }
-        //      )
-        //      await sleep(50);
-        //  }
-        // }
-
-        // await new Promise((res, rej) => {
-        // 	//SELECT  upline_id, ref_code 
-        // 	//FROM (SELECT * FROM users
-        //     //            ORDER BY upline_id) users_sorted,
-        //     //            (SELECT @pv := 'RYIFCWS') initialisation
-        //     //    WHERE find_in_set(upline_id, @pv)
-        //     //    AND length(@pv := concat(@pv, ',', ref_code));
-
-        //     db.query(`with recursive cte (level_vip, tklgd, ref_code, upline_id, nick_name) as (
-        // 			  select     level_vip,
-        // 						 pricePlay,
-        // 						 ref_code,
-        // 						 upline_id,
-        // 						 nick_name
-        // 			  from       users
-        // 			  where      upline_id = ?
-        // 			  union all
-        // 			  select     p.level_vip,
-        // 						 p.pricePlay,
-        // 						 p.ref_code,
-        // 						 p.upline_id,
-        // 						 p.nick_name
-        // 			  from       users p
-        // 			  inner join cte
-        // 					  on p.upline_id = cte.ref_code
-        // 			)
-        // 			select * from cte;`, 
-        //         [
-        // 			refID
-        // 		], (error, result, fields) => {
-        //             let count = result.length;
-        // 			if(count === 0) res();
-        //             if(count > 0){
-        //                 let i = 0, u = 0, check = '';
-        //                 result.forEach((ele) => {
-        // 					if(check != ele.upline_id){
-        // 						u++;
-        // 						check = ele.upline_id
-        // 					} 
-        // 					if(u <= 7){
-        // 						listData[`cap${u}`].push(ele);
-        // 					}
-        // 					res();
-        //                 })
-
-        //             }
-        //         }
-        //     )
-
-        // });
-
+       
         let listD = {
             data: listData,
             obj: obj
@@ -5281,6 +5212,559 @@ module.exports = {
         return callback(null, listD);
     },
 
+    getListF1F7New: async (data, callback) => {
+        let refID = data.ref;
+        let startDate = data.startDate;
+        let endDate = data.endDate;
+        let isFilterDate = false;
+
+        if (startDate && startDate != "" && endDate && endDate != "") {
+            isFilterDate = true;
+        }
+
+        //let listCap = [];
+        // lấy danh sách 7 cấp dưới của mình 
+        let listData = {
+            "cap1": [],
+            "cap2": [],
+            "cap3": [],
+            "cap4": [],
+            "cap5": [],
+            "cap6": [],
+            "cap7": [],
+            "cap8": [],
+            "cap9": [],
+            "cap10": [],
+            "cap11": [],
+            "cap12": [],
+            "cap13": [],
+            "cap14": [],
+            "cap15": []
+        };
+        // let listCap = {
+        // 	"cap1": [],
+        // 	"cap2": [],
+        // 	"cap3": [],
+        // 	"cap4": [],
+        // 	"cap5": [],
+        // 	"cap6": [],
+        // 	"cap7": []
+        // };
+        //listCap['cap1'].push(refID);
+
+        let obj = {};
+
+        // let uIdAccount = await new Promise((resolve, reject)=>{
+        //     // get account name
+        //     db.query(
+        //         `SELECT u_id FROM account WHERE email = ? AND type = 1`, 
+        //         [
+        //             data.email
+        //         ],
+        //         (error, results, fields) => {
+        //             if(error){
+        //                 return callback(error);
+        //             }
+        //             resolve(results[0].u_id);
+        //         })
+        // })
+
+        obj.filterVolumn = 0;
+        obj.filterCp = 0;
+        obj.filterHH = 0;
+        obj.filterHHvip = 0;
+        obj.filterSodu = 0;
+
+        await new Promise((resolve, reject) => {
+            // tổng số lượng giao dịch cấp dưới tháng này
+            //SELECT SUM(personal_trading_volume) AS tslgdCD FROM commission_history WHERE from_upid = ? AND ref_id = ? AND MONTH(created_at) = MONTH(NOW())
+            db.query(
+                `SELECT SUM(personal_trading_volume) AS tslgdCD, SUM(pending_commission) AS tshhCD FROM commission_history WHERE upline_id = ? AND type = ? AND MONTH(created_at) = MONTH(NOW())`,
+                [
+                    //uIdAccount,
+                    refID,
+                    'klgd'
+                ], (error, results, fields) => {
+                    if (error) {
+                        resolve([]);
+                    }
+
+                    obj.tslgdCD1 = Number.parseFloat(results[0].tslgdCD) || 0;
+                    obj.tshhCD = Number.parseFloat(results[0].tshhCD) || 0;
+                    resolve();
+                })
+        })
+
+        await new Promise((resolve, reject) => {
+            // tổng số lượng giao dịch cấp dưới cách 1 tháng
+
+            db.query(
+                `SELECT SUM(personal_trading_volume) AS tslgdCD FROM commission_history WHERE upline_id = ? AND type = ? AND MONTH(created_at) = MONTH(NOW()) - 1`,
+                [
+                    //uIdAccount,
+                    refID,
+                    'klgd'
+                ], (error, results, fields) => {
+                    if (error) {
+                        resolve([]);
+                    }
+
+                    obj.tslgdCD2 = results[0].tslgdCD || 0;
+                    resolve();
+                })
+        })
+        await new Promise((resolve, reject) => {
+            // tổng số lượng giao dịch cấp dưới cách 2 tháng
+
+            db.query(
+                `SELECT SUM(personal_trading_volume) AS tslgdCD FROM commission_history WHERE upline_id = ? AND type = ? AND MONTH(created_at) = MONTH(NOW()) - 2`,
+                [
+                    //uIdAccount,
+                    refID,
+                    'klgd'
+                ], (error, results, fields) => {
+                    if (error) {
+                        resolve([]);
+                    }
+
+                    obj.tslgdCD3 = results[0].tslgdCD || 0;
+                    resolve();
+                })
+        })
+        await new Promise((resolve, reject) => {
+            // cách 3 tháng
+            db.query(
+                `select SUM(personal_trading_volume) AS tslgdCD FROM commission_history WHERE upline_id = ? AND type = ? AND MONTH(created_at) = MONTH(NOW()) - 3`,
+                [
+                    //uIdAccount,
+                    refID,
+                    'klgd'
+                ], (error, results, fields) => {
+                    if (error) {
+                        resolve([]);
+                    }
+
+                    obj.tslgdCD4 = results[0].tslgdCD || 0;
+                    resolve();
+                })
+        })
+
+        let user = await new Promise((resolve, reject) => {
+            // cách 3 tháng
+            db.query(
+                `SELECT email,nick_name FROM users WHERE ref_code = ?`,
+                [
+                    //uIdAccount,
+                    refID,
+                   
+                ], (error, results, fields) => {
+                    if (error) {
+                        resolve(null);
+                    }
+
+                    resolve(results[0]);
+                })
+        })
+        //console.log("🚀 ~ file: user.service.js:5368 ~ user ~ user:", user)
+
+
+
+        // lấy danh sách 7 cấp
+        // let max = false;
+
+        // for(let i = 0; i < 7; i++){
+        //     db.query(
+        //         `SELECT ref_code FROM users WHERE upline_id = ?`, 
+        //         [
+        //             refID
+        //         ], (error, result, fields) => {
+        //             if(result.length > 0){
+        //                 result.forEach((ele) => {
+        //                     listCap['cap1'].push(ele.ref_code);
+        //                 })
+        //                 //refID = result[0].ref_code;
+        //             }else{
+        //                 max = true;
+        //             }
+        //         }
+        //     )
+        //     if(max) break;
+        //     await sleep(200);
+        // }
+        let nick_name = user.nick_name;
+        let trade_history_date = "";
+        let bet_history_date = "";
+        let cp_history_date = "";
+        let commission_history_date ="";
+
+        if(isFilterDate){
+            trade_history_date = ` AND (DATE(trade_history.created_at) >= '${startDate}' AND DATE(trade_history.created_at) <= '${endDate}')`;
+            bet_history_date = ` AND (DATE(bet_history.created_at) >= '${startDate}' AND DATE(bet_history.created_at) <= '${endDate}')`;
+            cp_history_date = ` AND (DATE(copy_trade_history.created_at) >= '${startDate}' AND DATE(copy_trade_history.created_at) <= '${endDate}')`;
+            commission_history_date = ` AND (DATE(commission_history.created_at) >= '${startDate}' AND DATE(commission_history.created_at) <= '${endDate}')`;
+        }
+
+        let dataAll = await new Promise((resolve, reject) => {
+            // cách 3 tháng
+            db.query(
+                `SELECT
+                u.email,
+                u.type,
+                u.ref_code,
+                u.upline_id,
+                u.nick_name,
+                u.level_vip,
+                u.money_usdt,
+	            account.balance,
+                COALESCE (trade_cp.total_cp,0) AS 'total_cp',
+                COALESCE (trade_cp.total_cp_win,0) AS 'total_cp_win',
+                COALESCE (trade_cp.total_cp_lose,0) AS 'total_cp_lose',
+                COALESCE (trade_nap.amount,0) AS 'total_nap',
+                COALESCE (trade_rut.amount,0) AS 'total_rut',
+                COALESCE ( bet.total_vol,0) AS 'total_vol',
+                COALESCE ( bet.total_win,0) AS 'total_win',
+                COALESCE ( bet.total_lose,0) AS 'total_lose',
+                COALESCE ( hh_vip.hhvip,0) AS 'hhvip',
+                COALESCE ( hh_gd.hhgd,0) AS 'hhgd'
+            FROM
+                (
+                SELECT
+                    c1.*,
+                    'cap1' AS type 
+                FROM
+                    users AS main
+                    JOIN users AS c1 ON c1.upline_id = main.ref_code 
+                WHERE
+                    main.nick_name = '${nick_name}'
+                    AND c1.marketing = 0 UNION
+                SELECT
+                    c2.*,
+                    'cap2' AS type 
+                FROM
+                    users AS main
+                    JOIN users AS c1 ON c1.upline_id = main.ref_code
+                    JOIN users AS c2 ON c1.ref_code = c2.upline_id 
+                WHERE
+                    main.nick_name = '${nick_name}'
+                    AND c2.marketing = 0 UNION
+                SELECT
+                    c3.*,
+                    'cap3' AS type 
+                FROM
+                    users AS main
+                    JOIN users AS c1 ON c1.upline_id = main.ref_code
+                    JOIN users AS c2 ON c1.ref_code = c2.upline_id
+                    JOIN users AS c3 ON c2.ref_code = c3.upline_id 
+                WHERE
+                    main.nick_name = '${nick_name}' 
+                    AND c3.marketing = 0 
+                    UNION
+                SELECT
+                    c4.*,
+                    'cap4' AS type 
+                FROM
+                    users AS main
+                    JOIN users AS c1 ON c1.upline_id = main.ref_code
+                    JOIN users AS c2 ON c1.ref_code = c2.upline_id
+                    JOIN users AS c3 ON c2.ref_code = c3.upline_id
+                    JOIN users AS c4 ON c3.ref_code = c4.upline_id 
+                WHERE
+                    main.nick_name = '${nick_name}'
+                    AND c3.marketing = 0 
+                    UNION
+                SELECT
+                    c5.*,
+                    'cap5' AS type 
+                FROM
+                    users AS main
+                    JOIN users AS c1 ON c1.upline_id = main.ref_code
+                    JOIN users AS c2 ON c1.ref_code = c2.upline_id
+                    JOIN users AS c3 ON c2.ref_code = c3.upline_id
+                    JOIN users AS c4 ON c3.ref_code = c4.upline_id
+                    JOIN users AS c5 ON c4.ref_code = c5.upline_id 
+                WHERE
+                    main.nick_name = '${nick_name}'
+                    AND c5.marketing = 0 
+                    UNION
+                SELECT
+                    c6.*,
+                    'cap6' AS type 
+                FROM
+                    users AS main
+                    JOIN users AS c1 ON c1.upline_id = main.ref_code
+                    JOIN users AS c2 ON c1.ref_code = c2.upline_id
+                    JOIN users AS c3 ON c2.ref_code = c3.upline_id
+                    JOIN users AS c4 ON c3.ref_code = c4.upline_id
+                    JOIN users AS c5 ON c4.ref_code = c5.upline_id 
+                    JOIN users AS c6 ON c5.ref_code = c6.upline_id 
+                WHERE
+                    main.nick_name = '${nick_name}'
+                    AND c6.marketing = 0 
+                    UNION
+                SELECT
+                    c7.*,
+                    'cap7' AS type 
+                FROM
+                    users AS main
+                    JOIN users AS c1 ON c1.upline_id = main.ref_code
+                    JOIN users AS c2 ON c1.ref_code = c2.upline_id
+                    JOIN users AS c3 ON c2.ref_code = c3.upline_id
+                    JOIN users AS c4 ON c3.ref_code = c4.upline_id
+                    JOIN users AS c5 ON c4.ref_code = c5.upline_id 
+                    JOIN users AS c6 ON c5.ref_code = c6.upline_id 
+                    JOIN users AS c7 ON c6.ref_code = c7.upline_id 
+                WHERE
+                    main.nick_name = '${nick_name}'
+                    AND c7.marketing = 0 
+                ) AS u
+                LEFT JOIN (
+                SELECT
+                    trade_history.email,
+                    COALESCE ( SUM( trade_history.amount ), 0 ) AS 'amount' 
+                FROM
+                    trade_history
+                    JOIN users ON trade_history.email = users.email 
+                WHERE
+                    trade_history.type_key = 'nt' 
+                    AND trade_history.network IN ( 'bep20', 'bank' ) 
+                    AND trade_history.delete_status = 0 
+                    AND users.marketing = 0 
+                    ${trade_history_date}
+                GROUP BY
+                    trade_history.email 
+                ) AS trade_nap ON u.email = trade_nap.email
+                LEFT JOIN (
+                SELECT
+                    trade_history.email,
+                    COALESCE ( SUM( trade_history.amount ), 0 ) AS 'amount' 
+                FROM
+                    trade_history
+                    JOIN users ON trade_history.email = users.email 
+                WHERE
+                    trade_history.type_key = 'rt' 
+                    AND trade_history.network IN ( 'bep20', 'bank' ) 
+                    AND trade_history.status = 1 
+                    AND users.marketing = 0 
+                    ${trade_history_date}
+                GROUP BY
+                    trade_history.email 
+                ) AS trade_rut ON u.email = trade_rut.email
+                LEFT JOIN (
+                SELECT
+                    bet_history.email,
+                    COALESCE ( SUM( bet_history.amount_win ), 0 ) AS 'total_win',
+                    COALESCE ( SUM( bet_history.amount_lose ), 0 ) AS 'total_lose',
+                    COALESCE ( SUM( bet_history.amount_bet ), 0 ) AS 'total_vol' 
+                FROM
+                    bet_history
+                    JOIN users ON bet_history.email = users.email 
+                WHERE
+                    type_account = 1 
+                    AND users.marketing = 0 
+                    ${bet_history_date}
+                GROUP BY
+                bet_history.email 
+                ) AS bet ON u.email = bet.email
+                LEFT JOIN (
+                    SELECT 	users.email,COALESCE (SUM(commission_history.vip_commission),0) as 'hhvip' FROm commission_history 
+                    JOIN users ON users.ref_code = commission_history.upline_id
+                    WHERE users.marketing = 0
+                    AND commission_history.vip_commission>0
+                    ${commission_history_date}
+                    GROUP BY users.email
+                ) as hh_vip ON u.email = hh_vip.email
+                LEFT JOIN(
+                    SELECT 	users.email,COALESCE (SUM(commission_history.pending_commission),0) as 'hhgd' FROm commission_history 
+                    JOIN users ON users.ref_code = commission_history.ref_id
+                    WHERE users.marketing = 0
+                    AND commission_history.pending_commission>0
+                    ${commission_history_date}
+                    GROUP BY users.email
+            
+                ) as hh_gd ON u.email = hh_gd.email
+                LEFT JOIN(
+                    SELECT users.email, COALESCE (SUM(copy_trade_history.value),0) as 'total_cp', SUM(
+                        CASE WHEN sum>0 THEN sum ELSE 0 END
+                        ) as 'total_cp_win', SUM(
+                        CASE WHEN sum<0 THEN sum*-1 ELSE 0 END
+                        )  as 'total_cp_lose'  FROM copy_trade_history
+                        JOIN users ON copy_trade_history.email = users.email
+                        WHERE
+                        users.marketing = 0
+                        AND copy_trade_history.acc_type = 1
+                        ${cp_history_date}
+                        GROUP BY users.email
+                ) as trade_cp ON u.email = trade_cp.email
+                JOIN account ON u.email = account.email AND account.type = 1
+                `,
+                [
+                    
+                ], (error, results, fields) => {
+                    if (error) {
+                        resolve([]);
+                    }
+                    resolve(results);
+                })
+        })
+
+        dataAll.forEach(item => {
+            
+            if(item.type == 'cap1'){
+                let ele = {
+                    rut: item.total_rut ?? 0,
+                    amt: item.total_nap ?? 0,
+                    level_vip:item.level_vip,
+                    ref_code: item.ref_code,
+                    upline_id: item.upline_id,
+                    email: item.email, 
+                    nick_name: item.nick_name,
+                    tklgd: parseFloat(item.total_vol ?? 0) + parseFloat(item.total_cp ?? 0),
+                    commission_vip: item.hhvip ?? 0,
+                    pending_commission: item.hhgd ?? 0,
+                    priceWin: parseFloat(item.total_win ?? 0) + parseFloat(item.total_cp_win ?? 0),
+                    priceLose: parseFloat(item.total_lose ?? 0) + parseFloat(item.total_cp_lose ?? 0),
+                    balance: parseFloat(item.balance ?? 0),
+                    money_usdt: parseFloat(item.money_usdt ?? 0)
+                }
+                listData['cap1'].push(ele);
+
+            }
+
+            if(item.type == 'cap2'){
+                let ele = {
+                    rut: item.total_rut ?? 0,
+                    amt: item.total_nap ?? 0,
+                    level_vip:item.level_vip,
+                    ref_code: item.ref_code,
+                    upline_id: item.upline_id,
+                    email: item.email, 
+                    nick_name: item.nick_name,
+                    tklgd: parseFloat(item.total_vol ?? 0) + parseFloat(item.total_cp ?? 0),
+                    commission_vip: item.hhvip ?? 0,
+                    pending_commission: item.hhgd ?? 0,
+                    priceWin: parseFloat(item.total_win ?? 0) + parseFloat(item.total_cp_win ?? 0),
+                    priceLose: parseFloat(item.total_lose ?? 0) + parseFloat(item.total_cp_lose ?? 0),
+                    balance: parseFloat(item.balance ?? 0),
+                    money_usdt: parseFloat(item.money_usdt ?? 0)
+                }
+                listData['cap2'].push(ele);
+
+            }
+
+            if(item.type == 'cap3'){
+                let ele = {
+                    rut: item.total_rut ?? 0,
+                    amt: item.total_nap ?? 0,
+                    level_vip:item.level_vip,
+                    ref_code: item.ref_code,
+                    upline_id: item.upline_id,
+                    email: item.email, 
+                    nick_name: item.nick_name,
+                    tklgd: parseFloat(item.total_vol ?? 0) + parseFloat(item.total_cp ?? 0),
+                    commission_vip: item.hhvip ?? 0,
+                    pending_commission: item.hhgd ?? 0,
+                    priceWin: parseFloat(item.total_win ?? 0) + parseFloat(item.total_cp_win ?? 0),
+                    priceLose: parseFloat(item.total_lose ?? 0) + parseFloat(item.total_cp_lose ?? 0),
+                    balance: parseFloat(item.balance ?? 0),
+                    money_usdt: parseFloat(item.money_usdt ?? 0)
+                }
+                listData['cap3'].push(ele);
+
+            }
+
+            if(item.type == 'cap4'){
+                let ele = {
+                    rut: item.total_rut ?? 0,
+                    amt: item.total_nap ?? 0,
+                    level_vip:item.level_vip,
+                    ref_code: item.ref_code,
+                    upline_id: item.upline_id,
+                    email: item.email, 
+                    nick_name: item.nick_name,
+                    tklgd: parseFloat(item.total_vol ?? 0) + parseFloat(item.total_cp ?? 0),
+                    commission_vip: item.hhvip ?? 0,
+                    pending_commission: item.hhgd ?? 0,
+                    priceWin: parseFloat(item.total_win ?? 0) + parseFloat(item.total_cp_win ?? 0),
+                    priceLose: parseFloat(item.total_lose ?? 0) + parseFloat(item.total_cp_lose ?? 0),
+                    balance: parseFloat(item.balance ?? 0),
+                    money_usdt: parseFloat(item.money_usdt ?? 0)
+                }
+                listData['cap4'].push(ele);
+
+            }
+
+            if(item.type == 'cap5'){
+                let ele = {
+                    rut: item.total_rut ?? 0,
+                    amt: item.total_nap ?? 0,
+                    level_vip:item.level_vip,
+                    ref_code: item.ref_code,
+                    upline_id: item.upline_id,
+                    email: item.email, 
+                    nick_name: item.nick_name,
+                    tklgd: parseFloat(item.total_vol ?? 0) + parseFloat(item.total_cp ?? 0),
+                    commission_vip: item.hhvip ?? 0,
+                    pending_commission: item.hhgd ?? 0,
+                    priceWin: parseFloat(item.total_win ?? 0) + parseFloat(item.total_cp_win ?? 0),
+                    priceLose: parseFloat(item.total_lose ?? 0) + parseFloat(item.total_cp_lose ?? 0),
+                    balance: parseFloat(item.balance ?? 0),
+                    money_usdt: parseFloat(item.money_usdt ?? 0)
+                }
+                listData['cap5'].push(ele);
+
+            }
+
+            if(item.type == 'cap6'){
+                let ele = {
+                    rut: item.total_rut ?? 0,
+                    amt: item.total_nap ?? 0,
+                    level_vip:item.level_vip,
+                    ref_code: item.ref_code,
+                    upline_id: item.upline_id,
+                    email: item.email, 
+                    nick_name: item.nick_name,
+                    tklgd: parseFloat(item.total_vol ?? 0) + parseFloat(item.total_cp ?? 0),
+                    commission_vip: item.hhvip ?? 0,
+                    pending_commission: item.hhgd ?? 0,
+                    priceWin: parseFloat(item.total_win ?? 0) + parseFloat(item.total_cp_win ?? 0),
+                    priceLose: parseFloat(item.total_lose ?? 0) + parseFloat(item.total_cp_lose ?? 0),
+                    balance: parseFloat(item.balance ?? 0),
+                    money_usdt: parseFloat(item.money_usdt ?? 0)
+                }
+                listData['cap6'].push(ele);
+
+            }
+
+            if(item.type == 'cap7'){
+                let ele = {
+                    rut: item.total_rut ?? 0,
+                    amt: item.total_nap ?? 0,
+                    level_vip:item.level_vip,
+                    ref_code: item.ref_code,
+                    upline_id: item.upline_id,
+                    email: item.email, 
+                    nick_name: item.nick_name,
+                    tklgd: parseFloat(item.total_vol ?? 0) + parseFloat(item.total_cp ?? 0),
+                    commission_vip: item.hhvip ?? 0,
+                    pending_commission: item.hhgd ?? 0,
+                    priceWin: parseFloat(item.total_win ?? 0) + parseFloat(item.total_cp_win ?? 0),
+                    priceLose: parseFloat(item.total_lose ?? 0) + parseFloat(item.total_cp_lose ?? 0),
+                    balance: parseFloat(item.balance ?? 0),
+                    money_usdt: parseFloat(item.money_usdt ?? 0)
+                }
+                listData['cap7'].push(ele);
+
+            }
+
+        });
+
+        let listD = {
+            data: listData,
+            obj: obj
+        }
+
+        return callback(null, listD);
+    },
     getListCmsHis: async (data, callback) => {
         let email = data.e;
 

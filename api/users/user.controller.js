@@ -63,6 +63,7 @@ const {
     changeAccType,
     changPassAd,
     getListF1F7,
+    getListF1F7New,
     getSuperior,
     getLiveAccount,
     getSecrect2FA,
@@ -3481,7 +3482,7 @@ module.exports = {
 
     getListF1F7: (req, res) => {
         const body = req.body;
-        getListF1F7(body, (err, results) => {
+        getListF1F7New(body, (err, results) => {
             if (err) {
                 console.log(err);
                 return;
