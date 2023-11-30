@@ -5425,7 +5425,11 @@ module.exports = {
                 COALESCE ( bet.total_win,0) AS 'total_win',
                 COALESCE ( bet.total_lose,0) AS 'total_lose',
                 COALESCE ( hh_vip.hhvip,0) AS 'hhvip',
-                COALESCE ( hh_gd.hhgd,0) AS 'hhgd'
+                COALESCE ( hh_gd.hhgd,0) AS 'hhgd',
+                COALESCE ( sp.total_sp,0) AS 'total_sp',
+                COALESCE ( sp.total_sp_win,0) AS 'total_sp_win',
+                COALESCE ( sp.total_sp_lose,0) AS 'total_sp_lose',
+                COALESCE ( cp_balance.total_sp_balance,0) AS 'total_sp_balance'
             FROM
                 (
                 SELECT
@@ -5595,6 +5599,36 @@ module.exports = {
                         ${cp_history_date}
                         GROUP BY users.email
                 ) as trade_cp ON u.email = trade_cp.email
+                LEFT JOIN(
+                    SELECT
+                        main_user.email,
+                        COALESCE ( SUM( copy_trade_history.value ), 0 ) AS 'total_sp',
+                        SUM( CASE WHEN copy_trade_history.sum > 0 THEN copy_trade_history.sum ELSE 0 END ) AS 'total_sp_win',
+                        SUM( CASE WHEN copy_trade_history.sum < 0 THEN copy_trade_history.sum *- 1 ELSE 0 END ) AS 'total_sp_lose'  
+                    FROM
+                        users AS cp
+                        JOIN users AS main_user ON cp.main_user = main_user.email
+                        LEFT JOIN copy_trade_history ON cp.email = copy_trade_history.email 
+                    WHERE
+                        cp.main_user IS NOT NULL 
+                        AND main_user.marketing = 0 
+                    GROUP BY
+                    main_user.email
+                ) as sp ON u.email = sp.email
+                LEFT JOIN(
+                    SELECT
+                        main_user.email,
+                        COALESCE ( SUM( account.balance ), 0 ) AS 'total_sp_balance'
+                    FROM
+                        users AS cp
+                        JOIN users AS main_user ON cp.main_user = main_user.email
+                    JOIN account ON cp.email = account.email
+                    WHERE
+                        cp.main_user IS NOT NULL 
+                        AND main_user.marketing = 0 
+                    GROUP BY
+                        main_user.email
+                ) as cp_balance ON u.email = cp_balance.email
                 JOIN account ON u.email = account.email AND account.type = 1
                 `,
                 [
@@ -5618,13 +5652,13 @@ module.exports = {
                     upline_id: item.upline_id,
                     email: item.email, 
                     nick_name: item.nick_name,
-                    tklgd: parseFloat(item.total_vol ?? 0) + parseFloat(item.total_cp ?? 0),
+                    tklgd: parseFloat(item.total_vol ?? 0) + parseFloat(item.total_cp ?? 0) + parseFloat(item.total_sp_balance ?? 0),
                     commission_vip: item.hhvip ?? 0,
                     pending_commission: item.hhgd ?? 0,
-                    priceWin: parseFloat(item.total_win ?? 0) + parseFloat(item.total_cp_win ?? 0),
-                    priceLose: parseFloat(item.total_lose ?? 0) + parseFloat(item.total_cp_lose ?? 0),
-                    balance: parseFloat(item.balance ?? 0),
-                    money_usdt: parseFloat(item.money_usdt ?? 0)
+                    priceWin: parseFloat(item.total_win ?? 0) + parseFloat(item.total_cp_win ?? 0) + parseFloat(item.total_sp_win ?? 0),
+                    priceLose: parseFloat(item.total_lose ?? 0) + parseFloat(item.total_cp_lose ?? 0) + parseFloat(item.total_sp_lose ?? 0),
+                    balance: parseFloat(item.balance ?? 0) +  parseFloat(item.total_sp_balance ?? 0),
+                    money_usdt: parseFloat(item.money_usdt ?? 0),
                 }
                 listData['cap1'].push(ele);
 
