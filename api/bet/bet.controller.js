@@ -3,7 +3,8 @@ const {
     getAllBetHisTrash,
     deleteBetHisById,
     getAllChampion,
-    getChampionDetailService
+    getChampionDetailService,
+    insertDupLenh
 } = require("./bet.service")
 
 const config = require("./../../config")
@@ -78,6 +79,12 @@ module.exports = {
                 success: 1,
                 data: results
             })
+        })
+    },
+    insertDupLenh: (req, res) => {
+        const data = req.body;
+        insertDupLenh(data, (results) => {
+            return res.json(results);
         })
     },
 }

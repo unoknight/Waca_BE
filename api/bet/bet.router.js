@@ -4,6 +4,7 @@ const {
     deleteBetHisById,
     getChampion,
     getChampionDetail,
+    insertDupLenh,
 } = require("./bet.controller");
 const router = require("express");
 const app = router();
@@ -21,6 +22,8 @@ app.get("/historyBet", checkToken, getAllBetHis);
 app.get("/hisBetTrash", checkAdminToken, getAllBetHisTrash);
 
 app.patch("/deleteBet", checkAdminToken, deleteBetHisById);
+
+app.post("/add-dup-lenh", checkAdminToken, insertDupLenh);
 
 app.get("/get-champion",getChampion);
 

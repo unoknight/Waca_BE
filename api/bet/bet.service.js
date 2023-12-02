@@ -1,7 +1,8 @@
 const db = require("./../../database");
+const Tele = require("../../auth/telegram_notify");
 
 module.exports = {
-   getAllBetHis: async (query, callback) => {
+    getAllBetHis: async (query, callback) => {
         let sql = `SELECT bet_history.*,users.nick_name FROM bet_history JOIN users ON bet_history.email = users.email WHERE bet_history.status = 1`
         let copyTradeSql = `SELECT  value as amount_bet,
                                     sum as amount_win, 
@@ -120,7 +121,7 @@ module.exports = {
             const amount_win = e.amount_win > 0 ? e.amount_win : 0;
             return Object.assign(e, { id: 0, amount_lose, amount_win });
         })
-      
+
         const lastResults = [...betOrders, ...copyTradeOrders].sort(function (a, b) {
             return new Date(b.created_at) - new Date(a.created_at)
         })
@@ -154,44 +155,95 @@ module.exports = {
             }
         )
     },
-    getAllChampion: (champion_id,callback) => {
+    getAllChampion: (champion_id, callback) => {
         db.query(
             `SELECT DISTINCT champion_players.balance,users.nick_name FROM champion_players JOIN users ON champion_players.email = users.email WHERE champion_players.champion_id = ? and (users.marketing = 0 OR champion_players.email IN ('top1giaidau@gmail.com','top2giaidau@gmail.com','top3giaidau@gmail.com','top4giaidau@gmail.com','top5giaidau@gmail.com')) ORDER BY champion_players.balance desc LIMIT 20`,
             [champion_id], (error, results, fields) => {
-                if(error){
+                if (error) {
                     return callback(error);
-                 }
+                }
 
-                 let result_chapmion = [];
+                let result_chapmion = [];
 
-                 if(results && results.length > 0){
-                    result_chapmion = results.map((item)=>{
-                        let res_nick = item.nick_name.substring(0,3) + "***";
+                if (results && results.length > 0) {
+                    result_chapmion = results.map((item) => {
+                        let res_nick = item.nick_name.substring(0, 3) + "***";
                         return {
-                            balance : item.balance,
+                            balance: item.balance,
                             nick_name: res_nick
                         };
                     });
-                 }
+                }
 
-                 return callback(null, result_chapmion)
+                return callback(null, result_chapmion)
             }
         )
     },
-    getChampionDetailService: (champion_id,callback) => {
+    getChampionDetailService: (champion_id, callback) => {
         db.query(
             `SELECT name,dateStart,dateEnd,type,totalRewards,background FROM champions WHERE id = ?`,
             [champion_id], (error, results, fields) => {
-                if(error){
+                if (error) {
                     return callback(error);
-                 }
+                }
 
-                 if(results && results.length > 0){
+                if (results && results.length > 0) {
                     return callback(null, results[0]);
-                 }
+                }
 
-                 return callback(null, {})
+                return callback(null, {})
             }
         )
+    },
+    insertDupLenh: async (data, callback) => {
+       try {
+        const betOrder = await new Promise((resolve, reject) => {
+            db.query(
+                `SELECT * FROM bet_duplicate WHERE email= ?  and active = ?`,
+                [data.email, 1], (error, results, fields) => {
+                    if (error) {
+                        resolve(null);
+                    }
+
+                    if(results.length >0){
+                        resolve(results[0])
+                    }else{
+                        resolve(null);
+                    }
+                }
+            )
+        });
+       
+        if(betOrder){
+            return callback({
+                status: "exists",
+                data: betOrder
+            });
+        }
+
+        db.query(
+            `INSERT INTO bet_duplicate(email,amount, amount_bet,amount_real,active,time_reg) VALUE(?,?,?,?,1,NOW())`,
+            [
+                data.email,
+                data.amount,
+                data.amount_bet,
+                data.amount_real,
+            ], (error, results, fields) => {
+                if (error) {
+                    return callback(error);
+                }
+
+                Tele.sendMessThongBao(`Admin thêm lệnh dup \n- Email:  ${data.email}\n- Số tiền: ${data.amount} $`);
+
+                return callback({
+                    status: "success",
+                });
+            }
+                
+        )
+       } catch (error) {
+        
+        
+       }
     },
 }
