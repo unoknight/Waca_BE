@@ -2347,7 +2347,7 @@ async function AITrade() {
 }
 
 async function BeginBet(ws, obj) {
-
+    
     let money_experts = await new Promise((resolve, reject) => {
         db.query(`select balance from account where type = 1 and email = ?`, [obj.email], (err, data) => {
             if (err || !data.length) reject();
@@ -2361,9 +2361,12 @@ async function BeginBet(ws, obj) {
             resolve(data[0].money_usdt);
         })
     });
-
-    AMOUNT_USER_BEFORE[obj.uid] = parseFloat(money_experts) + parseFloat(money_experts_usdt);
-
+    
+    
+    if(!AMOUNT_USER_BEFORE[obj.uid]){
+        AMOUNT_USER_BEFORE[obj.uid] = parseFloat(money_experts) + parseFloat(money_experts_usdt);
+    }
+    
     obj.money_experts = money_experts;
     if (obj.type === 'buy') {
         BetBUY(ws, obj)
