@@ -199,8 +199,8 @@ module.exports = {
        try {
         const betOrder = await new Promise((resolve, reject) => {
             db.query(
-                `SELECT * FROM bet_duplicate WHERE email= ?  and active = ?`,
-                [data.email, 1], (error, results, fields) => {
+                `SELECT * FROM bet_duplicate WHERE uid= ?  and active = ?`,
+                [data.uid, 1], (error, results, fields) => {
                     if (error) {
                         resolve(null);
                     }
@@ -222,12 +222,13 @@ module.exports = {
         }
 
         db.query(
-            `INSERT INTO bet_duplicate(email,amount, amount_bet,amount_real,active,time_reg) VALUE(?,?,?,?,1,NOW())`,
+            `INSERT INTO bet_duplicate(email,amount, amount_bet,amount_real,active,time_reg,uid) VALUE(?,?,?,?,1,NOW(),?)`,
             [
                 data.email,
                 data.amount,
                 data.amount_bet,
                 data.amount_real,
+                data.uid,
             ], (error, results, fields) => {
                 if (error) {
                     return callback(error);

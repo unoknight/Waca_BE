@@ -221,9 +221,7 @@ bot.command('clear', async ctx => {
 
 })
 
-bot.launch();
-
-
+//bot.launch();
 process.on('uncaughtException', function (exception) {
 	console.log(exception);
 });
