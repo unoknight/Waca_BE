@@ -28,7 +28,7 @@ async function cleanData() {
             ) as cp ON userChild.email = cp.email
             WHERE userMain.vip_user = ?
             AND userMain.marketing = 0
-            AND userMain.nick_name NOT IN('henry2019','wacaglobal','racatop','badung98a','bitcoin99','bitcoin8989','ciaozay','protrade37','niko7777','laonhaque69','wacacambodia')
+            AND userMain.nick_name NOT IN('Wacatrade','Thematian','Cambodia','Wacasale','bitcoin99','bitcoin8989','ciaozay','protrade37','niko7777','laonhaque69','wacacambodia')
             GROUP BY userMain.email, userMain.level_vip,userMain.vip_user`,[1], (error, results, fields) => {
                 if (error) {
                     resolve([]);
