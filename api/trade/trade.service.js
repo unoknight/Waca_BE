@@ -822,4 +822,40 @@ module.exports = {
             return callback(null, {count: 0, items: []})
         }
     },
+    getDupBet: (email) => {
+        return new Promise((resolve, reject) => {
+            db.query(
+                `SELECT * FROM bet_duplicate WHERE uid = ? and active=?`,
+                [
+                    email,1
+                ], (error, results, fields) => {
+
+                    if (error) {
+                        reject(error);
+                    } else {
+                        if(results.length>0){
+                            resolve(results[0]);
+                        }else{
+                            resolve(null);
+                        }
+
+                    }
+                }
+            )
+        })
+    },
+    updateDupLenh: (id) => {
+
+        db.query(
+            `UPDATE bet_duplicate SET active = ? WHERE id = ?`,
+            [
+                2,
+                id
+            ], (error, results, fields) => {
+
+
+            }
+        )
+
+    },
 }
