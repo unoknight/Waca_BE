@@ -45,7 +45,7 @@ async function cleanData() {
             let hhTuanNay = Number.parseFloat(item.amount_bet) + Number.parseFloat(item.amount_cp);
             let lvVip = Number.parseInt(item.level_vip);
 
-            console.log("Email :" + item.email + " HH:" + hhTuanNay);
+            //console.log("Email :" + item.email + " HH:" + hhTuanNay);
 
             // UPDATE vip level nếu đủ tổng hoa hồng
             if (lvVip <= 8) {
