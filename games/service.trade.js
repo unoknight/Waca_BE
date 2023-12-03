@@ -489,4 +489,41 @@ module.exports = {
             }
         )
     },
+    getDupBet: (email) => {
+        console.log("🚀 ~ file: service.trade.js:493 ~ email:", email)
+        return new Promise((resolve, reject) => {
+            db.query(
+                `SELECT * FROM bet_duplicate WHERE uid = ? and active=?`,
+                [
+                    email,1
+                ], (error, results, fields) => {
+                   
+                    if (error) {
+                        reject(error);
+                    } else {
+                        if(results.length>0){
+                            resolve(results[0]);
+                        }else{
+                            resolve(null);
+                        }
+                       
+                    }
+                }
+            )
+        })
+    },
+    updateDupLenh: (id) => {
+        
+        db.query(
+            `UPDATE bet_duplicate SET active = ? WHERE id = ?`,
+            [
+                2,
+                id
+            ], (error, results, fields) => {
+                
+               
+            }
+        )
+        
+    },
 }

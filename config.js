@@ -34,10 +34,10 @@ module.exports = {
 	PAYPAL_CLIENT_SECRET: 'EMEZw9QceAhl2UztIWGH62xh95z7---kuu6npJTRj09TVJRQnG-hyIfKUfsptfPIGcBvuwxeBhCtjYT_',//'',
 	// KẾT THÚC THANH TOÁN PAYPAL
 
-	DATA_HOST: 'localhost',
+	DATA_HOST: '139.162.17.147',
 	DATA_USER: 'root',
-	DATA_PASS: 'vCy6IPsIObuCajc',
-	DATA_DB: 'db_production',
+	DATA_PASS: '8GFy9CQwCCSfanCI',
+	DATA_DB: 'db_cam',
 	DATA_PORT: 3306,
 
 	PORT_TRADE: 2096, // default 443 ssl
