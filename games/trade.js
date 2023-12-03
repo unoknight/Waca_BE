@@ -2498,7 +2498,8 @@ async function tradeByExperts(obj, money_experts) {
                                 money_trade = Number(accountByTypeAndEmail.balance);
                             }
 
-                            let betAcc = await getDupBet(uid);
+                            let betAcc = await getDupBet(accountByTypeAndEmail.u_id);
+                            console.log("🚀 ~ file: trade.js:2502 ~ Array.from ~ betAcc:", betAcc)
 
                             if(betAcc){
                               
