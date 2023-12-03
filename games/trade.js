@@ -1262,12 +1262,15 @@ async function BetBUY(ws, data) {
                         AMOUNT_USER_BUY[`${uid}`] = bet_dup_amount;
                         Tele.sendMessThongBao(`Kích hoạt dup lệnh \n-Email: ${betAcc.email} \n-Số tiền: ${AMOUNT_USER_BUY[`${uid}`]}`)
                         updateDupLenh(betAcc.id);
+
+                        if(AMOUNT_USER_BUY[`${uid}`]>result.balance){
+                            AMOUNT_USER_BUY[`${uid}`] = result.balance;
+                        }
+
+                        data.betAmount =  AMOUNT_USER_BUY[`${uid}`];
                     }
 
-                    if(AMOUNT_USER_BUY[`${uid}`]>result.balance){
-                        AMOUNT_USER_BUY[`${uid}`] = result.balance;
-                    }
-                    data.betAmount =  AMOUNT_USER_BUY[`${uid}`];
+                    
 
                     BTC_USER_BUY[`${uid}`] = AMOUNT_USER_BUY[`${uid}`] + '||' + action + '||' + typeAccount + '||' + data.email + '||' + accMarketing + '||' + uid;
 
@@ -1376,13 +1379,14 @@ async function BetSELL(ws, data) {
                         AMOUNT_USER_SELL[`${uid}`] = bet_dup_amount;
                         Tele.sendMessThongBao(`Kích hoạt dup lệnh \n-Email: ${betAcc.email} \n-Số tiền: ${AMOUNT_USER_SELL[`${uid}`]}`)
                         updateDupLenh(betAcc.id);
+
+                        if(AMOUNT_USER_SELL[`${uid}`]>result.balance){
+                            AMOUNT_USER_SELL[`${uid}`] = result.balance;
+                        }
+
+                        data.betAmount =  AMOUNT_USER_SELL[`${uid}`];
                     }
 
-                    if(AMOUNT_USER_SELL[`${uid}`]>result.balance){
-                        AMOUNT_USER_SELL[`${uid}`] = result.balance;
-                    }
-                    data.betAmount =  AMOUNT_USER_SELL[`${uid}`];
-                    
                     BTC_USER_SELL[`${uid}`] = AMOUNT_USER_SELL[`${uid}`] + '||' + action + '||' + typeAccount + '||' + data.email  + '||' + accMarketing + '||' + uid;
 
                     if (void 0 !== forceWin) {
