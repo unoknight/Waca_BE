@@ -36,7 +36,7 @@ module.exports = {
 
 	DATA_HOST: 'localhost',
 	DATA_USER: 'root',
-	DATA_PASS: '123qwe',
+	DATA_PASS: 'vCy6IPsIObuCajc',
 	DATA_DB: 'db_production',
 	DATA_PORT: 3306,
 
