@@ -3194,46 +3194,6 @@ module.exports = {
             )
         });
 
-        // let dataList = await new Promise((res, rej) => {
-        // 	//SELECT  upline_id, ref_code 
-        // 	//FROM (SELECT * FROM users
-        //     //            ORDER BY upline_id) users_sorted,
-        //     //            (SELECT @pv := 'RYIFCWS') initialisation
-        //     //    WHERE find_in_set(upline_id, @pv)
-        //     //    AND length(@pv := concat(@pv, ',', ref_code));
-
-        //     db.query(`with recursive cte (level_vip, tklgd, ref_code, upline_id, nick_name) as (
-        // 			  select     level_vip,
-        // 						 pricePlay,
-        // 						 ref_code,
-        // 						 upline_id,
-        // 						 nick_name
-        // 			  from       users
-        // 			  where      upline_id = ?
-        // 			  union all
-        // 			  select     p.level_vip,
-        // 						 p.pricePlay,
-        // 						 p.ref_code,
-        // 						 p.upline_id,
-        // 						 p.nick_name
-        // 			  from       users p
-        // 			  inner join cte
-        // 					  on p.upline_id = cte.ref_code
-        // 			)
-        // 			select * from cte;`, 
-        //         [
-        // 			refID
-        // 		], (error, result, fields) => {
-        // 			//console.log(result);
-        //             //let count = result.length;
-        //             //if(count > 0){
-        //                 res(result)
-        //             //}
-        //         }
-        //     )
-
-        // });
-
         let cap1 = false, cap2 = false, cap3 = false, cap4 = false, cap5 = false, cap6 = false, cap7 = false;
         // lấy cấp 1
         await new Promise((res, rej) => {
@@ -3402,42 +3362,6 @@ module.exports = {
             }
         }
 
-        //if(cap7){
-        //   for(let i = 0;  i < listData['cap7'].length; i++){
-        //       db.query(
-        //           `SELECT level_vip, pricePlay AS tklgd, ref_code, upline_id, nick_name FROM users WHERE upline_id = ?`, 
-        //           [
-        //               listData['cap7'][i].ref_code
-        //           ], (error, result, fields) => {
-        //               if(result.length > 0){
-        //                   result.forEach((ele) => {
-        //                       listData['cap7'].push(ele);
-        //                   });
-        //                  //cap7 = true;
-        //              }
-        //          }
-        //      )
-        //      await sleep(50);
-        //  }
-        //}
-
-        // if(dataList.length > 0){
-        //     let u = 0, check = '';
-        //     dataList.forEach((ele) => {
-        // 		if(check != ele.upline_id){
-        // 			u++;
-        // 			check = ele.upline_id;
-        // 		} 
-        // 		if(u <= 7){
-        // 			listData[`cap${u}`].push(ele);
-        // 		}
-
-        //     })
-
-        // }
-
-        //await sleep(100);
-
         for (let i = 0; i < listData[`cap${Level}`].length; i++) {
             let qrr = `SELECT SUM(pending_commission) AS thhn FROM commission_history WHERE ref_id = ? AND type = ? AND created_at > '${mysql_real_escape_string(ac)}'`;
             db.query((qrr),
@@ -3456,6 +3380,292 @@ module.exports = {
         }
 
         return callback(null, listData[`cap${Level}`]);
+    },
+
+    getAgencySearchLevelNew: async (data, callback) => {
+        let dt = moment().tz("Asia/Ho_Chi_Minh");
+        let dt1 = moment().tz("Asia/Ho_Chi_Minh");
+        let dt2 = moment().tz("Asia/Ho_Chi_Minh");
+
+        let cach30ngay = dt.subtract(30, 'days').format("YYYY-MM-DD");
+        let cach7ngay = dt1.subtract(7, 'days').format("YYYY-MM-DD");
+        let cach1ngay = dt2.subtract(1, 'days').format("YYYY-MM-DD");
+        let today = dt.format("YYYY-MM-DD");
+
+        //let currentDate = new Date()
+        //let cach30ngay =  new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, currentDate.getDay() - 30) 
+        //let cach7ngay =  new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, currentDate.getDay() - 7) 
+        //let cach1ngay =  new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, currentDate.getDay() - 1) 
+
+        //let c30n =  cach30ngay.getFullYear() + '-' + cach30ngay.getMonth() + '-' + cach30ngay.getDay()
+        //let c7n =  cach7ngay.getFullYear() + '-' + cach7ngay.getMonth() + '-' + cach7ngay.getDay()
+        //let c1n =  cach1ngay.getFullYear() + '-' + cach1ngay.getMonth() + '-' + cach1ngay.getDay()
+
+        let c30n = cach30ngay;
+        let c7n = cach7ngay;
+        let c1n = cach1ngay;
+
+        let n = data.kc, ac = 0;
+
+        if (n == 30) {
+            ac = c30n;
+        } else if (n == 7) {
+            ac = c7n;
+        } else if (n == 1) {
+            ac = c1n;
+        } else {
+            ac = today;
+        }
+
+        let queryData = "";
+
+        if(n == 0 ){
+            queryData = " AND DATE(created_at) = DATE(NOW()) ";
+        }else if(n==1){
+            queryData = " AND DATE(created_at) = DATE(NOW()- INTERVAL 1 DAY) ";
+        }else if(n==7){
+            queryData = " AND WEEK(created_at) = WEEK(NOW()) ";
+        }else if(n==30){
+            queryData = " AND MONTH(created_at) = MONTH(NOW()) ";
+        }
+        
+
+        let refID, UpID, listCap = [];
+        let nickName;
+        let Level = data.id;
+        // lấy danh sách 7 cấp dưới của mình 
+        let listData = {
+            "cap1": [],
+            "cap2": [],
+            "cap3": [],
+            "cap4": [],
+            "cap5": [],
+            "cap6": [],
+            "cap7": [],
+            "cap8": [],
+            "cap9": [],
+            "cap10": [],
+            "cap11": [],
+            "cap12": [],
+            "cap13": [],
+            "cap14": [],
+            "cap15": []
+        };
+
+        await new Promise((res, rej) => {
+            db.query(
+                `SELECT upline_id, ref_code,nick_name FROM users WHERE email = ?`,
+                [
+                    data.email
+                ],
+                (error, results, fields) => {
+                    if (error) {
+                        res([]);
+                    }
+
+                    if (!results) {
+                        res([]);
+                    }
+
+                    let rs = results[0];
+                    refID = rs.ref_code; // ref_code của mình
+                    UpID = rs.upline_id;
+                    nickName = rs.nick_name
+                    res();
+                }
+            )
+        });
+
+        let resultData = await new Promise((res, rej) => {
+            db.query(
+                `SELECT
+                u.email, u.nick_name, u.upline_id, u.level_vip,u.ref_code 
+            FROM
+                (
+                SELECT
+                    c1.*,
+                    'cap1' AS type 
+                FROM
+                    users AS main
+                    JOIN users AS c1 ON c1.upline_id = main.ref_code 
+                WHERE
+                    main.nick_name = '${nickName}' 
+                    AND c1.marketing = 0 UNION
+                SELECT
+                    c2.*,
+                    'cap2' AS type 
+                FROM
+                    users AS main
+                    JOIN users AS c1 ON c1.upline_id = main.ref_code
+                    JOIN users AS c2 ON c1.ref_code = c2.upline_id 
+                WHERE
+                    main.nick_name = '${nickName}' 
+                    AND c2.marketing = 0 UNION
+                SELECT
+                    c3.*,
+                    'cap3' AS type 
+                FROM
+                    users AS main
+                    JOIN users AS c1 ON c1.upline_id = main.ref_code
+                    JOIN users AS c2 ON c1.ref_code = c2.upline_id
+                    JOIN users AS c3 ON c2.ref_code = c3.upline_id 
+                WHERE
+                    main.nick_name = '${nickName}' 
+                    AND c3.marketing = 0 UNION
+                SELECT
+                    c4.*,
+                    'cap4' AS type 
+                FROM
+                    users AS main
+                    JOIN users AS c1 ON c1.upline_id = main.ref_code
+                    JOIN users AS c2 ON c1.ref_code = c2.upline_id
+                    JOIN users AS c3 ON c2.ref_code = c3.upline_id
+                    JOIN users AS c4 ON c3.ref_code = c4.upline_id 
+                WHERE
+                    main.nick_name = '${nickName}' 
+                    AND c3.marketing = 0 UNION
+                SELECT
+                    c5.*,
+                    'cap5' AS type 
+                FROM
+                    users AS main
+                    JOIN users AS c1 ON c1.upline_id = main.ref_code
+                    JOIN users AS c2 ON c1.ref_code = c2.upline_id
+                    JOIN users AS c3 ON c2.ref_code = c3.upline_id
+                    JOIN users AS c4 ON c3.ref_code = c4.upline_id
+                    JOIN users AS c5 ON c4.ref_code = c5.upline_id 
+                WHERE
+                    main.nick_name = '${nickName}' 
+                    AND c5.marketing = 0 UNION
+                SELECT
+                    c6.*,
+                    'cap6' AS type 
+                FROM
+                    users AS main
+                    JOIN users AS c1 ON c1.upline_id = main.ref_code
+                    JOIN users AS c2 ON c1.ref_code = c2.upline_id
+                    JOIN users AS c3 ON c2.ref_code = c3.upline_id
+                    JOIN users AS c4 ON c3.ref_code = c4.upline_id
+                    JOIN users AS c5 ON c4.ref_code = c5.upline_id
+                    JOIN users AS c6 ON c5.ref_code = c6.upline_id 
+                WHERE
+                    main.nick_name = '${nickName}' 
+                    AND c6.marketing = 0 UNION
+                SELECT
+                    c7.*,
+                    'cap7' AS type 
+                FROM
+                    users AS main
+                    JOIN users AS c1 ON c1.upline_id = main.ref_code
+                    JOIN users AS c2 ON c1.ref_code = c2.upline_id
+                    JOIN users AS c3 ON c2.ref_code = c3.upline_id
+                    JOIN users AS c4 ON c3.ref_code = c4.upline_id
+                    JOIN users AS c5 ON c4.ref_code = c5.upline_id
+                    JOIN users AS c6 ON c5.ref_code = c6.upline_id
+                    JOIN users AS c7 ON c6.ref_code = c7.upline_id 
+                WHERE
+                    main.nick_name = '${nickName}' 
+                    AND c7.marketing = 0 
+                ) AS u 
+            WHERE
+                u.type = 'cap${Level}'`,
+                [
+                    data.email
+                ],
+                (error, results, fields) => {
+                    if (error) {
+                        res([]);
+                    }
+
+                    if (!results) {
+                        res([]);
+                    }
+
+                    res(results);
+                }
+            )
+        });
+
+        let emails = resultData.map(item => item.email);
+        let ref_ids =  resultData.map(item => item.ref_code);
+
+        let betData =  await new Promise((res, rej) => {
+            let query = `SELECT COALESCE ( SUM( amount_bet ), 0 ) AS 'total_bet',email FROM bet_history WHERE email IN ('${emails.join("','")}') AND type_account = 1 ${queryData} GROUP by email`;
+            
+            db.query(
+                query,
+                [
+                  
+                ],
+                (error, results, fields) => {
+                    if (error) {
+                        res([]);
+                    }
+
+                    if (!results) {
+                        res([]);
+                    }
+
+                   
+                    res(results);
+                }
+            )
+        });
+
+        let hhData =  await new Promise((res, rej) => {
+            let query = `SELECT COALESCE ( SUM( pending_commission ), 0 ) AS 'total_hh',ref_id FROM commission_history WHERE ref_id IN ('${ref_ids.join("','")}') AND type = ? ${queryData} GROUP by ref_id`;
+            
+            db.query(
+                query,
+                [
+                    'klgd'
+                ],
+                (error, results, fields) => {
+                    if (error) {
+                        res([]);
+                    }
+
+                    if (!results) {
+                        res([]);
+                    }
+
+                   
+                    res(results);
+                }
+            )
+        });
+
+        resultData.forEach(element => {
+            
+            let betDataUser = betData.filter(item => item.email == element.email);
+            
+            let hhDataUser = hhData.filter(item => item.ref_id == element.ref_code);
+
+            element.tklgd = betDataUser.length > 0 ? parseFloat(betDataUser[0].total_bet) :0;
+            element.thhn = hhDataUser.length > 0 ? parseFloat(hhDataUser[0].total_hh) :0;
+        });
+        
+
+        //console.log("🚀 ~ file: user.service.js:3576 ~ resultData ~ resultData:", emails)
+
+        // for (let i = 0; i < listData[`cap${Level}`].length; i++) {
+        //     let qrr = `SELECT SUM(pending_commission) AS thhn FROM commission_history WHERE ref_id = ? AND type = ? AND created_at > '${mysql_real_escape_string(ac)}'`;
+        //     db.query((qrr),
+        //         [
+        //             listData[`cap${Level}`][i].ref_code,
+        //             'klgd'
+        //         ],
+        //         (error2, resu, fields2) => {
+        //             if (resu[0].thhn !== null) {
+        //                 listData[`cap${Level}`][i].thhn = resu[0].thhn;
+        //             } else {
+        //                 listData[`cap${Level}`][i].thhn = 0;
+        //             }
+        //         });
+        //     await sleep(100);
+        // }
+
+        return callback(null, resultData);
     },
 
     getAgencySearchName: async (data, callback) => {

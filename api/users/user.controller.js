@@ -49,6 +49,7 @@ const {
     getComDetailsPage,
     getComDetailsDate,
     getAgencySearchLevel,
+    getAgencySearchLevelNew,
     getAgencySearchName,
     updateSecret2FA,
     updateCodeSecure,
@@ -3320,7 +3321,7 @@ module.exports = {
             } else {
                 body['email'] = decoded.result.email
 
-                getAgencySearchLevel(body, (err, results) => {
+                getAgencySearchLevelNew(body, (err, results) => {
                     if (err) {
                         console.log(err);
                         return;
