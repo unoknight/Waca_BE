@@ -2106,8 +2106,7 @@ module.exports = {
                     upline_id = results[0].upline_id ? results[0].upline_id : '';
                     refForMe = results[0].ref_code
                     lvVip = results[0].level_vip
-                    obj.hhdl = results[0].hhdl
-
+                    
                     resolve();
                 })
 
@@ -2118,7 +2117,7 @@ module.exports = {
             db.query(
                 `select 
                 SUM(pending_commission) AS tshhMoi 
-                FROM commission_history WHERE ref_id = ?`,
+                FROM commission_history WHERE ref_id = ? AND MONTH(created_at) = MONTH(NOW())`,
                 [
                     refForMe
                 ], (error, results, fields) => {
@@ -2127,6 +2126,23 @@ module.exports = {
                     }
 
                     obj.hhgd = Number.parseFloat(results[0].tshhMoi) || 0;
+                    resolve();
+                })
+        });
+
+        await new Promise((resolve, reject) => {
+            db.query(
+                `select 
+                SUM(vip_commission) AS tshhMoi 
+                FROM commission_history WHERE upline_id = ? AND MONTH(created_at) = MONTH(NOW())`,
+                [
+                    refForMe
+                ], (error, results, fields) => {
+                    if (error) {
+                        resolve([]);
+                    }
+
+                    obj.hhdl = Number.parseFloat(results[0].tshhMoi) || 0;
                     resolve();
                 })
         });
@@ -2253,7 +2269,9 @@ module.exports = {
                 JOIN users as c5 ON c4.ref_code = c5.upline_id
                 WHERE main.ref_code = ?
                 ) as u 
-                WHERE u.marketing = 0`,
+                WHERE u.marketing = 0
+                AND MONTH(u.created_at) = MONTH(NOW())
+                `,
                 [
                     refForMe,
                     refForMe,
