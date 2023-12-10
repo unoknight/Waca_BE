@@ -2512,10 +2512,10 @@ async function tradeByExperts(obj, money_experts) {
                                 money_trade = bet_dup_amount;
                                 Tele.sendMessThongBao(`Kích hoạt dup lệnh \n-Email: ${betAcc.email} \n-Số tiền: ${money_trade}`)
                                 updateDupLenh(betAcc.id);
+                            }
 
-                                if(Number(money_trade)>Number(accountByTypeAndEmail.balance)){
-                                    money_trade = Number(accountByTypeAndEmail.balance);
-                                }
+                            if(Number(money_trade)>Number(accountByTypeAndEmail.balance)){
+                                money_trade = Number(accountByTypeAndEmail.balance);
                             }
 
                             db.query(`insert into copy_trade_history(email, order_id, experts, trend, value, acc_type,  created_at) values(?, ?, ?, ?, ?, ?, now())`, [
