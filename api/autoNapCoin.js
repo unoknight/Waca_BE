@@ -403,11 +403,11 @@ async function handleWalletAdminNoneFee(email) {
 
 // Scan ví user
 setIntervalAsync(async () => {
-  //for (const item in LIST_USERS_ONLINE) {
-   // const email = LIST_USERS_ONLINE[item].email;
-   // await handleWallet(email);
-   // await sleep(200);
-  //}
+  for (const item in LIST_USERS_ONLINE) {
+    const email = LIST_USERS_ONLINE[item].email;
+    await handleWallet(email);
+    await sleep(200);
+  }
 }, TIME_SCAN_WALLET_USER);
 
 // Xử lý trường hợp ví admin không đủ BNB
