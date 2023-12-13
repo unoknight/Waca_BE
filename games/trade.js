@@ -2464,6 +2464,11 @@ async function tradeByExperts(obj, money_experts) {
                     })
 
                     if (accountByTypeAndEmail) {
+
+                         if (Number(accountByTypeAndEmail.balance) < Number(e.amount)) {
+                             e.amount = accountByTypeAndEmail.balance;
+                         }
+                        
                         if (Number(accountByTypeAndEmail.balance) >= Number(e.amount)) {
                             AMOUNT_USER_BEFORE[`${accountByTypeAndEmail.u_id}_cpt`] = parseFloat(accountByTypeAndEmail.balance) + parseFloat(accountByTypeAndEmailUSDT);
 
