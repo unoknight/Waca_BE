@@ -668,12 +668,21 @@ module.exports = {
         let cach7ngay = dt2.subtract(7, 'days').format("YYYY-MM-DD");
         let homnay = dt3.format("YYYY-MM-DD");
 
-        let qr = '', qr2 = '', qr3 = '';
+        let qr = '', qr2 = '', qr3 = '', qr4= '';
         if (void 0 !== type) {
             if (type == 'all') {
                 qr = `SELECT SUM(amount) AS dtUSD, SUM(real_amount) AS dtBNB, SUM(pay_fee) AS freeBNB FROM trade_history WHERE type_key = ? AND status = 1`;
                 qr2 = `SELECT SUM(amount_win) AS tsWin, SUM(amount_lose) AS tsLose FROM bet_history WHERE marketing = ? AND status = 1 AND type_account = ?`;
                 qr3 = `SELECT SUM(pending_commission) AS tsHHong FROM commission_history WHERE marketing = ? AND type = ?`;
+                qr4 = `SELECT users.email, COALESCE (SUM(copy_trade_history.value),0) as 'total_cp', SUM(
+                    CASE WHEN sum>0 THEN sum ELSE 0 END
+                    ) as 'total_cp_win', SUM(
+                    CASE WHEN sum<0 THEN sum*-1 ELSE 0 END
+                    )  as 'total_cp_lose'  FROM copy_trade_history
+                    JOIN users ON copy_trade_history.email = users.email
+                    WHERE
+                    users.marketing = ?
+                    AND copy_trade_history.acc_type = ?`
             } else if (type == 'today') {
                 qr = `SELECT SUM(amount) AS dtUSD, SUM(real_amount) AS dtBNB, SUM(pay_fee) AS freeBNB FROM trade_history WHERE type_key = ? AND status = 1 AND created_at > '${mysql_real_escape_string(homnay)}'`;
                 qr2 = `SELECT SUM(amount_win) AS tsWin, SUM(amount_lose) AS tsLose FROM bet_history WHERE marketing = ? AND status = 1 AND type_account = ? AND created_at > '${mysql_real_escape_string(homnay)}'`;
@@ -696,9 +705,19 @@ module.exports = {
         let from = data.from;
         let to = data.to;
         if (void 0 !== from && void 0 !== to) {
-            qr = `SELECT SUM(amount) AS dtUSD, SUM(real_amount) AS dtBNB, SUM(pay_fee) AS freeBNB FROM trade_history WHERE type_key = ? AND status = 1 AND created_at BETWEEN '${from}' and '${to}'`;
-            qr2 = `SELECT SUM(amount_win) AS tsWin, SUM(amount_lose) AS tsLose FROM bet_history WHERE marketing = ? AND status = 1 AND type_account = ? AND created_at BETWEEN '${from}' and '${to}'`;
-            qr3 = `SELECT SUM(pending_commission) AS tsHHong FROM commission_history WHERE marketing = ? AND type = ? AND created_at BETWEEN '${from}' and '${to}'`;
+            qr = `SELECT SUM(amount) AS dtUSD, SUM(real_amount) AS dtBNB, SUM(pay_fee) AS freeBNB FROM trade_history WHERE type_key = ? AND status = 1 AND DATE(created_at) >= '${from}' and DATE(created_at) <= '${to}'`;
+            qr2 = `SELECT SUM(amount_win) AS tsWin, SUM(amount_lose) AS tsLose FROM bet_history WHERE marketing = ? AND status = 1 AND type_account = ? AND DATE(created_at) >= '${from}' and  DATE(created_at) <= '${to}'`;
+            qr3 = `SELECT SUM(pending_commission) AS tsHHong FROM commission_history WHERE marketing = ? AND type = ? AND DATE(created_at) >= '${from}' and DATE(created_at) <= '${to}'`;
+            qr4 = `SELECT COALESCE (SUM(copy_trade_history.value),0) as 'total_cp', SUM(
+                CASE WHEN sum>0 THEN sum ELSE 0 END
+                ) as 'total_cp_win', SUM(
+                CASE WHEN sum<0 THEN sum*-1 ELSE 0 END
+                )  as 'total_cp_lose'  FROM copy_trade_history
+                JOIN users ON copy_trade_history.email = users.email
+                WHERE
+                users.marketing = ?
+                AND copy_trade_history.acc_type = ? AND DATE(copy_trade_history.created_at) >= '${from}' and DATE(copy_trade_history.created_at) <= '${to}' `;    
+      
         }
 
         let rsData = {};
@@ -708,6 +727,7 @@ module.exports = {
                 [
                     'nt',
                 ], (error, results, fields) => {
+                   
                     if (results.length > 0) {
                         rsData.dtUSD = results[0].dtUSD;
                         rsData.dtBNB = results[0].dtBNB;
@@ -718,6 +738,7 @@ module.exports = {
                 }
             )
         })
+                
         await new Promise((res, rej) => {
             db.query(qr2,
                 [
@@ -742,6 +763,23 @@ module.exports = {
                 ], (error, results, fields) => {
                     if (results.length > 0) {
                         rsData.tsHHong = results[0].tsHHong;
+                    }
+
+                    res();
+                }
+            )
+        })
+
+        await new Promise((res, rej) => {
+            db.query(qr4,
+             
+                [
+                    0,
+                    1 
+                ], (error, results, fields) => {
+                    if (results.length > 0) {
+                        rsData.tsWin = parseFloat(rsData.tsWin) + parseFloat(results[0].total_cp_win);
+                        rsData.tsLose = parseFloat(rsData.tsLose) + parseFloat(results[0].total_cp_lose);
                     }
 
                     res();
