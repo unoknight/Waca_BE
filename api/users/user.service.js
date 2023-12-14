@@ -2328,6 +2328,7 @@ module.exports = {
             down_rate: 0, // tỉ lệ sell
 
             lose: 0,
+            lose_amount: 0,
             profits: 0, // lợi nhuận rồng
             refund: 0, // hoàn tiền           
             revenue: 0, // tổng doanh thu
@@ -2338,8 +2339,104 @@ module.exports = {
             up_rate: 0, // tỉ lệ buy
 
             win: 0,
-            win_rate: 0
+            win_rate: -1,
+            win_amount: 0,
+            total_bet: 0,
         }, uid = 0;
+
+
+        //trade count
+
+        let trade_count = await new Promise((resolve, reject) => {
+            db.query(
+                `SELECT
+                COALESCE (COUNT( id ),0) AS total,
+                COALESCE (SUM( CASE WHEN amount_win > 0 THEN 1 ELSE 0 END ),0) AS 'win',
+                COALESCE (SUM( CASE WHEN amount_lose > 0 THEN 1 ELSE 0 END ),0) AS 'lose',
+                COALESCE (SUM(amount_bet),0) as 'total_bet',
+                COALESCE (SUM( CASE WHEN amount_win > 0 THEN amount_win ELSE 0 END ),0) AS 'win_amount',
+                COALESCE (SUM( CASE WHEN amount_lose > 0 THEN amount_lose ELSE 0 END ),0) AS 'lose_amount'
+            FROM
+                bet_history 
+            WHERE
+                email = ? 
+                AND type_account = ? 
+                AND DATE ( created_at ) = DATE (
+                NOW())`,
+                [
+                    email,
+                    1
+                ],
+                (error, results, fields) => {
+                    if (results.length == 0) {
+                        //return callback(null);
+                        resolve(null)
+                    }
+
+                    resolve(results[0]);
+                })
+        })
+
+        if(trade_count!=null){
+            obj.win += Number(trade_count.win);
+            obj.lose += Number(trade_count.lose);
+
+            obj.trades += parseFloat(trade_count.total_bet);
+            obj.win_amount += parseFloat(trade_count.win_amount);
+            obj.lose_amount += parseFloat(trade_count.lose_amount);
+
+            obj.total_bet += Number(trade_count.total);
+        }
+
+        let copy_trade_count = await new Promise((resolve, reject) => {
+            db.query(
+                `SELECT
+                COALESCE (COUNT( id ),0) AS total,
+                COALESCE (SUM( CASE WHEN sum > 0 THEN 1 ELSE 0 END ),0) AS 'win',
+                COALESCE (SUM( CASE WHEN sum < 0 THEN 1 ELSE 0 END ),0) AS 'lose',
+                COALESCE (SUM(value),0) as 'total_bet',
+                COALESCE (SUM( CASE WHEN sum > 0 THEN sum ELSE 0 END ),0) AS 'win_amount',
+                COALESCE (SUM( CASE WHEN sum < 0 THEN sum ELSE 0 END ),0) AS 'lose_amount'
+            FROM
+                copy_trade_history 
+            WHERE
+                email = ? 
+                AND acc_type = ?
+                AND DATE ( created_at ) = DATE (
+                NOW())`,
+                [
+                    email,
+                    1
+                ],
+                (error, results, fields) => {
+                    if (results.length == 0) {
+                        //return callback(null);
+                        resolve(null)
+                    }
+
+                    resolve(results[0]);
+                })
+        }) 
+
+        if(copy_trade_count!=null){
+            obj.win += Number(copy_trade_count.win);
+            obj.lose += Number(copy_trade_count.lose);
+
+            obj.trades += parseFloat(copy_trade_count.total_bet);
+            obj.win_amount += parseFloat(copy_trade_count.win_amount);
+            obj.lose_amount += parseFloat(copy_trade_count.lose_amount);
+
+            obj.total_bet += Number(copy_trade_count.total);
+        }
+
+        obj.profits = obj.win_amount - obj.lose_amount;
+        obj.revenue = obj.win_amount;
+
+       
+        if(obj.total_bet>0){
+            obj.win_rate = (obj.win / obj.total_bet) * 100;
+        }
+
         await new Promise((resolve, reject) => {
             db.query(
                 `select * from account where email = ? and type = 1`,
@@ -2365,14 +2462,15 @@ module.exports = {
 
                     let rateWin = (win / total) * 100;
 
-                    obj.profits = win - lose; // lợi nhuận rồng   
-                    obj.revenue = win; // tổng doanh thu
+                    // obj.profits = win - lose; // lợi nhuận rồng   
+                    // obj.revenue = win; // tổng doanh thu
 
-                    obj.trades = order_amount; // tổng tiền giao dịch
-                    obj.win_rate = rateWin
+                    // obj.trades = order_amount; // tổng tiền giao dịch
+                    // obj.win_rate = rateWin
                     resolve();
                 })
         })
+
         if (uid == 0) {
             return callback(null);
         }
