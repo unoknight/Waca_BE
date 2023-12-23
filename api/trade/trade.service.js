@@ -672,7 +672,7 @@ module.exports = {
         if (void 0 !== type) {
             if (type == 'all') {
                 qr = `SELECT SUM(amount) AS dtUSD, SUM(real_amount) AS dtBNB, SUM(pay_fee) AS freeBNB FROM trade_history WHERE type_key = ? AND status = 1`;
-                qr_rt = `SELECT SUM(amount) AS dtUSD, SUM(real_amount) AS dtBNB, SUM(pay_fee) AS freeBNB FROM trade_history WHERE (type_key = ? OR type_key = ?) AND status = 1`;
+                qr_rt = `SELECT SUM(amount) AS dtUSD, SUM(real_amount) AS dtBNB, SUM(pay_fee) AS freeBNB FROM trade_history WHERE type_key = ? AND (network = ? OR network = ?) AND status = 1`;
                 qr2 = `SELECT SUM(amount_win) AS tsWin, SUM(amount_lose) AS tsLose FROM bet_history WHERE marketing = ? AND status = 1 AND type_account = ?`;
                 qr3 = `SELECT SUM(pending_commission) AS tsHHong FROM commission_history WHERE marketing = ? AND type = ?`;
                 qr4 = `SELECT users.email, COALESCE (SUM(copy_trade_history.value),0) as 'total_cp', SUM(
@@ -719,7 +719,7 @@ module.exports = {
                 WHERE
                 users.marketing = ?
                 AND copy_trade_history.acc_type = ? AND DATE(copy_trade_history.created_at) >= '${from}' and DATE(copy_trade_history.created_at) <= '${to}' `;    
-                qr_rt = `SELECT SUM(amount) AS dtUSD, SUM(real_amount) AS dtBNB, SUM(pay_fee) AS freeBNB FROM trade_history WHERE (type_key = ? OR type_key = ?) AND status = 1 AND DATE(created_at) >= '${from}' and DATE(created_at) <= '${to}'`;        
+                qr_rt = `SELECT SUM(amount) AS dtUSD, SUM(real_amount) AS dtBNB, SUM(pay_fee) AS freeBNB FROM trade_history WHERE type_key = ? AND (network = ? OR network = ?) AND status = 1 AND DATE(created_at) >= '${from}' and DATE(created_at) <= '${to}'`;        
         }
 
         let rsData = {};
