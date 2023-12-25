@@ -421,7 +421,7 @@ console.log(account);
             })
     },
     getTopExpertsList: (callback) => {
-        db.query(`SELECT u.profile_image,u.nick_name,COALESCE(bh_win.count,0) win_count, COALESCE(bh_lose.count,0) as lose_count, COALESCE(COUNT(cta.id),0) as follow, COALESCE(SUM(cta.balance),0) as 'balance' FROM users u
+        db.query(`SELECT u.profile_image,u.nick_name,COALESCE(bh_win.count,0) win_count, COALESCE(bh_lose.count,0) as lose_count, COALESCE(COUNT(cta.id),0) + COALESCE(u.add_on_sub,0) as follow, COALESCE(SUM(cta.balance),0) as 'balance' FROM users u
         LEFT JOIN 
         (
             SELECT email,COALESCE(COUNT(id),0) as count FROM bet_history 
