@@ -437,7 +437,7 @@ function countDownGame() {
         jsonData['session'] = session;
 
         // XỬ LÝ SEND DỰ ĐOÁN TELEGRAM
-        XU_LY_SEND_BOT_DU_DOAN(SO_GIAY_DEM_NGUOC);
+        //XU_LY_SEND_BOT_DU_DOAN(SO_GIAY_DEM_NGUOC);
         //
 
         if (SO_GIAY_DEM_NGUOC === 0) {
@@ -474,7 +474,7 @@ function countDownGame() {
                 // xử lý BUY anh SELL khi kết thúc Watting
 
                 xuLyChartKetThuc1Phien(jsonData);
-
+                
                 if (DATA_GL.BOT) {
                     BOTAOStart()
                 }
@@ -860,7 +860,7 @@ function PUSH_STATIC_2(data) {
     writeStatic();
 
     handleResultSession(data, title);
-
+    
     HandlingBuySell2(title);
 
     //trungnm
@@ -888,137 +888,195 @@ function PUSH_STATIC_2(data) {
             }
         }
     )
+
+    if(BTC_USER_BUY.length > 0){
+        BTC_USER_BUY = [];
+    }
+
+    if(BTC_USER_SELL.length > 0){
+        BTC_USER_SELL = [];
+    }
+   
+   if(AMOUNT_USER_BUY.length > 0){
+        AMOUNT_USER_BUY = [];
+   }
+
+   if(AMOUNT_USER_SELL.length > 0){
+        AMOUNT_USER_SELL = [];
+   }
+
+   if(BTC_USER_BUY_CPT.length > 0){
+        BTC_USER_BUY_CPT = [];
+   }
+
+   if(BTC_USER_SELL_CPT.length > 0){
+        BTC_USER_SELL_CPT = [];
+   }
+    
+
+   if(BTC_USER_BUY_CPT_EMAIL.length > 0){
+    BTC_USER_BUY_CPT_EMAIL = [];
+   }
+   
+    if(BTC_USER_SELL_CPT_EMAIL.length > 0){
+        BTC_USER_SELL_CPT_EMAIL = [];
+    }
+
+    if(AMOUNT_USER_BUY_CPT.length > 0){
+        AMOUNT_USER_BUY_CPT = [];
+    }
+
+    if(AMOUNT_USER_SELL_CPT.length > 0){
+        AMOUNT_USER_SELL_CPT = [];
+    }
+
+    if(PRICE_BUY_LIVE!=0){
+        PRICE_BUY_LIVE = 0;
+    }
+
+    if(PRICE_SELL_LIVE != 0){
+        PRICE_SELL_LIVE = 0;
+    }
+
+    if(PRICE_BUY_DEMO != 0){
+        PRICE_BUY_DEMO = 0;
+    }
+
+    if(PRICE_SELL_DEMO != 0){
+        PRICE_SELL_DEMO = 0;
+    }
+
 }
 
-function xuLyChartKetThuc1Phien_backup(data) {
-    if (maintenance) return; // bảo trì , dừng
+// function xuLyChartKetThuc1Phien_backup(data) {
+//     if (maintenance) return; // bảo trì , dừng
 
-    let close = data.close, open = data.open;
+//     let close = data.close, open = data.open;
 
-    //console.log(ORDER_OR_WATTING);     
-    if (ORDER_OR_WATTING === 'order') { //watting
-        /* RA BUY */
+//     //console.log(ORDER_OR_WATTING);     
+//     if (ORDER_OR_WATTING === 'order') { //watting
+//         /* RA BUY */
 
-        if (DATA_GL.BTC.BUY) {
-            if (close < open || close == open) {
-                var tl = open - close;
-                close = Number(close) + Number(tl) + (Math.random() * 3);
-            }
+//         if (DATA_GL.BTC.BUY) {
+//             if (close < open || close == open) {
+//                 var tl = open - close;
+//                 close = Number(close) + Number(tl) + (Math.random() * 3);
+//             }
 
-            jsonData.close = parseFloat(close.toFixed(2));
-        }
+//             jsonData.close = parseFloat(close.toFixed(2));
+//         }
 
-        if (DATA_GL.BTC.SELL) {
-            if (close > open || close == open) {
-                var tl = close - open;
-                close = Number(open) - Number(tl) - (Math.random() * 3);
-            }
+//         if (DATA_GL.BTC.SELL) {
+//             if (close > open || close == open) {
+//                 var tl = close - open;
+//                 close = Number(open) - Number(tl) - (Math.random() * 3);
+//             }
 
-            jsonData.close = parseFloat(close.toFixed(2));
-        }
+//             jsonData.close = parseFloat(close.toFixed(2));
+//         }
 
-        // kết thúc
+//         // kết thúc
 
-        /**
-         * Ít là ăn
-         *
-         */
-        //let totalBuy = void 0 === eval(PRICE_BUY_LIVE.join('+')) ? 0 : eval(PRICE_BUY_LIVE.join('+'));
-        //let totalSell = void 0 === eval(PRICE_SELL_LIVE.join('+')) ? 0 : eval(PRICE_SELL_LIVE.join('+'));
-        let totalBuy = PRICE_BUY_LIVE;
-        let totalSell = PRICE_SELL_LIVE;
+//         /**
+//          * Ít là ăn
+//          *
+//          */
+//         //let totalBuy = void 0 === eval(PRICE_BUY_LIVE.join('+')) ? 0 : eval(PRICE_BUY_LIVE.join('+'));
+//         //let totalSell = void 0 === eval(PRICE_SELL_LIVE.join('+')) ? 0 : eval(PRICE_SELL_LIVE.join('+'));
+//         let totalBuy = PRICE_BUY_LIVE;
+//         let totalSell = PRICE_SELL_LIVE;
 
-        totalBuy -= PRICE_MAKETING_BUY;
-        totalSell -= PRICE_MAKETING_SELL;
+//         totalBuy -= PRICE_MAKETING_BUY;
+//         totalSell -= PRICE_MAKETING_SELL;
 
-        //kiểm tra nếu số tiền chênh lệch cao thì cho thua
-        //let rd = Math.floor(Math.random() * 200) + 400;
+//         //kiểm tra nếu số tiền chênh lệch cao thì cho thua
+//         //let rd = Math.floor(Math.random() * 200) + 400;
 
-        if (DATA_GL.LESS_WIN) { // ít là ăn 
-            if (totalBuy < totalSell) { // BUY sẽ thắng ( CLOSE > OPEN )
+//         if (DATA_GL.LESS_WIN) { // ít là ăn 
+//             if (totalBuy < totalSell) { // BUY sẽ thắng ( CLOSE > OPEN )
 
-                if (close < open || close == open) {
-                    let tl = open - close;
-                    close = Number(close) + Number(tl) + (Math.random() * 3);
-                }
+//                 if (close < open || close == open) {
+//                     let tl = open - close;
+//                     close = Number(close) + Number(tl) + (Math.random() * 3);
+//                 }
 
-                jsonData.close = parseFloat(close.toFixed(2));
-            } else if (totalBuy > totalSell) { // SELL sẽ thắng ( CLOSE < OPEN ) // if(totalBuy > totalSell)
+//                 jsonData.close = parseFloat(close.toFixed(2));
+//             } else if (totalBuy > totalSell) { // SELL sẽ thắng ( CLOSE < OPEN ) // if(totalBuy > totalSell)
 
-                if (close > open || close == open) {
-                    var tl = close - open;
-                    close = Number(open) - Number(tl) - (Math.random() * 3);
-                }
+//                 if (close > open || close == open) {
+//                     var tl = close - open;
+//                     close = Number(open) - Number(tl) - (Math.random() * 3);
+//                 }
 
-                jsonData.close = parseFloat(close.toFixed(2));
-            }
-        } else {
-            let totalBuyAv = 0;
-            let totalSellAv = 0;
-            if (totalBuy > totalSell) {
-                totalBuyAv = totalBuy - totalSell;
-            } else if (totalBuy < totalSell) {
-                totalSellAv = totalSell - totalBuy
-            }
+//                 jsonData.close = parseFloat(close.toFixed(2));
+//             }
+//         } else {
+//             let totalBuyAv = 0;
+//             let totalSellAv = 0;
+//             if (totalBuy > totalSell) {
+//                 totalBuyAv = totalBuy - totalSell;
+//             } else if (totalBuy < totalSell) {
+//                 totalSellAv = totalSell - totalBuy
+//             }
 
-            let rd = 400;
-            if (totalBuyAv > rd) {
-                // SELL sẽ thắng ( CLOSE < OPEN ) 
-                if (close > open || close == open) {
-                    var tl = close - open;
-                    close = Number(open) - Number(tl) - (Math.random() * 3);
-                }
+//             let rd = 400;
+//             if (totalBuyAv > rd) {
+//                 // SELL sẽ thắng ( CLOSE < OPEN ) 
+//                 if (close > open || close == open) {
+//                     var tl = close - open;
+//                     close = Number(open) - Number(tl) - (Math.random() * 3);
+//                 }
 
-                jsonData.close = parseFloat(close.toFixed(2));
-            } else if (totalSellAv > rd) {
-                // BUY sẽ thắng ( CLOSE > OPEN )
-                if (close < open || close == open) {
-                    let tl = open - close;
-                    close = Number(close) + Number(tl) + (Math.random() * 3);
-                }
+//                 jsonData.close = parseFloat(close.toFixed(2));
+//             } else if (totalSellAv > rd) {
+//                 // BUY sẽ thắng ( CLOSE > OPEN )
+//                 if (close < open || close == open) {
+//                     let tl = open - close;
+//                     close = Number(close) + Number(tl) + (Math.random() * 3);
+//                 }
 
-                jsonData.close = parseFloat(close.toFixed(2));
-            }
-        }
+//                 jsonData.close = parseFloat(close.toFixed(2));
+//             }
+//         }
 
-        PRICE_MAKETING_BUY = 0;
-        PRICE_MAKETING_SELL = 0;
+//         PRICE_MAKETING_BUY = 0;
+//         PRICE_MAKETING_SELL = 0;
 
-        /**
-         * Ít là ăn
-         *
-         */
+//         /**
+//          * Ít là ăn
+//          *
+//          */
 
-        session++;
-        writeSessionDB();
-    }
+//         session++;
+//         writeSessionDB();
+//     }
 
-    let title;
+//     let title;
 
-    if (jsonData.close > jsonData.open) { // BUY
-        title = 'buy';
-        BUY.push(title);
-    } else { // SELL
-        title = 'sell';
-        SELL.push(title);
-    }
+//     if (jsonData.close > jsonData.open) { // BUY
+//         title = 'buy';
+//         BUY.push(title);
+//     } else { // SELL
+//         title = 'sell';
+//         SELL.push(title);
+//     }
 
-    if (LIST_GET_DATA.length >= 120) {
-        LIST_GET_DATA.shift();
-    }
+//     if (LIST_GET_DATA.length >= 120) {
+//         LIST_GET_DATA.shift();
+//     }
 
-    LIST_GET_DATA.push(jsonData);
+//     LIST_GET_DATA.push(jsonData);
 
-    STATIC.push(title);
+//     STATIC.push(title);
 
-    writeStaticDB();
-    writeStatic();
+//     writeStaticDB();
+//     writeStatic();
 
-    //timeGet = new Date().getTime();
-    // Xử lý kết quả
-    //HandlingBuySell(title);       
-    HandlingBuySell2(title);
-}
+//     //timeGet = new Date().getTime();
+//     // Xử lý kết quả
+//     //HandlingBuySell(title);       
+//     HandlingBuySell2(title);
+// }
 
 async function XU_LY_QUY_BOT(PRICE_WIN, PRICE_LOSE) {
     //console.log(AMOUNT_MARKETING_WIN + ' -- ' + AMOUNT_MARKETING_LOSE);
@@ -1605,194 +1663,206 @@ async function HandlingBuySell2(title) {
     let countUser = Object.keys(users).length;
 
     for (let obj in BTC_USER_BUY) {
-        let moneyAndActionBuy = BTC_USER_BUY[obj];
-        let moneyAndAction = moneyAndActionBuy.split("||");
-        let money = moneyAndAction[0];
-        let action = moneyAndAction[1];
-        let type = moneyAndAction[2];
-        let email = moneyAndAction[3];
-        let accMarketingBuy = moneyAndAction[4];
-        let uid = moneyAndAction[5];
-        let forceWin = moneyAndAction[6];
-        let ws = '';
+        try {
+            let moneyAndActionBuy = BTC_USER_BUY[obj];
+            let moneyAndAction = moneyAndActionBuy.split("||");
+            let money = moneyAndAction[0];
+            let action = moneyAndAction[1];
+            let type = moneyAndAction[2];
+            let email = moneyAndAction[3];
+            let accMarketingBuy = moneyAndAction[4];
+            let uid = moneyAndAction[5];
+            let forceWin = moneyAndAction[6];
+            let ws = '';
 
-        await new Promise((res, rej) => {
-            let o = 0;
-            for (let av in users) {
-                o++;
-                if (users[av].email == email) {
-                    ws = users[av].ws;
-                    res();
+            await new Promise((res, rej) => {
+                let o = 0;
+                for (let av in users) {
+                    o++;
+                    if (users[av].email == email) {
+                        ws = users[av].ws;
+                        res();
+                    }
+
+                    if (o === countUser) res();
+                }
+            })
+
+            if ((typeof forceWin === 'boolean' && forceWin) || action === title) { // đây là thắng của BUY
+                let amount = money / 100 * rateNhaThuong; // Money của BUY
+
+                let amountShow = Number(amount); // là số tiền nhận được
+                let addMo = amountShow + Number(money);
+
+                let obj = {
+                    balance: addMo,
+                    win: amountShow,
+                    upID: uid,
+                    email: email
                 }
 
-                if (o === countUser) res();
+                if (type == 1) {
+                    updatePriceWinLose(obj, 'w');
+                    TOTAL_WIN_PRICE += amountShow;
+                }
+
+                if (type == 1 && accMarketingBuy == 1) {
+                    AMOUNT_MARKETING_WIN += amountShow;
+                }
+
+                updateAmountWin(obj, (err, result) => { })
+
+                let obj2 = {
+                    type: 'kq',
+                    data: { kq: 'win', money: addMo }
+                }
+
+                //console.log('XU LY BUY WIN: ' + accMarketingBuy);
+                if (ws !== '')
+                    ws.send(JSON.stringify(obj2));
+
+                // Lưu vào lịch sử
+                await SaveHistory('win', uid, type, action, SEVER_GET, amountShow, money, email, accMarketingBuy);
+
+                await handleStreakChallenge(email);
+            } else if (action !== title) {
+                let obj = {
+                    lose: Number(money),
+                    upID: uid,
+                    email: email
+                }
+
+                updateAmountLose(obj, (err, result) => { })
+
+                if (type == 1) {
+                    updatePriceWinLose(obj, 'l');
+                    TOTAL_LOSE_PRICE += obj.lose;
+                }
+
+                if (type == 1 && accMarketingBuy == 1) {
+                    AMOUNT_MARKETING_LOSE += obj.lose;
+                }
+
+                let obj2 = {
+                    type: 'kq',
+                    data: { kq: 'lose', money: Number(money) }
+                }
+
+                if (ws !== '')
+                    ws.send(JSON.stringify(obj2));
+
+                // Lưu vào lịch sử
+                await SaveHistory('lose', uid, type, action, SEVER_GET, money, money, email, accMarketingBuy);
+                await handleStreakChallenge(email);
             }
-        })
-
-        if ((typeof forceWin === 'boolean' && forceWin) || action === title) { // đây là thắng của BUY
-            let amount = money / 100 * rateNhaThuong; // Money của BUY
-
-            let amountShow = Number(amount); // là số tiền nhận được
-            let addMo = amountShow + Number(money);
-
-            let obj = {
-                balance: addMo,
-                win: amountShow,
-                upID: uid,
-                email: email
-            }
-
-            if (type == 1) {
-                updatePriceWinLose(obj, 'w');
-                TOTAL_WIN_PRICE += amountShow;
-            }
-
-            if (type == 1 && accMarketingBuy == 1) {
-                AMOUNT_MARKETING_WIN += amountShow;
-            }
-
-            updateAmountWin(obj, (err, result) => { })
-
-            let obj2 = {
-                type: 'kq',
-                data: { kq: 'win', money: addMo }
-            }
-
-            //console.log('XU LY BUY WIN: ' + accMarketingBuy);
-            if (ws !== '')
-                ws.send(JSON.stringify(obj2));
-
-            // Lưu vào lịch sử
-            await SaveHistory('win', uid, type, action, SEVER_GET, amountShow, money, email, accMarketingBuy);
-
-            await handleStreakChallenge(email);
-        } else if (action !== title) {
-            let obj = {
-                lose: Number(money),
-                upID: uid,
-                email: email
-            }
-
-            updateAmountLose(obj, (err, result) => { })
-
-            if (type == 1) {
-                updatePriceWinLose(obj, 'l');
-                TOTAL_LOSE_PRICE += obj.lose;
-            }
-
-            if (type == 1 && accMarketingBuy == 1) {
-                AMOUNT_MARKETING_LOSE += obj.lose;
-            }
-
-            let obj2 = {
-                type: 'kq',
-                data: { kq: 'lose', money: Number(money) }
-            }
-
-            if (ws !== '')
-                ws.send(JSON.stringify(obj2));
-
-            // Lưu vào lịch sử
-            await SaveHistory('lose', uid, type, action, SEVER_GET, money, money, email, accMarketingBuy);
-            await handleStreakChallenge(email);
+        } catch (error) {
+            console.log("🚀 ~ file: trade.js:1618 ~ HandlingBuySell2 ~ error:", error)
         }
+        
     }
 
     for (let obj in BTC_USER_SELL) {
-        let moneyAndActionSell = BTC_USER_SELL[obj];
-        let moneyAndAction = moneyAndActionSell.split("||");
-        let money2 = moneyAndAction[0];
-        let action2 = moneyAndAction[1];
-        let type2 = moneyAndAction[2];
-        let email2 = moneyAndAction[3];
-        let accMarketingSell = moneyAndAction[4];
-        let uid = moneyAndAction[5];
-        let forceWin = moneyAndAction[6];
-        let ws = '';
 
-        await new Promise((res, rej) => {
-            let o = 0;
+        try {
+            let moneyAndActionSell = BTC_USER_SELL[obj];
+            let moneyAndAction = moneyAndActionSell.split("||");
+            let money2 = moneyAndAction[0];
+            let action2 = moneyAndAction[1];
+            let type2 = moneyAndAction[2];
+            let email2 = moneyAndAction[3];
+            let accMarketingSell = moneyAndAction[4];
+            let uid = moneyAndAction[5];
+            let forceWin = moneyAndAction[6];
+            let ws = '';
 
-            for (let av in users) {
-                o++;
-                if (users[av].email == email2) {
-                    ws = users[av].ws;
-                    res();
+            await new Promise((res, rej) => {
+                let o = 0;
+
+                for (let av in users) {
+                    o++;
+                    if (users[av].email == email2) {
+                        ws = users[av].ws;
+                        res();
+                    }
+
+                    if (o === countUser) res();
+                }
+            })
+
+            if ((typeof forceWin === 'boolean' && forceWin) || action2 === title) { // đây là thắng của SELL
+                let amount = money2 / 100 * rateNhaThuong; // Money của BUY
+
+                let amountShow = Number(amount); // là tổng số tiền nhận được
+                let addMo = amountShow + Number(money2);
+
+                let obj = {
+                    balance: addMo,
+                    win: amountShow,
+                    upID: uid,
+                    email: email2
                 }
 
-                if (o === countUser) res();
+                if (type2 == 1) {
+                    TOTAL_WIN_PRICE += amountShow;
+                    updatePriceWinLose(obj, 'w');
+                }
+
+                if (type2 == 1 && accMarketingSell == 1) {
+                    AMOUNT_MARKETING_WIN += amountShow;
+                }
+
+                updateAmountWin(obj, (err, result) => { });
+
+                let obj2 = {
+                    type: 'kq',
+                    data: { kq: 'win', money: addMo }
+                }
+
+                if (ws !== '')
+                    ws.send(JSON.stringify(obj2));
+
+                //console.log('XU LY SELL WIN: ' + accMarketingSell);
+
+                // Lưu vào lịch sử
+                await SaveHistory('win', uid, type2, action2, SEVER_GET, amountShow, money2, email2, accMarketingSell);
+                await handleStreakChallenge(email2);
+            } else if (action2 !== title) {
+                let obj = {
+                    lose: Number(money2),
+                    upID: uid,
+                    email: email2
+                }
+
+                updateAmountLose(obj, (err, result) => { })
+
+                if (type2 == 1) {
+                    TOTAL_LOSE_PRICE += obj.lose;
+                    updatePriceWinLose(obj, 'l');
+                }
+
+                if (type2 == 1 && accMarketingSell == 1) {
+                    AMOUNT_MARKETING_LOSE += obj.lose;
+                }
+
+                let obj2 = {
+                    type: 'kq',
+                    data: { kq: 'lose', money: Number(money2) }
+                }
+
+                //console.log('XU LY SELL LOSE: ' + accMarketingSell);
+
+                if (ws !== '')
+                    ws.send(JSON.stringify(obj2));
+
+                // Lưu vào lịch sử
+                await SaveHistory('lose', uid, type2, action2, SEVER_GET, money2, money2, email2, accMarketingSell);
+                await handleStreakChallenge(email2);
             }
-        })
-
-        if ((typeof forceWin === 'boolean' && forceWin) || action2 === title) { // đây là thắng của SELL
-            let amount = money2 / 100 * rateNhaThuong; // Money của BUY
-
-            let amountShow = Number(amount); // là tổng số tiền nhận được
-            let addMo = amountShow + Number(money2);
-
-            let obj = {
-                balance: addMo,
-                win: amountShow,
-                upID: uid,
-                email: email2
-            }
-
-            if (type2 == 1) {
-                TOTAL_WIN_PRICE += amountShow;
-                updatePriceWinLose(obj, 'w');
-            }
-
-            if (type2 == 1 && accMarketingSell == 1) {
-                AMOUNT_MARKETING_WIN += amountShow;
-            }
-
-            updateAmountWin(obj, (err, result) => { });
-
-            let obj2 = {
-                type: 'kq',
-                data: { kq: 'win', money: addMo }
-            }
-
-            if (ws !== '')
-                ws.send(JSON.stringify(obj2));
-
-            //console.log('XU LY SELL WIN: ' + accMarketingSell);
-
-            // Lưu vào lịch sử
-            await SaveHistory('win', uid, type2, action2, SEVER_GET, amountShow, money2, email2, accMarketingSell);
-            await handleStreakChallenge(email2);
-        } else if (action2 !== title) {
-            let obj = {
-                lose: Number(money2),
-                upID: uid,
-                email: email2
-            }
-
-            updateAmountLose(obj, (err, result) => { })
-
-            if (type2 == 1) {
-                TOTAL_LOSE_PRICE += obj.lose;
-                updatePriceWinLose(obj, 'l');
-            }
-
-            if (type2 == 1 && accMarketingSell == 1) {
-                AMOUNT_MARKETING_LOSE += obj.lose;
-            }
-
-            let obj2 = {
-                type: 'kq',
-                data: { kq: 'lose', money: Number(money2) }
-            }
-
-            //console.log('XU LY SELL LOSE: ' + accMarketingSell);
-
-            if (ws !== '')
-                ws.send(JSON.stringify(obj2));
-
-            // Lưu vào lịch sử
-            await SaveHistory('lose', uid, type2, action2, SEVER_GET, money2, money2, email2, accMarketingSell);
-            await handleStreakChallenge(email2);
+        } catch (error) {
+            console.log("🚀 ~ file: trade.js:1718 ~ HandlingBuySell2 ~ error:", error)
+            
         }
+        
     }
 
     BTC_USER_BUY_BACK = BTC_USER_BUY
@@ -1880,7 +1950,7 @@ async function HandlingCommissionBUY() {
                         if (results.length) { // nếu tồn tại 
                             UpId = results[0].upline_id; // lấy mã ref ( nếu có )
                             RefFN = results[0].ref_code; // ref của chính mình
-                            console.log("🚀 ~ file: trade.js:1823 ~ checkF0Commission ~ RefFN:", RefFN)
+                            //console.log("🚀 ~ file: trade.js:1823 ~ checkF0Commission ~ RefFN:", RefFN)
                             obj.sourceLevelId = results[0].level_vip;
                         }
 
@@ -2015,7 +2085,7 @@ async function HandlingCommissionSELL() {
                         if (results.length) { // nếu tồn tại 
                             UpId = results[0].upline_id; // lấy mã ref ( nếu có )
                             RefFN = results[0].ref_code; // ref của chính mình
-                            console.log("🚀 ~ file: trade.js:1957 ~ checkF0Commission ~ RefFN:", RefFN)
+                            //console.log("🚀 ~ file: trade.js:1957 ~ checkF0Commission ~ RefFN:", RefFN)
                             obj.sourceLevelId = results[0].level_vip;
                         }
 
