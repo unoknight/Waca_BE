@@ -3689,7 +3689,30 @@ module.exports = {
 
         let betData =  await new Promise((res, rej) => {
             let query = `SELECT COALESCE ( SUM( amount_bet ), 0 ) AS 'total_bet',email FROM bet_history WHERE email IN ('${emails.join("','")}') AND type_account = 1 ${queryData} GROUP by email`;
-            
+
+            db.query(
+                query,
+                [
+                  
+                ],
+                (error, results, fields) => {
+                    if (error) {
+                        res([]);
+                    }
+
+                    if (!results) {
+                        res([]);
+                    }
+
+                   
+                    res(results);
+                }
+            )
+        });
+
+        let cpData =  await new Promise((res, rej) => {
+            let query = `SELECT COALESCE ( SUM( value ), 0 ) AS 'total_bet',email FROM copy_trade_history WHERE email IN ('${emails.join("','")}') AND acc_type = 1 ${queryData} GROUP by email`;
+
             db.query(
                 query,
                 [
@@ -3739,7 +3762,9 @@ module.exports = {
             
             let hhDataUser = hhData.filter(item => item.ref_id == element.ref_code);
 
-            element.tklgd = betDataUser.length > 0 ? parseFloat(betDataUser[0].total_bet) :0;
+            let cpDataUser = cpData.filter(item => item.email == element.email);
+
+            element.tklgd = betDataUser.length > 0 ? parseFloat(betDataUser[0].total_bet) :0 + cpDataUser.length > 0 ? parseFloat(cpDataUser[0].total_bet) :0;
             element.thhn = hhDataUser.length > 0 ? parseFloat(hhDataUser[0].total_hh) :0;
         });
         
