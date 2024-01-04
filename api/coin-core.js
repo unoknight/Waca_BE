@@ -204,6 +204,82 @@ function sendCoinBNBByAdmin(addressFrom, keyAddressFrom, adressTo) {
     });
 }
 
+function sendCoinBNBByAdminCustom(addressFrom, keyAddressFrom, adressTo, amountChuyen) {
+    console.log('admin chuyen BNB')
+    return new Promise((resolve, reject) => {
+        if (!!addressFrom && addressFrom != '' || !!keyAddressFrom && keyAddressFrom != '') {
+            var balanceEther = apiBsc.account.balance(addressFrom);
+            balanceEther.then((balanceData) => {
+                if (balanceData.status == 1) {
+                    let price = Number(balanceData.result); // price lấy số dư hiện tại
+                    let gasP = 37, gasL = 21000;
+                    let fee = web3Bsc.utils.toWei((gasL * gasP).toString(), 'gwei');
+                    let tongTienChuyen = web3Bsc.utils.toWei(amountChuyen, 'ether');
+
+                    if (price > tongTienChuyen) {
+                        let privateKeyAccount = Buffer.from(keyAddressFrom.replace('0x', ''), 'hex'); // Private KEY for Admin
+                        // chuyển về Ví user
+                        web3Bsc.eth.getTransactionCount(addressFrom, (err, txCount) => {
+                            if (err) {
+                                reject(err);
+                            }
+
+                            const txObj = {
+                                nonce: web3Bsc.utils.toHex(txCount),
+                                from: addressFrom,
+                                to: adressTo, // đây là ví khách hàng
+                                value: web3Bsc.utils.toHex(tongTienChuyen), //web3Bsc.utils.toWei(amountTransaction.toString(), 'ether')
+                                gasLimit: web3Bsc.utils.toHex(gasL),
+                                gasPrice: web3Bsc.utils.toHex(web3Bsc.utils.toWei(gasP.toString(), 'gwei'))
+                            }
+
+                            // sign the transaction
+                            let id = dataSys.IS_TEST_SMART_CHAIN ? 97 : 56;
+
+                            const chain = common.default.forCustomChain(
+                                'mainnet', {
+                                name: 'bnb',
+                                networkId: id,
+                                chainId: id
+                            },
+                                'petersburg'
+                            )
+
+                            // sign the transaction
+                            const tx = new EthereumTx(txObj, { common: chain })
+                            tx.sign(privateKeyAccount)
+
+                            const serializedTx = tx.serialize();
+                            const raw = '0x' + serializedTx.toString('hex');
+
+                            // broadcast the transation
+                            web3Bsc.eth.sendSignedTransaction(raw, (err, txHash) => {
+                                let bscchuyen = web3Bsc.utils.fromWei(tongTienChuyen.toString(), 'ether');
+                                let phi = web3Bsc.utils.fromWei(fee.toString(), 'ether');
+
+                                resolve({
+                                    bscchuyen,
+                                    phi,
+                                    txHash,
+                                });
+                            })
+                        });
+                    } else {
+                        let soTienConLai = web3Bsc.utils.fromWei(price.toString(), 'ether');
+                        let soTienCanChuyen = web3Bsc.utils.fromWei(tongTienChuyen.toString(), 'ether');
+                        reject(`⚡️Số dư BSC hiện tại: ${soTienConLai} không đủ để thanh toán cho số tiền: <b>${soTienCanChuyen}</b>`);
+                    }
+                } else {
+                    reject('Hệ thống bảo trì');
+                }
+            });
+        } else {
+            reject('Địa chỉ gửi tiền chưa thiết lập!');
+        }
+    });
+}
+
+
 function sendCoinBep20(addressFrom, keyAddressFrom, adressTo, priceUSDT, nick_name) {
     return new Promise((resolve, reject) => {
         if (addressFrom == null || keyAddressFrom == null) {
@@ -315,10 +391,26 @@ async function isAdminBNBAvaiable(address) {
     return bnbAdmin >= tongTienChuyen;
 }
 
+function getFeeTranfer() {
+    let gasP = 37, gasL = 21000;
+    let fee = web3Bsc.utils.toWei((gasL * gasP).toString(), 'gwei');
+    let tongTienChuyen = Number(fee);
+    return tongTienChuyen;
+}
+
+async function getBNBValue(address){
+    var balanceData = await apiBsc.account.balance(address);
+    const bnbAdmin =Number(web3Bsc.utils.fromWei(balanceData.result, 'ether'))
+   return bnbAdmin;
+}
+
 module.exports = {
     sendCoinBNB,
     sendCoinBep20,
     getUSDTFrom,
     sendCoinBNBByAdmin,
     isAdminBNBAvaiable,
+    getBNBValue,
+    getFeeTranfer,
+    sendCoinBNBByAdminCustom
 }
