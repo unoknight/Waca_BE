@@ -2533,7 +2533,7 @@ async function tradeByExperts(obj, money_experts) {
                         })
                     })
 
-                    if (accountByTypeAndEmail) {
+                    if (accountByTypeAndEmail && Number(accountByTypeAndEmail.balance) > 0) {
 
                          if (Number(accountByTypeAndEmail.balance) < Number(e.amount)) {
                              e.amount = accountByTypeAndEmail.balance;

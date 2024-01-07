@@ -1812,7 +1812,7 @@ module.exports = {
                     data.verified_telegram = results.verified_telegram;
                     data.telegram_id = results.telegram_id;
                     data.active_type = results.active_type;
-                    sendLoginMail(data)
+                    //sendLoginMail(data)
                     
                     if(data.active_type == 2 && results.active_2fa){
                         sendOn2FACodeTele(data);

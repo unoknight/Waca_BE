@@ -34,10 +34,10 @@ module.exports = {
 	PAYPAL_CLIENT_SECRET: 'EMEZw9QceAhl2UztIWGH62xh95z7---kuu6npJTRj09TVJRQnG-hyIfKUfsptfPIGcBvuwxeBhCtjYT_',//'',
 	// KẾT THÚC THANH TOÁN PAYPAL
 
-	DATA_HOST: '139.162.17.147',
+	DATA_HOST: 'localhost',
 	DATA_USER: 'root',
-	DATA_PASS: '8GFy9CQwCCSfanCI',
-	DATA_DB: 'data_cam_t12',
+	DATA_PASS: 'vCy6IPsIObuCajc',
+	DATA_DB: 'db_production',
 	DATA_PORT: 3306,
 
 	PORT_TRADE: 2096, // default 443 ssl
@@ -54,7 +54,7 @@ module.exports = {
 
 	ABI_USDT_MAINNET: 'USDT_BEP20_mainnet',
 	ABI_USDT_TESTNNET: 'USDT_BEP20_testnet',
-	IS_TELEGRAM:false,
+	IS_TELEGRAM:true,
 	TELEGRAM_TOKEN: '6401650590:AAHP0Pq3tYulNG2kqxG-QvCirrbGA8vxCwY',
 	TELEGRAM_BET_ID: 'wacabot6',
 	TELEGRAM_RUT_ID: 'wacabot5',
